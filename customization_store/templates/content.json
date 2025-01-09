@@ -1,0 +1,18 @@
+{
+    "section1": {
+        "title": "Entrega Grátis",
+        "content": "Para a Bélgica em compras a partir de 50€."
+    },
+    "section2": {
+        "title": "Frete a 2,49€",
+        "content": "Para a Bélgica em compras superiores a €20€."
+    },
+    "section3": {
+        "title": "Envio Garantido",
+        "content": "Após a confirmação do pagamento."
+    },
+    "section4": {
+        "title": "Pagamento 100% seguro",
+        "content": "Cartão de crédito / Bancontact / Transferência Bancária."
+    }
+}

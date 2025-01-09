@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhes do Produto - {{ product.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <h2>Detalhes do Produto - {{ product.name }}</h2>
+  </div>
+
+  <div class="col-md-6">
+    <a href="{% url 'product_update' product.pk %}" class="btn btn-warning float-end">
+      <i class="bi bi-pencil"></i> Editar
+    </a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Informações Gerais</h5>
+    <dl class="row">
+      <dt class="col-sm-3">ID</dt>
+      <dd class="col-sm-9">{{ product.pk }}</dd>
+
+      <dt class="col-sm-3">Código de Barras</dt>
+      <dd class="col-sm-9">{{ product.barcode }}</dd>
+
+      <dt class="col-sm-3">Nome</dt>
+      <dd class="col-sm-9">{{ product.name }}</dd>
+
+      <dt class="col-sm-3">Marca</dt>
+      <dd class="col-sm-9">{{ product.brand }}</dd>
+
+      <dt class="col-sm-3">Categoria</dt>
+      <dd class="col-sm-9">{{ product.category }}</dd>
+
+      <dt class="col-sm-3">Subcategoria</dt>
+      <dd class="col-sm-9">{{ product.subcategory }}</dd>
+
+      <dt class="col-sm-3">País</dt>
+      <dd class="col-sm-9">{{ product.country }}</dd>
+
+      <dt class="col-sm-3">Peso NET (kg)</dt>
+      <dd class="col-sm-9">{{ product.net_weight }}</dd>
+
+      <dt class="col-sm-3">Peso Bruto (kg)</dt>
+      <dd class="col-sm-9">{{ product.gross_weight }}</dd>
+
+      <dt class="col-sm-3">Controlar o estoque?</dt>
+      <dd class="col-sm-9">{{ product.stock_control }}</dd>
+
+      <dt class="col-sm-3">Estoque Mínimo</dt>
+      <dd class="col-sm-9">{{ product.minimum_stock }}</dd>
+
+      <dt class="col-sm-3">Estoque Máximo</dt>
+      <dd class="col-sm-9">{{ product.maximum_stock }}</dd>
+
+      <dt class="col-sm-3">Preço de Venda ($)</dt>
+      <dd class="col-sm-9">{{ product.selling_price }}</dd>
+
+      <dt class="col-sm-3">Imagem</dt>
+      <dd class="col-sm-9">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }} Imagem">
+        {% else %}
+          <p>Sem imagem disponível</p>
+        {% endif %}
+      </dd>
+
+      <dt class="col-sm-3">Descrição</dt>
+      <dd class="col-sm-9">{{ product.description }}</dd>
+
+      <dt class="col-sm-3">Criado em</dt>
+      <dd class="col-sm-9">{{ product.created_at|date:"d/m/Y H:i" }}</dd>
+
+      <dt class="col-sm-3">Última Atualização</dt>
+      <dd class="col-sm-9">{{ product.updated_at|date:"d/m/Y H:i" }}</dd>
+
+      <dt class="col-sm-3">Criado por</dt>
+      <dd class="col-sm-9">{{ product.created_by }}</dd>
+
+      <dt class="col-sm-3">Atualizado por</dt>
+      <dd class="col-sm-9">{{ product.updated_by }}</dd>
+    </dl>
+  </div>
+</div>
+
+{% endblock %}

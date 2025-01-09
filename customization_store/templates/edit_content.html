@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Conteúdo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Editar Conteúdo das Divs</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {% for section, data in content.items %}
+        <div class="mb-3">
+            <label for="{{ section }}_title" class="form-label">Título ({{ section }})</label>
+            <input type="text" class="form-control" id="{{ section }}_title" name="{{ section }}_title" value="{{ data.title }}">
+        </div>
+        <div class="mb-3">
+            <label for="{{ section }}_content" class="form-label">Conteúdo ({{ section }})</label>
+            <textarea class="form-control" id="{{ section }}_content" name="{{ section }}_content" rows="3">{{ data.content }}</textarea>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+{% endblock %}

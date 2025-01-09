@@ -1,0 +1,153 @@
+<!-- Offcanvas Menu -->
+<div class="offcanvas offcanvas-start" id="offcanvasMenu" tabindex="-1" aria-labelledby="offcanvasMenuLabel">
+    <div class="offcanvas-header">
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">X</button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="accordion" id="accordionCategories">
+
+            <!-- Botão para visualizar todos os produtos -->
+            <div class="accordion-item category-without-children">
+                <h2 class="accordion-header" id="headingAllProducts">
+                    <div class="accordion-button category-item category-link" data-href="{% url 'store_product_list' %}">
+                        Todos os Produtos
+                    </div>
+                </h2>
+            </div>
+
+            {% for category in categories %}
+            <div class="accordion-item {% if category.subcategories.all %}category-with-children{% else %}category-without-children{% endif %}">
+                <h2 class="accordion-header" id="heading{{ category.id }}">
+                    {% if category.subcategories.all %}
+                    <button class="accordion-button category-item collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse{{ category.id }}" aria-expanded="false"
+                        aria-controls="collapse{{ category.id }}">
+                        <!-- Nome da categoria dentro de um div com onclick para redirecionar -->
+                        <div class="category-link" data-href="{% url 'store_products_by_category' category_path=category.get_full_path %}">
+                            {% if category.image %}
+                                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
+                            {% endif %}
+                            {{ category.name }}
+                        </div>
+                    </button>
+                    {% else %}
+                    <div class="category-item category-link" data-href="{% url 'store_products_by_category' category_path=category.get_full_path %}">
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
+                        {% endif %}
+                        {{ category.name }}
+                    </div>
+                    {% endif %}
+                </h2>
+                {% if category.subcategories.all %}
+                <div id="collapse{{ category.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ category.id }}" data-bs-parent="#accordionCategories">
+                    <div class="accordion-body">
+                        {% include 'components/_sidebar_subcategories_store.html' with subcategories=category.subcategories.all parent_id=category.id %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% block extra_styles %}
+<style>
+    .offcanvas {
+        background-color: rgb(255, 255, 255);
+    }
+
+    .offcanvas .btn-close {
+        background: none;
+        border: none;
+        font-size: 2em;
+        color: rgb(0, 0, 0);
+    }
+
+    .accordion-body {
+        padding-left: 1em; /* Adicione um recuo para subcategorias */
+    }
+
+    .accordion-item {
+        border: none;
+    }
+
+    .category-image {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .category-item {
+        font-size: 0.6em;
+        color: #000;
+        padding: 0.5em 1em;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .category-item:hover {
+        background-color: #3cec54;
+    }
+
+    /* Ajuste para categorias com e sem filhos */
+    .category-with-children .category-link {
+        font-weight: bold;
+    }
+
+    .category-without-children .category-link {
+        font-weight: normal;
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var accordions = document.querySelectorAll('.accordion-button');
+        var categoryLinks = document.querySelectorAll('.category-link');
+
+        accordions.forEach(function (accordion) {
+            accordion.addEventListener('click', function () {
+                var target = document.querySelector(this.getAttribute('data-bs-target'));
+                if (target) {
+                    var isCollapsed = target.classList.contains('collapse');
+                    if (isCollapsed) {
+                        target.classList.add('show');
+                    } else {
+                        target.classList.remove('show');
+                    }
+                }
+            });
+        });
+
+        categoryLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                var href = this.getAttribute('data-href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
+
+        function handleScroll() {
+            var header = document.querySelector('nav.navbar-expand-lg[style]');
+            var navbar = document.querySelector('#navbarMain');
+            if (header && navbar) {
+                if (window.scrollY >= header.offsetHeight) {
+                    navbar.classList.add('fixed-navbar');
+                } else {
+                    navbar.classList.remove('fixed-navbar');
+                }
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+    });
+</script>
+{% endblock %}
+

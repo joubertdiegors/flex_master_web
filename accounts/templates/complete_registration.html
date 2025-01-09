@@ -1,0 +1,44 @@
+{% extends "base_store.html" %}
+{% load extras %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">Completar Cadastro</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.phone.label_tag }}
+                <div class="input-group">
+                    {{ form.phone|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class="mb-3">
+                {{ form.postal_code.label_tag }}
+                <div class="input-group">
+                    {{ form.postal_code|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class="mb-3">
+                {{ form.city.label_tag }}
+                <div class="input-group">
+                    {{ form.city|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class="mb-3">
+                {{ form.address.label_tag }}
+                <div class="input-group">
+                    {{ form.address|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class="mb-3">
+                {{ form.image.label_tag }}
+                <div class="input-group">
+                    {{ form.image|add_class:"form-control" }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Completar Cadastro</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

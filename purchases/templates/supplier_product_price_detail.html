@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhes do Preço do Produto do Fornecedor: {{ supplier_product_price.product.name }}
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col">
+    <h2>Detalhes do Preço do Produto do Fornecedor: {{ supplier_product_price.product.name }}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <table class="table table-striped table-bordered">
+      <tr>
+        <th>Fornecedor</th>
+        <td>{{ supplier_product_price.supplier.name }}</td>
+      </tr>
+      <tr>
+        <th>Produto</th>
+        <td>{{ supplier_product_price.product.name }}</td>
+      </tr>
+      <tr>
+        <th>Quantidade na Caixa</th>
+        <td>{{ supplier_product_price.box_quantity }}</td>
+      </tr>
+      <tr>
+        <th>Permite Varejo</th>
+        <td>{{ supplier_product_price.allows_retail|yesno:"Sim,Não" }}</td>
+      </tr>
+      <tr>
+        <th>Preço de Compra</th>
+        <td>{{ supplier_product_price.purchase_price }}</td>
+      </tr>
+      <tr>
+        <th>Código do Artigo</th>
+        <td>{{ supplier_product_price.supplier_article_code }}</td>
+      </tr>
+      <tr>
+        <th>Data da Última Compra</th>
+        <td>{{ supplier_product_price.last_purchase_date }}</td>
+      </tr>
+      <tr>
+        <th>Quantidade da Última Compra</th>
+        <td>{{ supplier_product_price.last_purchase_quantity }}</td>
+      </tr>
+      <tr>
+        <th>Criado em</th>
+        <td>{{ supplier_product_price.created_at }}</td>
+      </tr>
+      <tr>
+        <th>Atualizado em</th>
+        <td>{{ supplier_product_price.updated_at }}</td>
+      </tr>
+    </table>
+    <a href="{% url 'supplier_product_price_update' supplier_product_price.pk %}" class="btn btn-warning">Editar</a>
+    <a href="{% url 'supplier_product_price_list' %}" class="btn btn-secondary">Voltar</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base_store.html' %}
+
+{% block title %}Sobre Nós - Sacolão{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Seção A Nossa Empresa -->
+    <div id="our_company" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #007bff; border-radius: 10px;">A Nossa Empresa</h2>
+            <p style="color: darkslategray;">Informações sobre a história da empresa, sua fundação, e o que a torna única. Aqui você pode incluir detalhes sobre a trajetória, conquistas e a filosofia que guia a empresa.</p>
+        </div>
+    </div>
+
+    <!-- Seção Nossos Objetivos -->
+    <div id="our_goals" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #198754; border-radius: 10px;">Nossos Objetivos</h2>
+            <p style="color: darkslategray;">Detalhes sobre os objetivos da empresa, incluindo metas de curto e longo prazo. Aqui você pode falar sobre o compromisso com a qualidade, satisfação do cliente e crescimento sustentável.</p>
+        </div>
+    </div>
+
+    <!-- Seção Nossa Visão -->
+    <div id="our_vision" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #dc3545; border-radius: 10px;">Nossa Visão</h2>
+            <p style="color: darkslategray;">Declaração da visão da empresa, descrevendo o futuro desejado e como pretende alcançá-lo. Pode incluir a missão, valores fundamentais e o impacto que deseja causar no setor e na comunidade.</p>
+        </div>
+    </div>
+
+    <!-- Seção Nossos Valores -->
+    <div id="our_values" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #0d6efd; border-radius: 10px;">Nossos Valores</h2>
+            <p style="color: darkslategray;">Descrição dos valores fundamentais que guiam a empresa, como integridade, inovação, responsabilidade social e ambiental, e compromisso com a excelência.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Estilos personalizados para a página Sobre Nós */
+    #our_company, #our_goals, #our_vision, #our_values {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    #our_company h2, #our_goals h2, #our_vision h2, #our_values h2 {
+        color: #ffffff;
+        text-align: center;
+    }
+
+    #our_company p, #our_goals p, #our_vision p, #our_values p {
+        color: #495057;
+        text-align: justify;
+    }
+
+    .container {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}

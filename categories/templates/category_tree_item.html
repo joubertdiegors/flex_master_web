@@ -1,0 +1,20 @@
+<li class="collapsed" data-id="{{ category.id }}" data-name="{{ category.name }}" data-image="{% if category.image and category.image.url %}{{ category.image.url }}{% endif %}" data-parent="{{ category.parent.id|default_if_none:'' }}">
+  <span class="collapse-icon">
+    <i class="bi bi-arrow-right"></i>
+  </span>
+  {% if category.image %}
+    <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
+  {% endif %}
+  <span>{{ category.name }} ({{ category.subcategories.count }})</span>
+  <i class="bi bi-pencil edit-icon" title="Editar"></i>
+  <i class="bi bi-trash delete-icon" title="Excluir"></i>
+  {% if category.subcategories.count > 0 %}
+    <ul>
+      {% for subcategory in subcategories %}
+        {% if subcategory.parent == category %}
+          {% include 'category_tree_item.html' with category=subcategory subcategories=subcategories %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+</li>

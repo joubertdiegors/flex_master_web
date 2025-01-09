@@ -1,0 +1,30 @@
+<!-- Modal de Login -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="loginModalLabel">Acessar a sua conta</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'gestao' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Email / Usuário:</label>
+                        <input type="text" class="form-control" id="id_username" name="username"
+                            placeholder="Digite seu email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Senha:</label>
+                        <input type="password" class="form-control" id="id_password" name="password"
+                            placeholder="Digite sua senha">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <span>Não tem uma conta? <a href="{% url 'register' %}">Registre-se aqui</a></span>
+            </div>
+        </div>
+    </div>
+</div>

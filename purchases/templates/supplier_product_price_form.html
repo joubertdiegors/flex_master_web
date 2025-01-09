@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if form.instance.pk %}Editar Preço do Produto do Fornecedor{% else %}Novo Preço do Produto do Fornecedor{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col">
+    <h2>{% if form.instance.pk %}Editar Preço do Produto do Fornecedor{% else %}Novo Preço do Produto do Fornecedor{% endif %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Salvar</button>
+      <a href="{% url 'supplier_product_price_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(document).ready(function () {
+    // Inicializa o Selectize para todos os selects de produto já existentes
+    $('.SupplierProductPriceForm').selectize({
+      create: true,
+      sortField: 'text',
+      dropdownParent: 'body',  // Use isso se o dropdown for cortado por outros elementos
+      onInitialize: function () {
+        // Aplica largura fixa ao Selectize
+        this.$control.css('width', '100%');
+      }
+    });
+  })
+</script>
+{% endblock %}

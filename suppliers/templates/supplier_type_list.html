@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tipos de Fornecedor
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+
+  <div class="col-md-6">
+    <form method="get" action="{% url 'supplier_type_list' %}">
+      <div class="input-group">
+        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}" id="">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="col-md-6">
+    <a href="{% url 'supplier_type_create' %}" class="btn btn-success float-end">
+      <i class="bi bi-plus"></i> Novo Tipo de Fornecedor
+    </a>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <!-- Adicione mais colunas conforme necessário -->
+
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for suppliertype in suppliertypes %}
+      <tr>
+        <td>{{ suppliertype.pk }}</td>
+        <td>{{ suppliertype.name }}</td>
+        <!-- Adicione mais colunas conforme necessário -->
+
+        <td>
+          <a href="{% url 'supplier_type_detail' suppliertype.pk %}" class="btn btn-info btn-sm">
+            <i class="bi bi-eye"></i> Detalhes
+          </a>
+
+          <a href="{% url 'supplier_type_update' suppliertype.pk %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

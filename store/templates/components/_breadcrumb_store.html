@@ -1,0 +1,131 @@
+{% if not breadcrumb_off %}
+<div class="container mt-1 mb-1">
+    <div class="row">
+        <div class="{% if not is_not_list_page %}col-12{% else %}col-8{% endif %}">
+            <!-- Exibição Condicional de Breadcrumb e Categoria Anterior -->
+            <div class="d-none d-xl-block"> <!-- Exibido apenas em telas maiores que 1200px -->
+                <div aria-label="breadcrumb">
+                    <ol class="breadcrumb d-flex flex-nowrap overflow-hidden mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'store_product_list' %}" class="text-decoration-none text-dark">
+                                Loja
+                            </a>
+                        </li>
+
+                        {% if selected_categories %}
+                            {% for ancestor in selected_categories %}
+                                <li class="breadcrumb-item {% if not ancestor.parent %}parent-category{% endif %}">
+                                    <a href="{% url 'store_products_by_category' ancestor.get_full_path %}" class="text-decoration-none text-dark">
+                                        {{ ancestor.name }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if is_detail_page %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {{ product.name }}
+                            </li>
+                        {% endif %}
+
+                        {% if selected_brand %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'store_products_by_brand' selected_brand.name %}" class="text-decoration-none text-dark">
+                                    Marcas
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {{ selected_brand.name }}
+                            </li>
+                        {% endif %}
+
+                        {% if selected_country %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'store_products_by_country' selected_country.name %}" class="text-decoration-none text-dark">
+                                    Países
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {{ selected_country.name }}
+                            </li>
+                        {% endif %}
+
+                        {% if not selected_brand and not selected_country and not selected_categories and not is_best_seller_page and not is_promotions_list_page and not is_fresh_list_page %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Todos os Produtos
+                            </li>
+                        {% endif %}
+                        
+                        {% if is_best_seller_page and not selected_brand and not selected_country and not selected_categories and not is_fresh_list_page and not is_promotions_list_page %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Mais Vendidos
+                            </li>
+                        {% endif %}
+                        
+                        {% if is_fresh_list_page and not selected_brand and not selected_country and not selected_categories and not is_best_seller_page and not is_promotions_list_page %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Novidades
+                            </li>
+                        {% endif %}
+                        
+                        {% if is_promotions_list_page and not selected_brand and not selected_country and not selected_categories and not is_fresh_list_page and not is_best_seller_page %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Promoções
+                            </li>
+                        {% endif %}
+                    </ol>
+                </div>
+            </div>
+
+            <div class="d-xl-none"> <!-- Exibido apenas em telas menores que 1200px -->
+                {% if selected_categories %}
+                    {% with previous_category=selected_categories.last %}
+                        {% if previous_category %}
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-arrow-left-circle-fill"></i>
+                                <a href="{% url 'store_products_by_category' previous_category.get_full_path %}" class="text-decoration-none text-dark">
+                                    <span> {{ previous_category.name }}</span>
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </div>
+        </div>
+
+        {% if not is_not_list_page %}
+        <div class="col-4">
+            <div class="d-flex justify-content-end align-items-center flex-wrap text-center text-lg-end">
+                <span class="me-2">Exibir</span>
+                <select id="productsPerPage" class="form-select form-select-sm mx-2" style="width: auto;" onchange="changeProductsPerPage()">
+                    <option value="8" {% if products_per_page == 8 %}selected{% endif %}>8</option>
+                    <option value="16" {% if products_per_page == 16 %}selected{% endif %}>16</option>
+                    <option value="24" {% if products_per_page == 24 %}selected{% endif %}>24</option>
+                    <option value="36" {% if products_per_page == 36 %}selected{% endif %}>36</option>
+                </select>
+                <span>produtos por página</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% block extra_styles %}
+<style>
+    .parent-category a {
+      text-decoration: underline !important;
+    }
+
+    /* Estilização para a seta */
+    .d-lg-none .d-flex span:last-child {
+        font-size: 1.25rem; /* Ajuste o tamanho da seta conforme necessário */
+        color: #000; /* Cor da seta */
+    }
+
+    /* Adiciona um espaçamento entre a categoria e a seta */
+    .d-lg-none .d-flex span.ms-2 {
+        margin-left: 0.5rem;
+    }
+</style>
+{% endblock %}

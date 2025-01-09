@@ -1,0 +1,347 @@
+{% extends 'base_store.html' %}
+
+{% block title %}Sacolão{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Carrosel de Destaques -->
+    {% if banners %}
+    <div class="banner-carousel mb-4">
+        {% for banner in banners %}
+        <div>
+            <img src="{{ banner.image.url }}" class="d-block w-100 banner-image" alt="{{ banner.title }}">
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Produtos em Promoção -->
+    {% if promotions %}
+    <div id="promotions_products" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #dc3545; border-radius: 10px;">Nossas promoções</h2>
+                <div class="responsive">
+                    {% for promotion in promotions %}
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
+                        {% include 'components/product_card.html' with product=promotion.product product_default_url=product_default_url %}
+                    </div>
+                    {% endfor %}
+                </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <a href="{% url 'store_product_promotions_list' %}" class="btn btn-danger"
+                        style="width: 50rem;">Ver todas as promoções</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Novos produtos -->
+    {% if fresh_products %}
+    <div id="fresh_products"  class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #0d6efd; border-radius: 10px;">Novidades</h2>
+            <div class="responsive">
+                {% for fresh_product in fresh_products %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
+                    {% include 'components/product_card.html' with product=fresh_product.product product_default_url=product_default_url %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <a href="{% url 'store_product_fresh_list' %}" class="btn btn-primary" style="width: 50rem;">Ver todos os novos produtos.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Produtos mais Vendidos -->
+    {% if best_seller_products %}
+    <div id="best_seller_products" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #198754; border-radius: 10px;">Produtos mais vendidos</h2>
+                <div class="responsive">
+                    {% for bestseller in best_seller_products %}
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
+                        {% include 'components/product_card.html' with product=bestseller.product product_default_url=product_default_url %}
+                    </div>
+                    {% endfor %}
+                </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <a href="{% url 'store_product_best_seller_list' %}" class="btn btn-success" style="width: 50rem;">Ver todos os produtos mais vendidos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Nossas marcas -->
+    {% if highlighted_brands %}
+    <div id="highlighted_brands" class="row mb-4">
+        <div class="col">
+            <div class="highlighted-brands-carousel">
+                {% for highlighted_brand in highlighted_brands %}
+                <div class="card">
+                    <a href="{% url 'store_products_by_brand' highlighted_brand.brand.name %}">
+                        {% if highlighted_brand.brand.image %}
+                        <img src="{{ highlighted_brand.brand.image.url }}" class="card-img-top highlighted-brand-img" alt="{{ highlighted_brand.brand.name }}">
+                        {% else %}
+                        <img src="#" class="card-img-top highlighted-brand-img" alt="{{ highlighted_brand.brand.name }}">
+                        {% endif %}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Informações de Envio -->
+    <div class="row mb-4 d-flex">
+        {% for section, data in custom_content.items %}
+        <div class="col-md-3 d-flex">
+            <div class="below-content flex-fill">
+                <h5>{{ data.title }}</h5>
+                <p>{{ data.content }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Carrosel de banners */
+    .banner-carousel img.banner-image {
+        object-fit: contain;
+        width: 100%;
+    }
+
+    .full-width-h2 {
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100vw;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        padding: 15px 0;
+        background-color: #007bff;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .full-width-h2-container {
+        overflow-x: hidden;
+    }
+
+    /* Custom slick arrows */
+    .slick-prev, .slick-next {
+        font-size: 0;
+        border: none;
+        background: rgba(249, 249, 249, 0.5);
+        border-radius: 50%;
+        height: 30px;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slick-prev::before, .slick-next::before {
+        font-size: 16px;
+        color: rgb(144, 144, 144);
+        content: '←';
+    }
+
+    .slick-next::before {
+        content: '→';
+    }
+
+    .slick-prev {
+        left: -20px;
+    }
+
+    .slick-next {
+        right: -20px;
+    }
+
+    @media (max-width: 600px) {
+        .slick-prev, .slick-next {
+            display: none;
+        }
+    }
+
+    /* Estilos personalizados para o carrossel */
+    .slick-slide {
+        margin: 0 10px;
+    }
+
+    .slick-slide img {
+        width: 100%;
+    }
+
+    /* Estilo para ajustar a largura dos cards */
+    .responsive .col-12 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    /* Estilos para as informações de envio */
+    .below-content {
+        padding: 20px; /* Espaçamento interno */
+        border-radius: 10px; /* Bordas arredondadas */
+        background-color: white; /* Fundo branco */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        margin-bottom: 20px; /* Espaçamento inferior */
+    }
+
+    .below-content .widget-title {
+        font-size: 1.2em; /* Tamanho da fonte do título */
+        color: #333; /* Cor do título */
+        display: block; /* Garante que o título fique em uma linha */
+        margin-bottom: 10px; /* Espaçamento inferior do título */
+    }
+
+    .below-content .custom-html-widget {
+        display: flex; /* Usar flexbox para alinhar o ícone e o texto */
+        align-items: center; /* Alinha verticalmente ícones e texto */
+    }
+
+    .below-content p {
+        margin-bottom: 0; /* Remove o espaçamento inferior do parágrafo */
+    }
+
+    .below-content svg {
+        width: 24px; /* Tamanho do ícone */
+        height: 24px;
+        margin-right: 10px; /* Espaçamento à direita do ícone */
+    }
+
+    @media (max-width: 768px) {
+        .below-content {
+            padding: 15px; /* Reduz o espaçamento interno em telas menores */
+        }
+
+        .below-content svg {
+            width: 20px; /* Reduz o tamanho do ícone em telas menores */
+            height: 20px;
+        }
+    }
+
+    /* Estilos para marcas em destaque */
+    .highlighted-brands-carousel img.highlighted-brand-img {
+        max-height: 70px;
+        object-fit: contain;
+        width: 100%;
+    }
+
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    $(document).ready(function(){
+        $('.responsive').slick({
+            dots: true, // Exibe os indicadores (bolinhas)
+            autoplay: true, // Faz o carrosel rotacionar sozinho
+            infinite: true, // Faz o carrossel ser cíclico
+            speed: 500, // Velocidade de transição de 500ms
+            slidesToShow: 5, // Exibe 5 slides ao mesmo tempo
+            slidesToScroll: 1, // Desloca 1 slides por vez
+            responsive: [
+                {
+                    breakpoint: 1200,
+                    settings: {
+                        slidesToShow: 4,
+                        slidesToScroll: 1,
+                        autoplay: true,
+                        infinite: true,
+                        dots: true
+                    }
+                },
+                {
+                    breakpoint: 992,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 1,
+                        autoplay: true,
+                        infinite: true,
+                        dots: true
+                    }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 1,
+                        autoplay: true,
+                        infinite: true,
+                        dots: true
+                    }
+                }
+            ]
+        }, { passive: true});
+
+        // Carrosel de Destaques com Slick
+        $('.banner-carousel').slick({
+            dots: true,
+            infinite: true,
+            autoplay: true,
+            speed: 1000,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            prevArrow: '<button type="button" class="slick-prev">Previous</button>',
+            nextArrow: '<button type="button" class="slick-next">Next</button>',
+        }, { passive: true});
+
+        // Carrossel de Marcas em Destaque
+        $('.highlighted-brands-carousel').slick({
+            dots: false,
+            infinite: true,
+            autoplay: true,
+            speed: 1000,
+            slidesToShow: 5,
+            slidesToScroll: 1,
+            prevArrow: '<button type="button" class="slick-prev">Previous</button>',
+            nextArrow: '<button type="button" class="slick-next">Next</button>',
+            responsive: [
+                {
+                    breakpoint: 1200,
+                    settings: {
+                        slidesToShow: 4,
+                        slidesToScroll: 1,
+                        autoplay: true,
+                        infinite: true,
+                        dots: false
+                    }
+                },
+                {
+                    breakpoint: 992,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 1,
+                        autoplay: true,
+                        infinite: true,
+                        dots: false
+                    }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 1,
+                        autoplay: true,
+                        infinite: true,
+                        dots: false
+                    }
+                }
+            ]
+        });
+    }, { passive: true});
+</script>
+{% endblock %}

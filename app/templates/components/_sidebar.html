@@ -1,0 +1,26 @@
+<!-- Botão Flutuante -->
+<button class="btn btn-primary floating-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+    <i class="fa-solid fa-bars"></i>
+</button>
+
+<!-- Offcanvas Menu -->
+<div class="offcanvas offcanvas-start d-lg-none" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+<div class="offcanvas-header" style="align-self: center;">
+  <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+</div>
+<div class="offcanvas-body bg-dark text-white">
+    {% include 'components/__navbar_sidebar_links.html' %}
+</div>
+</div>
+
+{% block extra_styles %}
+
+<style>
+  .floating-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1050;
+  }
+</style>
+{% endblock %}

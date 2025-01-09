@@ -1,0 +1,58 @@
+{% extends "base_store.html" %}
+{% load extras %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4 text-center">Cadastro de novo usuário</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ user_form.first_name.label_tag }}
+                    <div class="input-group">
+                        {{ user_form.first_name|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    {{ user_form.last_name.label_tag }}
+                    <div class="input-group">
+                        {{ user_form.last_name|add_class:"form-control" }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ user_form.email.label_tag }}
+                    <div class="input-group">
+                        {{ user_form.email|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    {{ customer_form.country.label_tag }}
+                    <div class="input-group">
+                        {{ customer_form.country|add_class:"form-control" }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ user_form.password.label_tag }}
+                    <div class="input-group">
+                        {{ user_form.password|add_class:"form-control" }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    {{ user_form.password2.label_tag }}
+                    <div class="input-group">
+                        {{ user_form.password2|add_class:"form-control" }}
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

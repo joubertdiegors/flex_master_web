@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Lista de Categorias
+{% endblock %}
+
+{% block content %}
+
+<style>
+  .tree, .tree ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tree ul {
+    margin-left: 1em;
+    position: relative;
+  }
+
+  .tree ul ul {
+    margin-left: .5em;
+  }
+
+  .tree ul:before {
+    content: "";
+    display: block;
+    width: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    border-left: 1px solid #ccc;
+  }
+
+  .tree li {
+    margin: 0;
+    padding: 0.5em 1em;
+    line-height: 2em;
+    color: #ffffff;
+    font-weight: 400;
+    position: relative;
+  }
+
+  .tree li span {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .tree li .collapse-icon {
+    margin-right: 5px;
+    transition: transform 0.3s, color 0.3s;
+  }
+
+  .tree li.collapsed .collapse-icon {
+    color: #ffffff;
+  }
+
+  .tree li .category-image {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 10px;
+  }
+
+  .tree li:before {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 0;
+    border-top: 1px solid #ccc;
+    margin-top: -1px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .tree li:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 1px solid #ccc;
+    height: 100%;
+    width: 0;
+  }
+
+  .tree li:last-child:after {
+    height: 1em;
+  }
+
+  .tree li.collapsed > ul {
+    display: none;
+  }
+
+  .tree li ul {
+    margin: 0;
+  }
+</style>
+
+<div class="container mt-4">
+  <!-- Botão para Criar Nova Categoria -->
+  <button type="button" id="createCategoryButton" class="btn btn-primary mb-3">Criar Nova Categoria</button>
+
+  <!-- Categories Tree -->
+  <div class="tree">
+    <ul>
+      {% for category in categories %}
+        {% if category.parent is None %}
+          {% include 'category_tree_item.html' with category=category subcategories=categories %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<!-- Modal para criar nova categoria -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createCategoryModalLabel">Criar Nova Categoria</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="createCategoryForm" method="post" enctype="multipart/form-data" action="{% url 'category_create' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="new_category_name" class="form-label">Nome da Categoria</label>
+            <input type="text" class="form-control" id="new_category_name" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="new_category_image" class="form-label">Imagem da Categoria</label>
+            <input type="file" class="form-control" id="new_category_image" name="image">
+          </div>
+          <div class="mb-3">
+            <label for="new_category_parent" class="form-label">Categoria Vinculada</label>
+            <select class="form-select" id="new_category_parent" name="parent">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Criar Categoria</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Editar categoria -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCategoryModalLabel">Editar Categoria</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editCategoryForm" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="category_id" id="category_id">
+          <div class="mb-3">
+            <label for="category_name" class="form-label">Nome da Categoria</label>
+            <input type="text" class="form-control" id="category_name" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="current_category_image" class="form-label">Imagem Atual</label>
+            <div id="current_category_image_container">
+              <!-- Imagem atual será exibida aqui -->
+              <img id="current_category_image" src="" alt="Imagem Atual" class="img-fluid">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="category_image" class="form-label">Imagem da Categoria (opcional)</label>
+            <input type="file" class="form-control" id="category_image" name="image">
+          </div>
+          <div class="mb-3">
+            <label for="category_parent" class="form-label">Categoria Vinculada</label>
+            <select class="form-select" id="category_parent" name="parent">
+              <option value="">Nenhuma</option>
+              {% for cat in categories %}
+                <option value="{{ cat.id }}">{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Salvar mudanças</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Exclusão de Categoria -->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteCategoryModalLabel">Excluir Categoria</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Você tem certeza que deseja excluir a categoria "<span id="delete_category_name"></span>"?</p>
+      </div>
+      <div class="modal-footer">
+        <form id="deleteCategoryForm" method="post">
+          {% csrf_token %}
+          <input type="hidden" id="delete_category_id" name="category_id">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Excluir</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function setupTreeToggle() {
+      document.querySelectorAll('.collapse-icon').forEach(icon => {
+        icon.addEventListener('click', function() {
+          const li = this.closest('li');
+          const isCollapsed = li.classList.toggle('collapsed');
+
+          // Toggle icon based on the state
+          const iconElement = this.querySelector('i');
+          if (isCollapsed) {
+            iconElement.classList.remove('bi-arrow-bar-down');
+            iconElement.classList.add('bi-arrow-right');
+          } else {
+            iconElement.classList.remove('bi-arrow-right');
+            iconElement.classList.add('bi-arrow-bar-down');
+          }
+        });
+      });
+    }
+
+    setupTreeToggle(); // Initialize tree toggle functionality
+
+    // Modal de criação de nova categoria
+    document.getElementById('createCategoryButton').addEventListener('click', function() {
+      const createCategoryModal = new bootstrap.Modal(document.getElementById('createCategoryModal'));
+      createCategoryModal.show();
+    });
+
+    // Função para buscar categorias
+    function fetchCategories() {
+      fetch('{% url "category_list_json" %}')
+        .then(response => response.json())
+        .then(data => {
+          buildCategoryOptions(data);
+        });
+    }
+
+    // Função para construir opções de categorias
+    function buildCategoryOptions(categories) {
+      const createSelect = document.getElementById('new_category_parent');
+      const editSelect = document.getElementById('category_parent');
+      
+      // Limpar opções existentes
+      createSelect.innerHTML = '<option value="">Nenhuma</option>';
+      editSelect.innerHTML = '<option value="">Nenhuma</option>';
+      
+      function createOptions(selectElement, categories, parentId, level) {
+        categories
+          .filter(cat => cat.parent === parentId)
+          .forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = `${'--'.repeat(level)} ${cat.name}`;
+            selectElement.appendChild(option);
+
+            // Recursively add child categories
+            createOptions(selectElement, categories, cat.id, level + 1);
+          });
+      }
+
+      // Criar opções para ambos os selects
+      createOptions(createSelect, categories, null, 0);
+      createOptions(editSelect, categories, null, 0);
+    }
+
+    fetchCategories(); // Fetch and populate categories on load
+
+    // Edição de categorias
+    document.querySelectorAll('.edit-icon').forEach(icon => {
+      icon.addEventListener('click', function() {
+        const li = this.closest('li');
+        const categoryId = li.dataset.id;
+        const categoryName = li.dataset.name;
+        const categoryImage = li.dataset.image;
+        const categoryParent = li.dataset.parent;
+
+        // Preencher os campos do modal de edição
+        document.getElementById('category_id').value = categoryId;
+        document.getElementById('category_name').value = categoryName;
+        document.getElementById('category_parent').value = categoryParent;
+
+        // Definir o src da imagem existente
+        const imageElement = document.getElementById('current_category_image');
+        if (categoryImage) {
+          imageElement.src = categoryImage;
+          imageElement.style.display = 'block'; // Mostrar imagem se existir
+        } else {
+          imageElement.style.display = 'none'; // Esconder imagem se não existir
+        }
+
+        // Limpar o campo de imagem para permitir a seleção de uma nova imagem
+        document.getElementById('category_image').value = '';
+
+        // Atualizar a URL de ação do formulário de edição
+        document.getElementById('editCategoryForm').action = `/administration/categories/${categoryId}/update/`;
+
+        // Mostrar o modal de edição
+        const editCategoryModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+        editCategoryModal.show();
+      });
+    });
+
+    // Exclusão de categorias
+    document.querySelectorAll('.delete-icon').forEach(icon => {
+      icon.addEventListener('click', function() {
+        const li = this.closest('li');
+        const categoryId = li.dataset.id;
+        const categoryName = li.dataset.name;
+
+        // Preencher os dados do modal de exclusão
+        document.getElementById('delete_category_id').value = categoryId;
+        document.getElementById('delete_category_name').textContent = categoryName;
+
+        // Mostrar o modal de exclusão
+        const deleteCategoryModal = new bootstrap.Modal(document.getElementById('deleteCategoryModal'));
+        deleteCategoryModal.show();
+      });
+    });
+
+    // Submissão do formulário de exclusão
+    document.getElementById('deleteCategoryForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevenir o comportamento padrão de submissão do formulário
+      const form = event.target;
+      const categoryId = form.querySelector('#delete_category_id').value;
+
+      // Atualize a URL da requisição com o ID da categoria
+      const url = `/administration/categories/${categoryId}/delete/`; // Certifique-se de que a URL está correta
+
+      fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          // Se a exclusão for bem-sucedida, recarregar a página ou remover a categoria da interface
+          location.reload();
+        } else {
+          return response.json().then(data => {
+            location.reload();
+            //alert(`Erro ao excluir a categoria: ${data.error || 'Erro desconhecido.'}`);
+          });
+        }
+      })
+      .catch(error => {
+        alert('Erro na solicitação de exclusão.');
+        console.error('Erro na solicitação:', error);
+      });
+    });
+  });
+</script>
+
+
+{% endblock %}

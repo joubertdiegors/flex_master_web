@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Itens Nutricionais
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <form method="get" action="{% url 'nutritional_item_list' %}">
+      <div class="input-group">
+        <input type="text" class="form-control" name="name" placeholder="Nome do Item Nutricional" value="{{ request.GET.name }}" id="">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="col-md-6">
+    <a href="{% url 'nutritional_item_create' %}" class="btn btn-success float-end">
+      <i class="bi bi-plus"></i> Novo Item Nutricional
+    </a>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Unidade de Medida</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for nutritional_item in nutritional_items %}
+      <tr>
+        <td>{{ nutritional_item.pk }}</td>
+        <td>{{ nutritional_item.name }}</td>
+        <td>{{ nutritional_item.package_unit }}</td>
+        <td>
+          <a href="#" class="btn btn-info btn-sm">
+            <i class="bi bi-eye"></i> Detalhes
+          </a>
+
+          <a href="{% url 'nutritional_item_update' nutritional_item.pk %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

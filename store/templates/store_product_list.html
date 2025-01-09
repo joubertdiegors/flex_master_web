@@ -1,0 +1,147 @@
+{% extends 'base_store.html' %}
+
+{% block title %}Sacolão - Produtos{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-xxl-3 col-xl-2 d-none d-lg-block col-md-2">
+      <!-- Marcas -->
+      <div class="list-group list-group-flush" >
+        <span class="fw-bold px-2">Filtrar por Marca:</span>
+        <a href="{% url 'store_product_list' %}" class="list-group-item list-group-item-action {% if not selected_brand %}active{% endif %}">Todas as Marcas</a>
+        {% for brand in brands %}
+          <a href="{% url 'store_products_by_brand' brand.name %}" class="list-group-item list-group-item-action {% if selected_brand and selected_brand.name == brand.name %}active{% endif %}">{{ brand.name }}</a>
+        {% endfor %}
+      </div>
+
+      <!-- Países -->
+      <div class="list-group list-group-flush" >
+        <span class="fw-bold">Filtrar por País:</span>
+        <a href="{% url 'store_product_list' %}" class="list-group-item list-group-item-action {% if not selected_country %}active{% endif %}">Todos os Países</a>
+        {% for country in countries %}
+          <a href="{% url 'store_products_by_country' country.name %}" class="list-group-item list-group-item-action {% if selected_country and selected_country.name == country.name %}active{% endif %}">{{ country.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Produtos -->
+    <div class="col-xxl-9 col-xl-10 col-lg-10 col-md-12 col-sm-12 col-xs-12 justify-content">
+
+      <!-- Slick de Subcategorias -->
+      {% if subcategories %}
+      <div id="subcategories_carousel" style="background-color: rgb(3, 90, 0); border-radius: 20px;" class="row mb-2 mt-2">
+        <span id="title-categories">Navegue por categoria</span>
+        <div class="col">
+          <div class="subcategories-carousel">
+            {% for subcategory in subcategories %}
+            <div class="card text-center">
+              <a href="{% url 'store_products_by_category' subcategory.get_full_path %}">
+                {% if subcategory.image %}
+                <img src="{{ subcategory.image.url }}" class="card-img-top subcategory-img" alt="{{ subcategory.name }}">
+                {% else %}
+                <img src="{{ product_default_url }}" class="card-img-top subcategory-img" alt="{{ subcategory.name }}">
+                {% endif %}
+              </a>
+              <div class="card-body">
+                <p class="card-text">{{ subcategory.name }}</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      
+      <div class="row">
+        {% for product in products %}
+          <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-4 col-sm-6 col-6 mb-4">
+            {% include 'components/product_card.html' with product=product product_default_url=product_default_url %}
+          </div>
+        {% endfor %}
+      </div>
+      {% include 'components/_pagination_store.html' %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .list-group {
+    margin-top: 0px;
+    padding-bottom: 20px;
+    border-radius: 20px;
+  }
+
+  /* Estilos para subcategorias */
+  #title-categories{
+    color: rgb(255, 255, 255);
+    font-size: 1.5rem;
+    text-align: center;
+    align-content: center;
+    text-justify: distribute;
+    margin-bottom: 0.5em;
+    border-radius: 6px;
+    height: 40px;
+  }
+
+  .subcategories-carousel img.subcategory-img {
+    max-height: 100px;
+    object-fit: contain;
+    width: 100%;
+  }
+
+  .subcategories-carousel .card {
+    width: 150px;
+    margin: 0 10px;
+  }
+
+  .subcategories-carousel .card-body {
+    padding: 10px;
+  }
+
+  .subcategories-carousel .card-text {
+    font-size: 14px;
+  }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(document).ready(function(){
+    $('.subcategories-carousel').slick({
+      slidesToShow: 5,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 2000,
+      arrows: true,
+      dots: true,
+      responsive: [
+        {
+          breakpoint: 1200,
+          settings: {
+            slidesToShow: 4,
+            slidesToScroll: 1,
+          }
+        },
+        {
+          breakpoint: 768,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1,
+          }
+        },
+        {
+          breakpoint: 576,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1,
+          }
+        }
+      ]
+    });
+  });
+</script>
+{% endblock %}

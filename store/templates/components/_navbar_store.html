@@ -1,0 +1,117 @@
+<header class="navbar navbar-expand-lg" id="navbarMain" style="background-color: rgb(3, 90, 0);">
+    <div class="container-fluid">
+
+        <div class="container mb-3">
+            <div class="row" style="height: 40px;">
+
+                <div class="col-4 d-flex align-items-center justify-content-start">
+                    <button class="btn btn-primary" id="menu-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                        ☰ Menu
+                    </button>
+                </div>
+
+                <div class="col-4 d-flex align-items-center justify-content-center d-block d-lg-none">
+                    <a href="{% url 'store_home' %}">
+                        <img src="{{ header_logo_url }}" alt="Sacolão" class="header-logo" style="max-height: 45px;">
+                    </a>
+                </div>
+
+
+                <div class="col-4 d-flex align-items-center justify-content-end d-block d-lg-none" id="user-2">
+                    <ul class="list-unstyled">
+                        <li>
+                            {% if user.is_authenticated %}
+                                <div class="d-flex align-items-center">
+                                    <span class="mr-2">{{ user.first_name }} {{ user.last_name }}</span>
+                                    <a href="{% url 'logout' %}" class="d-flex flex-column align-items-center text-decoration-none text-dark">
+                                        <i class="bi bi-x-circle" style="font-size: 1.5em;"></i>
+                                        <span class="icon-text text-center">Sair</span>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <a href="#" class="align-items-center text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <i class="bi bi-people" style="font-size: 2em;"></i>
+                                    <span class="icon-text text-center">Conectar</span>
+                                </a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                
+                {% if not is_cart_detail_page %}
+                    <div class="col-xxl-8 col-xl-8 col-lg-8 d-none d-lg-flex align-items-center justify-content-end">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">
+                            <i class="bi bi-cart" style="font-size: 1.8em;"></i>
+                            <div class="d-flex flex-column align-items-start ms-2">
+                                <span class="cart-total-items cart-text text-white">{{ total_items }}</span>
+                                <span class="cart-total-cost cart-text text-white">€{{ total_cost|default:"0.00" }}</span>
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="container d-block d-lg-none">
+
+            <div class="row" style="height: 40px;">
+
+                <div class="col-9 d-flex align-items-center justify-content-start">
+                    <form class="input-group" action="{% url 'search_product' %}" method="GET" role="search">
+                        <span class="input-group-text" id="addon-wrapping"><i class="bi bi-search"></i></span>
+                        <input class="form-control search-input" type="search" name="q" placeholder="" aria-label="search" value="{{ search_query|default_if_none:'' }}">
+                        <button class="btn btn-warning" type="submit">Procurar</button>
+                    </form>
+                </div>
+
+                {% if not is_cart_detail_page %}
+                    <div class="col-3 d-flex align-items-center justify-content-end">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">
+                            <i class="bi bi-cart" style="font-size: 1.8em;"></i>
+                            <div class="d-flex flex-column align-items-start ms-2">
+                                <span class="cart-total-items cart-text text-white">{{ total_items }}</span>
+                                <span class="cart-total-cost cart-text text-white">€{{ total_cost|default:"0.00" }}</span>
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</header>
+
+{% block extra_styles %}
+<style>
+    .fixed-navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .fixed-navbar-padding {
+        margin-top: 110px; /* Ajuste este valor conforme a altura do seu navbar */
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    window.addEventListener('scroll', function() {
+        var header = document.querySelector('.navbar[style]');
+        var navbar = document.querySelector('#navbarMain');
+        var mainContainer = document.querySelector('main');
+
+        if (header && navbar && mainContainer) {
+            if (window.scrollY >= header.offsetHeight) {
+                navbar.classList.add('fixed-navbar');
+                mainContainer.classList.add('fixed-navbar-padding');
+            } else {
+                navbar.classList.remove('fixed-navbar');
+                mainContainer.classList.remove('fixed-navbar-padding');
+            }
+        }
+    }, { passive: true });
+</script>
+{% endblock %}

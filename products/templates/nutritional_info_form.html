@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if product.pk %}Editar Informações Nutricionais para {{ product.name }}{% else %}Novas Informações Nutricionais{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col">
+    <h2>{% if product.pk %}Editar Informações Nutricionais para {{ product.name }}{% else %}Novas Informações Nutricionais{% endif %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <form id="nutritional-info-form" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ formset.management_form }}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Nutritional Item</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for form in formset %}
+            <tr class="form-row">
+              <td>{{ form.nutritional_item }}</td>
+              <td>{{ form.quantity }}</td>
+              <td>
+                {% if form.instance.pk %}
+                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-form-id="{{ form.instance.pk }}">
+                    Delete
+                  </button>
+                  {{ form.id }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-secondary" id="add-form">Adicionar Item Nutricional</button>
+      <button type="submit" class="btn btn-primary">Salvar</button>
+      <a href="{% url 'product_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para confirmação de exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Confirmação de Exclusão</h5>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja excluir o item?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <form id="delete-form" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Excluir</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('add-form').addEventListener('click', function() {
+    var formIdx = document.querySelectorAll('.form-row').length;
+    var formTemplate = document.querySelector('.form-row').outerHTML.replace(/-\d+-/g, `-${formIdx}-`).replace(/_\d+_/g, `_${formIdx}_`);
+    var newRow = document.createElement('tr');
+    newRow.className = 'form-row';
+    newRow.innerHTML = formTemplate;
+    document.querySelector('tbody').appendChild(newRow);
+    updateFormIndexes();
+});
+
+document.getElementById('nutritional-info-form').addEventListener('submit', function(event) {
+    updateManagementForm();
+});
+
+function updateFormIndexes() {
+    var forms = document.querySelectorAll('.form-row');
+    forms.forEach(function(form, index) {
+        form.querySelectorAll('input, select, textarea').forEach(function(element) {
+            if (element.name.includes('-__prefix__-')) {
+                element.name = element.name.replace(/__prefix__/g, index);
+                element.id = element.id.replace(/__prefix__/g, index);
+            }
+        });
+    });
+    updateManagementForm();
+}
+
+function updateManagementForm() {
+    var totalForms = document.querySelectorAll('.form-row').length;
+    document.querySelector('#id_nutritional_info_product-TOTAL_FORMS').value = totalForms;
+}
+
+// Lógica para definir o formulário de exclusão dinamicamente
+document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+    button.addEventListener('click', function() {
+        const formId = this.getAttribute('data-form-id');
+        const deleteForm = document.getElementById('delete-form');
+        deleteForm.action = `{% url 'nutritional_info_delete' 0 %}`.replace('0', formId);
+    });
+});
+</script>
+
+{% endblock %}

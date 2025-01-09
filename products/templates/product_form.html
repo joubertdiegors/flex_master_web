@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if form.instance.pk %}Editar Produto: {{ form.instance.name }}
+{% else %}Novo Produto{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col">
+    <h2>{% if form.instance.pk %}Editar Produto: {{ form.instance.name }}{% else %}Novo Produto{% endif %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- Linha com barcode, name e image -->
+      <div class="row">
+        <!-- Primeira coluna com barcode, name, volume, package_unit -->
+        <div class="col-md-10">
+          <div class="form-group row align-items-center mb-3">
+            <label for="id_barcode" class="col-sm-3 col-form-label text-end">Código de Barras</label>
+            <div class="col-sm-9">
+              {{ form.barcode }}
+              {% for error in form.barcode.errors %}
+                <div class="text-danger">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="form-group row align-items-center mb-3">
+            <label for="id_name" class="col-sm-3 col-form-label text-end">Nome do Produto</label>
+            <div class="col-sm-9">
+              {{ form.name }}
+              {% for error in form.name.errors %}
+                <div class="text-danger">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="form-group row align-items-center mb-3">
+            <label for="id_volume" class="col-sm-3 col-form-label text-end">Volume</label>
+            <div class="col-sm-9">
+              {{ form.volume }}
+              {% for error in form.volume.errors %}
+                <div class="text-danger">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="form-group row align-items-center mb-3">
+            <label for="id_package_unit" class="col-sm-3 col-form-label text-end">Unidade de Embalagem</label>
+            <div class="col-sm-9">
+              {{ form.package_unit }}
+              {% for error in form.package_unit.errors %}
+                <div class="text-danger">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row align-items-center mb-3">
+                <label for="id_barcode" class="col-sm-3 col-form-label text-end">Marca</label>
+                <div class="col-sm-9">
+                  {{ form.brand }}
+                  {% for error in form.brand.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+    
+            <div class="col-md-6">
+              <div class="form-group row align-items-center mb-3">
+                <label for="id_barcode" class="col-sm-3 col-form-label text-end">País de Origem</label>
+                <div class="col-sm-9">
+                  {{ form.country }}
+                  {% for error in form.country.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Segunda coluna com image -->
+        <div class="col-md-2 d-flex align-items-center">
+          <div class="form-group text-center" style="width: 100%;">
+            <label for="id_image" class="d-block">{{ form.image.label }}</label>
+            <div class="border rounded bg-light" style="width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              {% if form.instance.image %}
+                <img src="{{ form.instance.image.url }}" alt="Imagem do Produto" style="max-width: 100%; max-height: 100%;">
+              {% else %}
+                <span class="text-muted">Clique para adicionar a imagem</span>
+              {% endif %}
+            </div>
+            {{ form.image }}
+            {% for error in form.image.errors %}
+              <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      {{ form.category.label_tag }}
+      {{ form.category }}
+      {% for error in form.category.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.sales_unit.label_tag }}
+      {{ form.sales_unit }}
+      {% for error in form.sales_unit.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.net_weight.label_tag }}
+      {{ form.net_weight }}
+      {% for error in form.net_weight.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.gross_weight.label_tag }}
+      {{ form.gross_weight }}
+      {% for error in form.gross_weight.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.stock_control.label_tag }}
+      {{ form.stock_control }}
+      {% for error in form.stock_control.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.minimum_stock.label_tag }}
+      {{ form.minimum_stock }}
+      {% for error in form.minimum_stock.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.maximum_stock.label_tag }}
+      {{ form.maximum_stock }}
+      {% for error in form.maximum_stock.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.selling_price.label_tag }}
+      {{ form.selling_price }}
+      {% for error in form.selling_price.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.description.label_tag }}
+      {{ form.description }}
+      {% for error in form.description.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      {{ form.is_active.label_tag }}
+      {{ form.is_active }}
+      {% for error in form.is_active.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
+      <!-- Botões -->
+      <button type="submit" class="btn btn-primary">Salvar</button>
+      <a href="{% url 'product_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

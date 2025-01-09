@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Produtos
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <form method="get" action="{% url 'product_list' %}">
+      <div class="input-group">
+        <input type="text" class="form-control" name="name" placeholder="Nome do Produto" value="{{ request.GET.name }}" id="">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="col-md-6">
+    <a href="{% url 'product_create' %}" class="btn btn-success float-end">
+      <i class="bi bi-plus"></i> Novo Produto
+    </a>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Código de Barras</th>
+        <th>Nome</th>
+        <th>Marca</th>
+        <th>Categorias</th>
+        <th>Preço de Venda</th>
+        <th>Ativo</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.pk }}</td>
+        <td>{{ product.barcode }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.brand }}</td>
+        <td>
+          {% for category in product.category.all %}
+            {{ category.name }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ product.selling_price }}</td>
+        <td>{{ product.is_active }}</td>
+        <td>
+          <a href="{% url 'product_detail' product.pk %}" class="btn btn-info btn-sm">
+            <i class="bi bi-eye"></i> Detalhes
+          </a>
+
+          <a href="{% url 'product_update' product.pk %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+          
+          <a href="{% url 'ingredients_create' product.pk %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i> Ingredientes
+          </a>
+          
+          <a href="{% url 'nutritional_info_create' product.pk %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i> Tabela Nutricional
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

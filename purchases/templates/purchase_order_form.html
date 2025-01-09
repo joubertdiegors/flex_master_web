@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}Editar Pedido de Compras{% else %}Novo Pedido de Compras{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{% if form.instance.pk %}Editar Pedido de Compras{% else %}Novo Pedido de Compras{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ items.management_form }}
+        {{ form.as_p }}
+
+        <h4>Itens do Pedido</h4>
+        <div class="table-responsive">
+            <table class="table table-striped" id="childTable">
+                <thead>
+                    <tr class="table-success">
+                        <th id="col-no">No.</th>
+                        <th id="col-product">Produto</th>
+                        <th id="col-quantity">Quantidade</th>
+                        <th id="col-price">Preço</th>
+                        <th id="col-discount">Desconto</th>
+                        <th id="col-tax">Imposto</th>
+                        <th id="col-total-price">Preço Total</th>
+                        <th id="col-actions"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for formset in items %}
+                    <tr id="tbl{{ forloop.counter }}">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>
+                            {{ formset.id }}
+                            {{ formset.product }}
+                        </td>
+                        <td>
+                            {{ formset.quantity }}
+                        </td>
+                        <td>
+                            {{ formset.price_at_order }}
+                        </td>
+                        <td>
+                            {{ formset.discount }}
+                        </td>
+                        <td>
+                            {{ formset.tax }}
+                        </td>
+                        <td>
+                            {{ formset.total_price }}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="deleteRow('tbl{{ forloop.counter }}')">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    <tr id="addRowBtn">
+                        <td colspan="8">
+                            <input type="button" class="btn btn-primary btn-block" id="addrow" onclick="childrenRow()" value="Add New Row" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn btn-success">Salvar</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+/* Define larguras fixas para as colunas da tabela */
+#childTable th, #childTable td {
+    white-space: nowrap; /* Impede que o texto quebre para uma nova linha */
+    overflow: hidden;    /* Oculta qualquer conteúdo que ultrapasse a largura */
+    text-overflow: ellipsis; /* Adiciona reticências (...) quando o texto for muito longo */
+}
+
+#col-no {
+    width: 4%;
+}
+
+#col-product {
+    width: 36%;
+}
+
+#col-quantity {
+    width: 10%;
+}
+
+#col-price {
+    width: 10%;
+}
+
+#col-discount {
+    width: 10%;
+}
+
+#col-tax {
+    width: 10%;
+}
+
+#col-total-price {
+    width: 10%;
+}
+
+#col-actions {
+    width: 10%;
+}
+
+/* Garante que o Selectize ocupe toda a largura da célula */
+.selectize-control {
+    width: 100% !important;
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    $(document).ready(function() {
+
+        // Inicializa o Selectize para todos os selects de produto já existentes
+        $('.js-example-tags').selectize({
+            create: true,
+            sortField: 'text',
+            dropdownParent: 'body',  // Use isso se o dropdown for cortado por outros elementos
+            onInitialize: function() {
+                // Aplica largura fixa ao Selectize
+                this.$control.css('width', '100%');
+            }
+        });
+
+        // Verifica se é um novo registro ou edição
+        var isEdit = "{{ form.instance.pk|default:'null' }}" !== "null";
+        console.log("Is edit mode:", isEdit);
+
+        // Se não for edição, adiciona uma linha automaticamente
+        if (!isEdit) {
+            console.log("New record - adding initial row.");
+            childrenRow();
+        }
+
+        // Evento para calcular o total ao alterar qualquer input relacionado à quantidade, preço, imposto ou desconto
+        $('#childTable').on('input', 'input[name^="items-"][name$="-quantity"], input[name^="items-"][name$="-price_at_order"], input[name^="items-"][name$="-tax"], input[name^="items-"][name$="-discount"]', function () {
+            let row = $(this).closest('tr');
+            calculateTotal(row);
+        });
+
+        // Calcula o total para as linhas existentes na tabela ao carregar a página
+        $("#childTable tbody tr").each(function() {
+            calculateTotal($(this));
+        });
+
+        // Atualiza o preço do produto quando o select de produto é alterado
+        $('#childTable').on('change', 'select[name^="items-"][name$="-product"]', function() {
+            let row = $(this).closest('tr');
+            let productId = $(this).val();
+            let supplierId = $('select[name="supplier"]').val();
+
+            console.log("Product changed - fetching price for row:", row.attr('id'), "Product ID:", productId, "Supplier ID:", supplierId);
+
+            if (supplierId && productId) {
+                fetchProductPrice(row, supplierId, productId);
+            }
+        });
+
+        // Atualiza a numeração das linhas
+        updateRowNumbers();
+    });
+
+    function childrenRow() {
+        console.log("Adding a new row to the table.");
+        var table = document.getElementById("childTable");
+        var totalForms = document.getElementById("id_items-TOTAL_FORMS");
+        var x = parseInt(totalForms.value);
+
+        var id = "tbl" + x;
+        var row = table.insertRow(table.rows.length - 1);
+        row.id = id;
+
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
+        var cell6 = row.insertCell(5);
+        var cell7 = row.insertCell(6);
+        var cell8 = row.insertCell(7);
+
+        // Atualiza o ID e os atributos name dos inputs para garantir que sejam únicos
+        cell1.outerHTML = `<th>${x + 1}</th>`;
+        cell2.innerHTML = `<select name="items-${x}-product" id="id_items-${x}-product" class="form-control js-example-tags">
+                                <option value="">Selecione um produto...</option>
+                                {% for product in products %}
+                                    <option value="{{ product.id }}">{{ product.name }}</option>
+                                {% endfor %}
+                            </select>`;
+        cell3.innerHTML = `<input type="number" name="items-${x}-quantity" id="id_items-${x}-quantity" class="form-control" />`;
+        cell4.innerHTML = `<input type="text" name="items-${x}-price_at_order" id="id_items-${x}-price_at_order" class="form-control price-input" readonly />`;
+        cell5.innerHTML = `<input type="text" name="items-${x}-discount" id="id_items-${x}-discount" class="form-control" />`;
+        cell6.innerHTML = `<input type="text" name="items-${x}-tax" id="id_items-${x}-tax" class="form-control" />`;
+        cell7.innerHTML = `<input type="text" name="items-${x}-total_price" id="id_items-${x}-total_price" class="form-control" />`;
+        cell8.innerHTML = `<button type="button" class="btn btn-danger" onclick="deleteRow('${id}')">Delete</button>`;
+
+        totalForms.value = x + 1;
+        updateRowNumbers();
+
+        // Inicializa o Selectize na nova linha
+        $(`select[name="items-${x}-product"]`).selectize({
+            create: true,
+            sortField: 'text',
+            dropdownParent: 'body',
+            onInitialize: function() {
+                this.$control.css('width', '100%');
+            }
+        });
+
+        console.log("Selectize initialized for new row: items-" + x + "-product");
+    }
+
+
+    function deleteRow(id) {
+        var row = document.getElementById(id);
+        var table = document.getElementById("childTable");
+        var totalForms = document.getElementById("id_items-TOTAL_FORMS");
+
+        row.remove();
+        totalForms.value = parseInt(totalForms.value) - 1;
+        updateRowNumbers();
+        reindexFormFields();
+    }
+
+    function updateRowNumbers() {
+        console.log("Updating row numbers.");
+        var table = document.getElementById("childTable");
+        for (var i = 1, row; row = table.rows[i]; i++) {
+            if (i < table.rows.length - 1) {
+                row.cells[0].innerHTML = i;
+                console.log("Row number updated:", i, "for row:", row.id);
+            }
+        }
+    }
+
+    function reindexFormFields() {
+        var table = document.getElementById("childTable");
+        var rows = table.getElementsByTagName("tr");
+        var totalForms = document.getElementById("id_items-TOTAL_FORMS");
+
+        for (var i = 1; i < rows.length - 1; i++) {
+            var row = rows[i];
+            row.id = "tbl" + (i - 1);
+
+            var inputs = row.querySelectorAll("input, select");
+            inputs.forEach(function(input) {
+                var name = input.name;
+                var id = input.id;
+                if (name) {
+                    var newName = name.replace(/items-\d+-/, `items-${i-1}-`);
+                    input.name = newName;
+                }
+                if (id) {
+                    var newId = id.replace(/id_items-\d+-/, `id_items-${i-1}-`);
+                    input.id = newId;
+                }
+            });
+        }
+
+        totalForms.value = rows.length - 2;
+    }
+
+    function fetchProductPrice(row, supplierId, productId) {
+        console.log("Fetching price for product ID:", productId, "and supplier ID:", supplierId);
+        if (supplierId && productId) {
+            var priceInput = row.find('.price-input');
+            $.ajax({
+                url: "{% url 'get_product_price' %}",
+                data: {
+                    'supplier_id': supplierId,
+                    'product_id': productId
+                },
+                success: function (data) {
+                    console.log("Price fetched successfully:", data);
+                    if (data.price) {
+                        priceInput.val(data.price);
+                    }
+                    // Recalcula o total depois de atualizar o preço
+                    calculateTotal(row);
+                },
+                error: function () {
+                    console.error("Erro ao buscar o preço do produto.");
+                    priceInput.val('0');
+                    calculateTotal(row);
+                }
+            });
+        } else {
+            console.error("Invalid supplier_id or product_id");
+        }
+    }
+
+    function calculateTotal(row) {
+        console.log("Calculating total for row:", row.attr('id'));
+        let quantity = parseFloat(row.find('input[name^="items-"][name$="-quantity"]').val()) || 0;
+        let price = parseFloat(row.find('input[name^="items-"][name$="-price_at_order"]').val()) || 0;
+        let tax = parseFloat(row.find('input[name^="items-"][name$="-tax"]').val()) || 0;
+        let discount = parseFloat(row.find('input[name^="items-"][name$="-discount"]').val()) || 0;
+
+        let total = (quantity * price) + tax - discount;
+        row.find('input[name^="items-"][name$="-total_price"]').val(total.toFixed(2));
+    }
+</script>
+{% endblock %}

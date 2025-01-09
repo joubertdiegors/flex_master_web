@@ -1,0 +1,114 @@
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <!-- Gestão Dropdown -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="gestaoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Gestão
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="gestaoDropdown">
+            <li><a class="dropdown-item {% if request.path == 'branch_list' %}active{% endif %}" href="{% url 'branch_list' %}">Filiais</a></li>
+            <li><a class="dropdown-item {% if request.path == 'country_list' %}active{% endif %}" href="{% url 'country_list' %}">Países</a></li>
+        </ul>
+    </li>
+    <!-- Produtos Dropdown -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="produtosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Produtos
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="produtosDropdown">
+            <li><a class="dropdown-item" href="{% url 'product_list' %}">Lista de Produtos</a></li>
+            <li><a class="dropdown-item" href="{% url 'category_list' %}">Categorias</a></li>
+            <li><a class="dropdown-item" href="{% url 'brand_list' %}">Marcas</a></li>
+            <li><a class="dropdown-item" href="{% url 'package_unit_list' %}">Unidades de medida da embalagem</a></li>
+            <li><a class="dropdown-item" href="{% url 'sales_unit_list' %}">Unidades de medida para venda</a></li>
+            <li><a class="dropdown-item" href="{% url 'nutritional_item_list' %}">Ítens da tabela Nutricional</a></li>
+        </ul>
+    </li>
+    <!-- Clientes Dropdown -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="clientesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Clientes
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="clientesDropdown">
+            <li><a class="dropdown-item" href="{% url 'customer_list' %}">Lista de Cliente</a></li>
+            <li><a class="dropdown-item" href="{% url 'customer_type_list' %}">Tipo de Cliente</a></li>
+            <li><a class="dropdown-item" href="{% url 'customer_state_list' %}">Status do cliente</a></li>
+        </ul>
+    </li>
+    <!-- Fornecedores Dropdown -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="fornecedoresDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Fornecedores
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="fornecedoresDropdown">
+            <li><a class="dropdown-item" href="{% url 'supplier_list' %}">Lista de Fornecedores</a></li>
+            <li><a class="dropdown-item" href="{% url 'supplier_type_list' %}">Tipo de Fornecedor</a></li>
+            <li><a class="dropdown-item" href="{% url 'supplier_state_list' %}">Status do Fornecedor</a></li>
+        </ul>
+    </li>
+    <!-- Preços Dropdown -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="precosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Preços
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="precosDropdown">
+            <!-- <li><a class="dropdown-item {% if request.path == '/purchase_orders/' %}active{% endif %}" href="purchase_order_list">Pedidos de Compra</a></li> -->
+            <li><a class="dropdown-item" href="{% url 'purchase_order_list' %}">Pedidos de Compra</a></li>
+            <li><a class="dropdown-item" href="#">Preços de Venda</a></li>
+            <li><a class="dropdown-item" href="#">TVA por País</a></li>
+            <li><a class="dropdown-item" href="{% url 'promotion_list' %}">Promoções</a></li>
+        </ul>
+    </li>
+    <!-- Customizações Dropdown -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="customizacoesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Customizações
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="customizacoesDropdown">
+            <li><a class="dropdown-item" href="{% url 'customization_home' %}">Logos</a></li>
+            <li><a class="dropdown-item" href="{% url 'banner_list' %}">Banners</a></li>
+            <li><a class="dropdown-item" href="{% url 'best_seller_list' %}">Produtos mais vendidos</a></li>
+            <li><a class="dropdown-item" href="{% url 'fresh_product_list' %}">Novos produtos</a></li>
+            <li><a class="dropdown-item" href="{% url 'highlighted_brand_list' %}">Marcas em destaque</a></li>
+            <li><a class="dropdown-item" href="{% url 'edit_content' %}">Infos de Envio - Home</a></li>
+        </ul>
+    </li>
+</ul>
+
+{% block extra_styles %}
+<style>
+    .navbar-nav .nav-link {
+        color: #ffffff;
+        font-size: 1.1em;
+    }
+
+    .navbar-nav .nav-link:hover, .navbar-nav .nav-link:focus {
+        color: rgb(242, 255, 0);
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .navbar-nav .nav-link.active {
+        color: rgb(255, 60, 0);
+    }
+
+    .navbar-nav .dropdown-menu {
+        background-color: rgb(3, 90, 0);
+        color: #ffffff;
+        font-size: 1.1em;
+    }
+
+    .navbar-nav .dropdown-item {
+        color: #ffffff;
+    }
+
+    .navbar-nav .dropdown-item:hover, .navbar-nav .dropdown-item:focus {
+        color: rgb(242, 255, 0);
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    @media (max-width: 992px) {
+        .header-logo {
+            margin-left: 20px; /* Aumentar a margem em telas menores */
+        }
+    }
+</style>
+{% endblock %}

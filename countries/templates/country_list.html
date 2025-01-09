@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Países
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col-md-6">
+    <form method="get" action="{% url 'country_list' %}">
+      <div class="input-group">
+        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-md-6">
+    <a href="{% url 'country_create' %}" class="btn btn-success float-end">
+      <i class="bi bi-plus"></i> Novo País
+    </a>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Código</th>
+        <th>Disponibilidade de Envio</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for country in countries %}
+      <tr>
+        <td>{{ country.id }}</td>
+        <td>{{ country.name }}</td>
+        <td>{{ country.code }}</td>
+        <td>{{ country.is_shipping_available|yesno:"Sim,Não" }}</td>
+        <td>
+          <a href="{% url 'country_detail' country.id %}" class="btn btn-info btn-sm">
+            <i class="bi bi-eye"></i>
+          </a>
+          <a href="{% url 'country_update' country.id %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

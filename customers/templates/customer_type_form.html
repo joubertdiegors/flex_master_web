@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if form.instance.pk %}Editar Tipo de Cliente: {{ form.instance.name }}
+{% else %}Novo Tipo de Cliente{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col">
+    <h2>{% if form.instance.pk %}Editar Tipo de Cliente: {{ form.instance.name }}{% else %}Novo Tipo de Cliente{% endif %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Salvar</button>
+      <a href="{% url 'customer_type_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

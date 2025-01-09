@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhes da Unidade de Medida - {{ package_unit.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <h2>Detalhes da Unidade de Medida - {{ package_unit.name }}</h2>
+  </div>
+
+  <div class="col-md-6">
+    <a href="{% url 'package_unit_update' package_unit.pk %}" class="btn btn-warning float-end">
+      <i class="bi bi-pencil"></i> Editar
+    </a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Informações Gerais</h5>
+    <dl class="row">
+      <dt class="col-sm-3">ID</dt>
+      <dd class="col-sm-9">{{ package_unit.pk }}</dd>
+
+      <dt class="col-sm-3">Nome</dt>
+      <dd class="col-sm-9">{{ package_unit.name }}</dd>
+
+      <dt class="col-sm-3">Símbolo</dt>
+      <dd class="col-sm-9">{{ package_unit.symbol }}</dd>
+
+      <dt class="col-sm-3">Criado em</dt>
+      <dd class="col-sm-9">{{ package_unit.created_at|date:"d/m/Y H:i" }}</dd>
+
+      <dt class="col-sm-3">Última Atualização</dt>
+      <dd class="col-sm-9">{{ package_unit.updated_at|date:"d/m/Y H:i" }}</dd>
+
+      <dt class="col-sm-3">Criado por</dt>
+      <dd class="col-sm-9">{{ package_unit.created_by }}</dd>
+
+      <dt class="col-sm-3">Atualizado por</dt>
+      <dd class="col-sm-9">{{ package_unit.updated_by }}</dd>
+    </dl>
+  </div>
+</div>
+
+{% endblock %}

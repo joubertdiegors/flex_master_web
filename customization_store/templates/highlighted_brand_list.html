@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Lista de Marcas em Destaque
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h2>Marcas em Destaque</h2>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="get" action="{% url 'highlighted_brand_list' %}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Buscar Marca"
+                    value="{{ request.GET.search }}" id="">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{% url 'highlighted_brand_create' %}" class="btn btn-success me-2">
+            <i class="bi bi-plus"></i> Nova Marca em Destaque
+        </a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Marca</th>
+                <th>Descrição</th>
+                <th>Ativo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for highlighted_brand in highlighted_brands %}
+            <tr>
+                <td>{{ highlighted_brand.brand.name }}</td>
+                <td>{{ highlighted_brand.description }}</td>
+                <td>{{ highlighted_brand.is_active }}</td>
+                <td>
+                    <a href="{% url 'highlighted_brand_update' pk=highlighted_brand.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal" data-form-id="{{ highlighted_brand.pk }}"
+                        data-item-name="{{ highlighted_brand.brand.name }}">
+                        Excluir
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para confirmação de exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmação de Exclusão</h5>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir a marca "<span id="itemName"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="delete-form" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lógica para definir o formulário de exclusão dinamicamente
+        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+            button.addEventListener('click', function () {
+                const formId = this.getAttribute('data-form-id');
+                const itemName = this.getAttribute('data-item-name');
+                const deleteForm = document.getElementById('delete-form');
+                const modalBody = document.querySelector('.modal-body #itemName');
+
+                deleteForm.action = `{% url 'highlighted_brand_delete' 0 %}`.replace('0', formId);
+                modalBody.textContent = itemName;
+            });
+        });
+    });
+</script>
+{% endblock %}

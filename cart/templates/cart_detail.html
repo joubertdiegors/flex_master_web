@@ -1,0 +1,319 @@
+{% extends "base_store.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Resumo de compra</h2>
+
+    <!-- Tabela para telas maiores -->
+    <div class="table-responsive d-none d-md-block">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th class="col-quantidade">Quantidade</th>
+                    <th>Total</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart.items.all %}
+                <tr id="table-item-{{ item.product.id }}">
+                    <td class="text-center align-middle" data-label="Imagem">
+                        {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="width: auto; height: 80px;">
+                        {% else %}
+                        <img src="{{ product_default_url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="width: auto; height: 80px;">
+                        {% endif %}
+                    </td>
+                    <td data-label="Produto">{{ item.product.name }}</td>
+                    <td class="price" data-product-id="{{ item.product.id }}" data-label="Preço">€{{ item.price }}</td>
+                    <td class="col-quantidade" data-label="Quantidade">
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-outline-secondary btn-quantity-left" type="button" onclick="updateQuantity('{{ item.product.id }}', 'table', 'decrement')">-</button>
+                            <input type="number" id="quantity_table_{{ item.product.id }}" class="form-control form-control-sm mx-0 text-center quantity-input no-spinners" value="{{ item.quantity }}" min="1" step="1">
+                            <button class="btn btn-outline-secondary btn-quantity-right" type="button" onclick="updateQuantity('{{ item.product.id }}', 'table', 'increment')">+</button>
+                        </div>
+                    </td>
+                    
+                    <td class="total" data-product-id="{{ item.product.id }}" data-label="Total">€{{ item.get_cost }}</td>
+                    <td data-label="Ações">
+                        <button type="button" class="btn btn-danger" onclick="removeFromCart('{{ item.product.id }}')"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Lista de cards para telas menores -->
+    <div class="d-block d-md-none">
+        {% for item in cart.items.all %}
+        <div class="card mb-3" id="cart-item-mobile-{{ item.product.id }}">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{ item.product.name }} {% if item.product.brand %} {{ item.product.brand }} {% endif %} {% if item.product.volume %} {{ item.product.volume }} {{ item.product.volume_unit.symbol }} {% endif %}
+                </h5>
+                <div class="row">
+                    <div class="col-4 text-center align-middle">
+                        {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="width: auto; height: 80px;">
+                        {% else %}
+                        <img src="{{ product_default_url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="width: auto; height: 80px;">
+                        {% endif %}
+                    </div>
+                    <div class="col-8">
+                        <p class="card-text">Preço: €{{ item.price }}</p>
+                        <div class="d-flex align-items-center mb-2">
+                            <button class="btn btn-outline-secondary btn-quantity-left" type="button" onclick="updateQuantity('{{ item.product.id }}', 'card', 'decrement')">-</button>
+                            <input type="number" id="quantity_card_{{ item.product.id }}" class="form-control form-control-sm mx-0 text-center quantity-input no-spinners" value="{{ item.quantity }}" min="1" step="1">
+                            <button class="btn btn-outline-secondary btn-quantity-right" type="button" onclick="updateQuantity('{{ item.product.id }}', 'card', 'increment')">+</button>
+                        </div>
+                        <p class="card-text">Total: <span class="total" data-product-id="{{ item.product.id }}">{{ item.get_cost }}</span></p>
+                        <button type="button" class="btn btn-danger" onclick="removeFromCart('{{ item.product.id }}')"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="d-flex justify-content-end">
+        Total de: <span class="cart-total-cost">€{{ total_cost }}</span>
+    </div>
+    <hr>
+    <a href="#" class="btn btn-primary">Finalizar Compra</a>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+@media (max-width: 768px) {
+    .table-responsive {
+        display: none;
+    }
+
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+    }
+
+    .card .card-body {
+        padding: 0.75rem;
+    }
+
+    .card .card-title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card .card-text {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.no-spinners {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.no-spinners::-webkit-outer-spin-button,
+.no-spinners::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.btn-quantity-left {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    width: 2rem;
+}
+
+.btn-quantity-right {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    width: 2rem;
+}
+
+.quantity-input {
+    margin-left: -1px;
+    margin-right: -1px;
+    height: calc(2.25rem + 2px);
+    border-radius: 0;
+    width: 3rem;
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function updateQuantity(productId, type, action = null) {
+    var input = document.getElementById('quantity_' + type + '_' + productId);
+    var currentQuantity = parseInt(input.value);
+
+    if (action === 'increment') {
+        input.value = currentQuantity + 1;
+    } else if (action === 'decrement' && currentQuantity > 1) {
+        input.value = currentQuantity - 1;
+    }
+
+    var updatedQuantity = parseInt(input.value);
+
+    if (updatedQuantity < 1 || isNaN(updatedQuantity)) {
+        input.value = 1;
+        updatedQuantity = 1;
+    }
+
+    $.ajax({
+        url: "{% url 'update_cart_item_quantity' %}",
+        type: "POST",
+        data: {
+            'product_id': productId,
+            'quantity': updatedQuantity,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            if (response.cart_data) {
+                // Captura e imprime o preço da linha do item
+                var priceElements = document.querySelectorAll('.price[data-product-id="' + productId + '"]');
+                var totalElements = document.querySelectorAll('.total[data-product-id="' + productId + '"]');
+
+                priceElements.forEach(function(priceElement) {
+                    var itemPrice = parseFloat(priceElement.textContent.replace('€', '').replace(',', '.'));
+                    console.log('Preço do item:', itemPrice);
+
+                    // Atualiza o custo total do item específico
+                    totalElements.forEach(function(totalElement) {
+                        var newTotalCost = itemPrice * updatedQuantity;
+                        totalElement.textContent = '€' + newTotalCost.toFixed(2).replace('.', ',');
+                    });
+                });
+
+                // Atualiza o total de itens e o custo total do carrinho
+                var totalItemsElements = document.querySelectorAll('.cart-total-items');
+                var totalCostElements = document.querySelectorAll('.cart-total-cost');
+                
+                totalItemsElements.forEach(function(element) {
+                    element.textContent = response.cart_data.total_items;
+                });
+                
+                totalCostElements.forEach(function(element) {
+                    element.textContent = '€' + response.cart_data.total_cost.toFixed(2);
+                });
+
+                // Atualizar o conteúdo do offcanvas
+                $.ajax({
+                    url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
+                    success: function(offcanvasResponse) {
+                        var offcanvasElement = $('#cartOffcanvas');
+                        
+                        // Encontrar e atualizar apenas o conteúdo do #cart-items-container
+                        var newContent = $(offcanvasResponse);
+                        var newItemsContainer = newContent.find('#cart-items-container').html();
+                        var footerContent = offcanvasElement.find('.cart-footer').html();  // Manter o footer atual
+
+                        offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
+
+                        // Atualizar o total no footer
+                        $('#cartOffcanvas .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
+                    }
+                });
+
+            } else {
+                console.error('Resposta AJAX inválida:', response);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Ocorreu um erro: " + error);
+        }
+    });
+}
+
+// Adicionando evento de input ao campo de quantidade
+document.querySelectorAll('.quantity-input').forEach(function(input) {
+    input.addEventListener('input', function() {
+        var parts = this.id.split('_');
+        var type = parts[1];
+        var productId = parts[2];
+        var value = parseInt(this.value);
+
+        if (isNaN(value) || value < 1) {
+            this.value = 1;
+        }
+
+        updateQuantity(productId, type);
+    });
+});
+
+function removeFromCart(productId) {
+    $.ajax({
+        url: "{% url 'remove_from_cart' product_id=0 %}".replace('0', productId),
+        type: "POST",
+        data: {
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            if (response.cart_data) {
+                // Atualizar o total de itens e o custo total do carrinho
+                var totalItemsElements = document.querySelectorAll('.cart-total-items');
+                var totalCostElements = document.querySelectorAll('.cart-total-cost');
+
+                totalItemsElements.forEach(function(element) {
+                    element.textContent = response.cart_data.total_items;
+                });
+
+                totalCostElements.forEach(function(element) {
+                    element.textContent = '€' + response.cart_data.total_cost.toFixed(2).replace('.', ',');
+                });
+
+                // Remover da tabela
+                var tableRow = document.getElementById('table-item-' + productId);
+                if (tableRow) {
+                    tableRow.parentNode.removeChild(tableRow);
+                }
+
+                // Remover do card
+                var cardRow = document.getElementById('cart-item-mobile-' + productId);
+                if (cardRow) {
+                    cardRow.parentNode.removeChild(cardRow);
+                }
+
+                // Atualizar o conteúdo do offcanvas
+                $.ajax({
+                    url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
+                    success: function(offcanvasResponse) {
+                        var offcanvasElement = $('#cartOffcanvas');
+                        
+                        // Encontrar e atualizar apenas o conteúdo do #cart-items-container
+                        var newContent = $(offcanvasResponse);
+                        var newItemsContainer = newContent.find('#cart-items-container').html();
+                        var footerContent = offcanvasElement.find('.cart-footer').html();  // Manter o footer atual
+
+                        offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
+
+                        // Atualizar o total no footer
+                        $('#cartOffcanvas .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
+                    }
+                });
+
+            } else {
+                console.error('Resposta AJAX inválida:', response);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Ocorreu um erro: " + error);
+        }
+    });
+}
+</script>
+{% endblock %}

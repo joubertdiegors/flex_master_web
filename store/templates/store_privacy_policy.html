@@ -1,0 +1,71 @@
+{% extends 'base_store.html' %}
+
+{% block title %}Política de Privacidade - Sacolão{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Política de Privacidade -->
+    <div id="privacy_policy" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: #ffffff; background-color: #007bff; border-radius: 10px;">Política de Privacidade</h2>
+            <p style="color: darkslategray;">
+                <strong>1. Coleta de Dados</strong><br>
+                Coletamos informações que você nos fornece diretamente, como quando você cria uma conta, faz uma compra, ou se comunica conosco.
+                Informações coletadas incluem, mas não estão limitadas a, nome, endereço de email, endereço de entrega, número de telefone, e informações de pagamento.
+            </p>
+            <p style="color: darkslategray;">
+                <strong>2. Uso de Dados</strong><br>
+                Utilizamos os dados coletados para processar e entregar suas encomendas, personalizar sua experiência, melhorar nossos serviços, e comunicar com você.
+                Também podemos usar seus dados para fins de marketing e promoção, caso você tenha dado consentimento para tal.
+            </p>
+            <p style="color: darkslategray;">
+                <strong>3. Compartilhamento de Dados</strong><br>
+                Não vendemos seus dados pessoais a terceiros.
+                Podemos compartilhar seus dados com parceiros de confiança que auxiliam na operação de nosso site, condução de nossos negócios, ou prestação de serviços a você, desde que esses parceiros concordem em manter essas informações confidenciais.
+                Podemos divulgar suas informações quando acreditarmos que a divulgação é apropriada para cumprir a lei, reforçar nossas políticas de site, ou proteger nossos direitos, propriedade ou segurança.
+            </p>
+            <p style="color: darkslategray;">
+                <strong>4. Segurança dos Dados</strong><br>
+                Implementamos uma variedade de medidas de segurança para manter a segurança de suas informações pessoais. Usamos criptografia para proteger informações sensíveis transmitidas online e mantemos seus dados em servidores seguros.
+            </p>
+            <p style="color: darkslategray;">
+                <strong>5. Direitos dos Usuários</strong><br>
+                Você tem o direito de acessar, corrigir ou excluir seus dados pessoais. Pode também se opor ao processamento de seus dados pessoais, solicitar a limitação do processamento ou a portabilidade de seus dados.
+                Para exercer esses direitos, entre em contato conosco através das informações fornecidas abaixo.
+            </p>
+            <p style="color: darkslategray;">
+                <strong>6. Contato</strong><br>
+                Se tiver dúvidas sobre esta política de privacidade, entre em contato conosco:<br>
+                Email: <a href="mailto:privacy@sacolao.be">privacy@sacolao.be</a><br>
+                Telefone: <a href="tel:+32471846113">+32 0471 84 6113</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Estilos personalizados para a página de Política de Privacidade */
+    #privacy_policy {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    #privacy_policy h2 {
+        color: #ffffff;
+        text-align: center;
+    }
+
+    #privacy_policy p {
+        color: #495057;
+        text-align: justify;
+    }
+
+    .container {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}

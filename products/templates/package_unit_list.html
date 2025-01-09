@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Unidades de Medida
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <form method="get" action="{% url 'package_unit_list' %}">
+      <div class="input-group">
+        <input type="text" class="form-control" name="name" placeholder="Nome da Unidade de Medida" value="{{ request.GET.name }}" id="">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="col-md-6">
+    <a href="{% url 'package_unit_create' %}" class="btn btn-success float-end">
+      <i class="bi bi-plus"></i> Nova Unidade de Medida
+    </a>
+  </div>
+</div>
+
+<div class="row">
+  <span>Esta é a lista de uniadades de medidas para a embalagem, se a embalagem tem 100g, 1kg, 1L e etc...</span>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Símbolo</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for package_unit in package_units %}
+      <tr>
+        <td>{{ package_unit.pk }}</td>
+        <td>{{ package_unit.name }}</td>
+        <td>{{ package_unit.symbol }}</td>
+        <td>
+          <a href="{% url 'package_unit_detail' package_unit.pk %}" class="btn btn-info btn-sm">
+            <i class="bi bi-eye"></i> Detalhes
+          </a>
+
+          <a href="{% url 'package_unit_update' package_unit.pk %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

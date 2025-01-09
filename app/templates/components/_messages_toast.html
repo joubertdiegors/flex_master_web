@@ -1,0 +1,28 @@
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">{{ message.tags|capfirst }}</strong>
+                    <small class="text-muted">Agora</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    {{ message }}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toastElements = document.querySelectorAll('.toast');
+        toastElements.forEach(toastElement => {
+            const toastInstance = new bootstrap.Toast(toastElement);
+            toastInstance.show();
+        });
+    });
+</script>
+{% endblock %}

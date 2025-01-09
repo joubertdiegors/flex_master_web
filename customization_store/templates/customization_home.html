@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<ul class="nav nav-tabs" id="customization-tabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="header-tab" data-bs-toggle="tab" data-bs-target="#header" type="button"
+      role="tab" aria-controls="header" aria-selected="true">Header</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="navbar-tab" data-bs-toggle="tab" data-bs-target="#navbar" type="button" role="tab"
+      aria-controls="navbar" aria-selected="false">Navbar</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="favicon-tab" data-bs-toggle="tab" data-bs-target="#favicon" type="button" role="tab"
+      aria-controls="favicon" aria-selected="false">Favicon</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="product-image-tab" data-bs-toggle="tab" data-bs-target="#product-image" type="button"
+      role="tab" aria-controls="product-image" aria-selected="false">Imagem de Produto</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="client-image-tab" data-bs-toggle="tab" data-bs-target="#client-image" type="button"
+      role="tab" aria-controls="client-image" aria-selected="false">Imagem de Cliente</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="supplier-image-tab" data-bs-toggle="tab" data-bs-target="#supplier-image" type="button"
+      role="tab" aria-controls="supplier-image" aria-selected="false">Imagem de Fornecedor</button>
+  </li>
+</ul>
+
+<div class="tab-content" id="customization-tab-content">
+  <!-- Header Section -->
+  <div class="tab-pane fade show active" id="header" role="tabpanel" aria-labelledby="header-tab">
+    <section>
+      <h2>Header</h2>
+      <div class="header-content">
+        <p>Aqui você pode personalizar o cabeçalho do site, incluindo a logomarca.</p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_header_logo' %}">
+          {% csrf_token %}
+          {{ header_form.as_p }}
+          <button type="submit" class="btn btn-primary">Upload Header Logo</button>
+        </form>
+        {% if header_logo_url %}
+        <img src="{{ header_logo_url }}?{{ timestamp }}" alt="Sacolão" class="header-logo" style="max-height: 200px;">
+        {% endif %}
+      </div>
+    </section>
+  </div>
+
+  <!-- Navbar Section -->
+  <div class="tab-pane fade" id="navbar" role="tabpanel" aria-labelledby="navbar-tab">
+    <section>
+      <h2>Navbar</h2>
+      <div class="navbar-content">
+        <p>Aqui você pode personalizar a barra de navegação, incluindo uma logomarca pequena.</p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_navbar_logo' %}">
+          {% csrf_token %}
+          {{ navbar_form.as_p }}
+          <button type="submit" class="btn btn-primary">Upload Navbar Logo</button>
+        </form>
+        {% if navbar_logo_url %}
+        <img src="{{ navbar_logo_url }}?{{ timestamp }}" alt="Navbar Logo" style="max-height: 70px;">
+        {% endif %}
+      </div>
+    </section>
+  </div>
+
+  <!-- Favicon Section -->
+  <div class="tab-pane fade" id="favicon" role="tabpanel" aria-labelledby="favicon-tab">
+    <section>
+      <h2>Favicon</h2>
+      <div class="favicon-content">
+        <p>Aqui você pode carregar um favicon para o site.</p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_favicon' %}">
+          {% csrf_token %}
+          {{ favicon_form.as_p }}
+          <button type="submit" class="btn btn-primary">Upload Favicon</button>
+        </form>
+        {% if favicon_url %}
+        <img src="{{ favicon_url }}?{{ timestamp }}" alt="Favicon" class="favicon" style="max-height: 32px;">
+        {% endif %}
+      </div>
+    </section>
+  </div>
+
+  <!-- Product Image Section -->
+  <div class="tab-pane fade" id="product-image" role="tabpanel" aria-labelledby="product-image-tab">
+    <section>
+      <h2>Imagem de Produto</h2>
+      <div class="product-image-content">
+        <p>Aqui você pode carregar uma imagem padrão para os produtos.</p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_product_image_default' %}">
+          {% csrf_token %}
+          {{ product_form.as_p }}
+          <button type="submit" class="btn btn-primary">Upload Imagem de Produto</button>
+        </form>
+        {% if product_default_url %}
+        <img src="{{ product_default_url }}?{{ timestamp }}" alt="Imagem de Produto"
+          style="max-height: 200px;">
+        {% endif %}
+      </div>
+    </section>
+  </div>
+
+  <!-- Client Image Section -->
+  <div class="tab-pane fade" id="client-image" role="tabpanel" aria-labelledby="client-image-tab">
+    <section>
+      <h2>Imagem de Cliente</h2>
+      <div class="client-image-content">
+        <p>Aqui você pode carregar uma imagem padrão para os clientes.</p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_customer_image_default' %}">
+          {% csrf_token %}
+          {{ customer_form.as_p }}
+          <button type="submit" class="btn btn-primary">Upload Imagem de Cliente</button>
+        </form>
+        {% if customer_default_url %}
+        <img src="{{ customer_default_url }}?{{ timestamp }}" alt="Imagem de Cliente" class="client-image"
+          style="max-height: 200px;">
+        {% endif %}
+      </div>
+    </section>
+  </div>
+
+  <!-- Supplier Image Section -->
+  <div class="tab-pane fade" id="supplier-image" role="tabpanel" aria-labelledby="supplier-image-tab">
+    <section>
+      <h2>Imagem de Fornecedor</h2>
+      <div class="supplier-image-content">
+        <p>Aqui você pode carregar uma imagem padrão para os fornecedores.</p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_supplier_image_default' %}">
+          {% csrf_token %}
+          {{ supplier_form.as_p }}
+          <button type="submit" class="btn btn-primary">Upload Imagem de Fornecedor</button>
+        </form>
+        {% if supplier_default_url %}
+        <img src="{{ supplier_default_url }}?{{ timestamp }}" alt="Imagem de Fornecedor" class="supplier-image"
+          style="max-height: 200px;">
+        {% endif %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .nav-tabs .nav-link {
+    cursor: pointer;
+  }
+</style>
+{% endblock %}

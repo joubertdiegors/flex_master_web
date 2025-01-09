@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhes do País: {{ country.name }}
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col">
+    <h2>Detalhes do País: {{ country.name }}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <table class="table table-striped table-bordered">
+      <tr>
+        <th>Nome</th>
+        <td>{{ country.name }}</td>
+      </tr>
+      <tr>
+        <th>Código</th>
+        <td>{{ country.code }}</td>
+      </tr>
+      <tr>
+        <th>Disponibilidade de Envio</th>
+        <td>{{ country.is_shipping_available|yesno:"Sim,Não" }}</td>
+      </tr>
+      <tr>
+        <th>Imagem</th>
+        <td>
+          {% if country.image %}
+            <img src="{{ country.image.url }}" alt="{{ country.name }}" style="max-height: 200px;">
+          {% else %}
+            Sem imagem
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <th>Criado em</th>
+        <td>{{ country.created_at }}</td>
+      </tr>
+      <tr>
+        <th>Atualizado em</th>
+        <td>{{ country.updated_at }}</td>
+      </tr>
+    </table>
+    <a href="{% url 'country_update' country.pk %}" class="btn btn-warning">Editar</a>
+    <a href="{% url 'country_list' %}" class="btn btn-secondary">Voltar</a>
+  </div>
+</div>
+{% endblock %}

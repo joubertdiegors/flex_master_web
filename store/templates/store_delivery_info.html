@@ -1,0 +1,88 @@
+{% extends 'base_store.html' %}
+
+{% block title %}Informações de Entrega - Sacolão{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Seção Envio -->
+    <div id="shipping" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: #ffffff; background-color: #007bff; border-radius: 10px;">Envio</h2>
+            <p style="color: darkslategray;">O processo de envio das encomendas será iniciado em até 24h contando apenas os dias úteis, após confirmação do pagamento da respetiva encomenda, com exceção de ruptura de estoque ou acordado com o próprio cliente.</p>
+        </div>
+    </div>
+
+    <!-- Seção Entrega -->
+    <div id="delivery" class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3 text-center py-2" style="color: #ffffff; background-color: #198754; border-radius: 10px;">Entrega</h2>
+            <p style="color: darkslategray;">
+                O utilizador tem à sua disposição a entrega de sua encomenda em domicílio. O serviço de entregas em domicílio é feito exclusivamente através de transportadora e funciona nos dias úteis, entre as 9h e as 18h, para entregas na Bélgica e alguns países da Europa.
+            </p>
+            <p style="color: darkslategray;">
+                Se os dados fornecidos pelos clientes não forem corretos ou se existir algum erro no preenchimento da morada de entrega por parte do cliente, o cliente assumirá as despesas de um novo envio.
+            </p>
+            <p style="color: darkslategray;">
+                Este serviço está disponível na Bélgica e alguns países da Europa. As condições aplicáveis são:
+            </p>
+            <ul style="color: darkslategray;">
+                <li>Peso máximo por envio é de 30 kg.</li>
+            </ul>
+            <p style="color: darkslategray;">
+                Prazo estimado de entrega:
+            </p>
+            <ul style="color: darkslategray;">
+                <li>Grátis – O prazo de entrega a partir de 24h do dia útil seguinte após a recolha em todo o território nacional.</li>
+                <li>Valor Fixo – O prazo de entrega a partir de 24h do dia útil seguinte após a recolha em todo o território nacional.</li>
+            </ul>
+            <p style="color: darkslategray;">
+                Nos envios para outros países da Europa o tempo de entrega pode variar de acordo com a distância.
+            </p>
+            <p style="color: darkslategray;">
+                Todos os nossos envios são realizados por transportadora, apesar de existir um prazo médio para a entrega não é possível garantir que esses prazos sejam cumpridos na sua totalidade, pois existem alguns fatores como, demandas, condições climáticas e etc, que podem levar a alteração dos prazos.
+            </p>
+            <p style="color: darkslategray;">
+                Não é possível agendar um horário para a entrega.
+            </p>
+            <p style="color: darkslategray;">
+                Envios para outros países da Europa favor entrar em contacto por e-mail ou whatsapp para solicitar cotação.
+            </p>
+            <p style="color: darkslategray;">
+                Email: <a href="mailto:info@sacolao.be">info@sacolao.be</a><br>
+                Whatsapp: <a href="tel:+32471846113">+32 471 84 6113</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Estilos personalizados para a página de Informações de Entrega */
+    #shipping, #delivery {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    #shipping h2, #delivery h2 {
+        color: #ffffff;
+        text-align: center;
+    }
+
+    #shipping p, #delivery p, #delivery ul {
+        color: #495057;
+        text-align: justify;
+    }
+
+    .container {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    ul {
+        list-style-type: disc;
+        margin-left: 20px;
+    }
+</style>
+{% endblock %}

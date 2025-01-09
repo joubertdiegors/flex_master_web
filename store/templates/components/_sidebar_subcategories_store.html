@@ -1,0 +1,36 @@
+<div class="accordion" id="accordionSubcategories{{ parent_id }}">
+    {% for subcategory in subcategories %}
+    <div class="accordion-item {% if subcategory.subcategories.all %}category-with-children{% else %}category-without-children{% endif %}">
+        <h2 class="accordion-header" id="heading{{ subcategory.id }}">
+            {% if subcategory.subcategories.all %}
+            <button class="accordion-button category-item collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse{{ subcategory.id }}" aria-expanded="false"
+                aria-controls="collapse{{ subcategory.id }}">
+                <!-- Nome da categoria como link -->
+                <div class="category-link" data-href="{% url 'store_products_by_category' category_path=subcategory.get_full_path %}">
+                    {% if subcategory.image %}
+                        <img src="{{ subcategory.image.url }}" alt="{{ subcategory.name }}" class="category-image">
+                    {% endif %}
+                    {{ subcategory.name }}
+                </div>
+            </button>
+            {% else %}
+            <div class="category-item category-link" data-href="{% url 'store_products_by_category' category_path=subcategory.get_full_path %}">
+                {% if subcategory.image %}
+                    <img src="{{ subcategory.image.url }}" alt="{{ subcategory.name }}" class="category-image">
+                {% endif %}
+                {{ subcategory.name }}
+            </div>
+            {% endif %}
+        </h2>
+        {% if subcategory.subcategories.all %}
+        <div id="collapse{{ subcategory.id }}" class="accordion-collapse collapse"
+            aria-labelledby="heading{{ subcategory.id }}" data-bs-parent="#accordionSubcategories{{ parent_id }}">
+            <div class="accordion-body">
+                {% include 'components/_sidebar_subcategories_store.html' with subcategories=subcategory.subcategories.all parent_id=subcategory.id %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>

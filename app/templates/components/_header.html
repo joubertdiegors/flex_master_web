@@ -1,0 +1,223 @@
+<nav class="navbar" style="background-color: rgb(5, 151, 0);">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <!-- Logo -->
+            <div id="logo-container" class="d-flex align-items-center">
+                <a href="#">
+                    <img src="{{ header_logo_url }}" alt="Sacolão" class="header-logo" style="max-height: 100px;">
+                </a>
+            </div>
+
+            <!-- Texto de boas-vindas -->
+            <div class="align-items-center">
+                <span class="navbar-text text-white">
+                    {% if user.is_authenticated %}
+                        Bem-vindo, {{ user.username }}!
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-white">Login</a>
+                    {% endif %}
+                </span>
+                <br>
+                <span class="navbar-text text-white">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="text-white">Sair</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Navbar principal com abas -->
+        <div class="d-none d-lg-flex justify-content-center w-100">
+            <ul class="nav nav-pills" id="mainNavTabs">
+                <li class="nav-item">
+                    <a class="nav-link" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="gestao-tab" data-bs-toggle="tab" href="#gestao" role="tab" aria-controls="gestao" aria-selected="false">Gestão</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="produtos-tab" data-bs-toggle="tab" href="#produtos" role="tab" aria-controls="produtos" aria-selected="false">Produtos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="clientes-tab" data-bs-toggle="tab" href="#clientes" role="tab" aria-controls="clientes" aria-selected="false">Clientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="fornecedores-tab" data-bs-toggle="tab" href="#fornecedores" role="tab" aria-controls="fornecedores" aria-selected="false">Fornecedores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="precos-tab" data-bs-toggle="tab" href="#precos" role="tab" aria-controls="precos" aria-selected="false">Preços</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="customizacoes-tab" data-bs-toggle="tab" href="#customizacoes" role="tab" aria-controls="customizacoes" aria-selected="false">Customizações</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Conteúdo das abas -->
+        <div class="tab-content d-none d-lg-flex justify-content-center w-100" id="myTabContent">
+            <div class="tab-pane fade" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                <ul class="nav nav-pills" id="dashboardSubMenu">
+                    <li class="nav-item"><a class="nav-link" href="#">Em breve</a></li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="gestao" role="tabpanel" aria-labelledby="gestao-tab">
+                <ul class="nav nav-pills" id="gestaoSubMenu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'branch_list' %}">Filiais</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'country_list' %}">Países</a></li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="produtos" role="tabpanel" aria-labelledby="produtos-tab">
+                <ul class="nav nav-pills" id="produtosSubMenu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">Lista de Produtos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'category_list' %}">Categorias</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'brand_list' %}">Marcas</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'package_unit_list' %}" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="hover" data-bs-content="Unidades de medida da embalagem">UM - embalagem</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sales_unit_list' %}" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-trigger="hover" data-bs-content="Unidades de medida para vendas">UM - venda</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'nutritional_item_list' %}">Informações nutricionais</a></li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="clientes" role="tabpanel" aria-labelledby="clientes-tab">
+                <ul class="nav nav-pills" id="clientesSubMenu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'customer_list' %}">Lista de Cliente</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'customer_type_list' %}">Tipo de Cliente</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'customer_state_list' %}">Status do cliente</a></li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="fornecedores" role="tabpanel" aria-labelledby="fornecedores-tab">
+                <ul class="nav nav-pills" id="fornecedoresSubMenu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'supplier_list' %}">Lista de Fornecedores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'supplier_type_list' %}">Tipo de Fornecedor</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'supplier_state_list' %}">Status do Fornecedor</a></li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="precos" role="tabpanel" aria-labelledby="precos-tab">
+                <ul class="nav nav-pills" id="precosSubMenu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'supplier_product_price_list' %}">Preços de Compra</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'purchase_order_list' %}">Pedidos de Compra</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Preços de Venda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">TVA por País</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'promotion_list' %}">Promoções</a></li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="customizacoes" role="tabpanel" aria-labelledby="customizacoes-tab">
+                <ul class="nav nav-pills" id="customizacoesSubMenu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'customization_home' %}">Logos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'banner_list' %}">Banners</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'best_seller_list' %}">Produtos mais vendidos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'fresh_product_list' %}">Novos produtos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'highlighted_brand_list' %}">Marcas em destaque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'edit_content' %}">Infos de Envio - Home</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+{% block extra_styles %}
+<style>
+    .navbar-nav .nav-link {
+        color: #ffffff;
+        font-size: 1.1em;
+    }
+
+    .nav-pills .nav-link {
+        color: #ffffff;
+        background-color: transparent;
+    }
+
+    .nav-pills .nav-link:hover, .nav-pills .nav-link:focus {
+        color: rgb(225, 255, 0);
+        transition: color 0.3s ease;
+    }
+
+    .nav-pills .nav-link.active {
+        color: rgb(225, 255, 0);
+        background-color: transparent;
+    }
+
+    .tab-content .nav-link {
+        color: #ffffff;
+    }
+
+    .tab-content .nav-link:hover, .tab-content .nav-link:focus {
+        color: rgb(242, 255, 0);
+        transition: color 0.3s ease;
+    }
+
+    .tab-content {
+        background-color: rgb(5, 151, 0);
+        border-radius: 0 0 5px 5px;
+    }
+
+    @media (max-width: 992px) {
+        .header-logo {
+            margin-left: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Recupera o estado da aba ativa
+        const activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            const tab = document.getElementById(activeTab);
+            if (tab) {
+                new bootstrap.Tab(tab).show();
+            }
+        }
+
+        // Recupera o estado do submenu ativo
+        const activeSubMenu = localStorage.getItem('activeSubMenu');
+        if (activeSubMenu) {
+            const [subMenuId, activeLinkIndex] = activeSubMenu.split(':');
+            const subMenu = document.getElementById(subMenuId);
+            if (subMenu) {
+                const links = subMenu.querySelectorAll('.nav-link');
+                if (links.length > 0 && activeLinkIndex < links.length) {
+                    links.forEach(link => link.classList.remove('active'));
+                    links[activeLinkIndex].classList.add('active');
+                }
+            }
+        }
+
+         // Salva o estado da aba ativa no localStorage e redireciona para o dashboard
+        const tabs = document.querySelectorAll('#mainNavTabs .nav-link');
+        tabs.forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function (event) {
+                localStorage.setItem('activeTab', event.target.id);
+                // Redireciona para a URL do dashboard se a aba ativa for o dashboard
+                if (event.target.id === 'dashboard-tab') {
+                    window.location.href = '/dashboard/';
+                }
+            });
+        });
+
+        // Salva o estado do submenu ativo no localStorage
+        const subMenus = document.querySelectorAll('.tab-content .nav-pills');
+        subMenus.forEach(subMenu => {
+            subMenu.addEventListener('click', function (event) {
+                if (event.target.classList.contains('nav-link')) {
+                    const links = Array.from(subMenu.querySelectorAll('.nav-link'));
+                    const activeLinkIndex = links.indexOf(event.target);
+                    localStorage.setItem('activeSubMenu', `${subMenu.id}:${activeLinkIndex}`);
+                }
+            });
+        });
+
+        // Ativa os popovers
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl);
+        });
+    });
+</script>
+{% endblock %}
+

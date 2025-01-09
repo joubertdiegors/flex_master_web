@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Pedido de Compras
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Editar Pedido de Compras</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <h4>Itens do Pedido</h4>
+        <div id="items-formset">
+            {{ items.management_form }}
+            {% for form in items.forms %}
+                <div class="form-inline">
+                    <div class="form-group mr-3">
+                        {{ form.product.label_tag }} {{ form.product }}
+                    </div>
+                    <div class="form-group mr-3">
+                        {{ form.quantity.label_tag }} {{ form.quantity }}
+                    </div>
+                    <div class="form-group mr-3">
+                        {{ form.price_at_order.label_tag }} {{ form.price_at_order }}
+                    </div>
+                    <div class="form-group mr-3">
+                        {{ form.tax.label_tag }} {{ form.tax }}
+                    </div>
+                    <div class="form-group mr-3">
+                        {{ form.discount.label_tag }} {{ form.discount }}
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger remove-form-row">Remover</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
+        <button type="button" id="add-item" class="btn btn-success mt-3">Adicionar Item</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const supplierField = document.querySelector('select[name="supplier"]');
+        const itemForms = document.querySelectorAll('#items-formset .form-inline');
+        
+        // Update price based on selected product and supplier
+        function updatePrice(form) {
+            const productField = form.querySelector('select[name$="product"]');
+            const priceField = form.querySelector('input[name$="price_at_order"]');
+            
+            productField.addEventListener('change', function () {
+                const productId = productField.value;
+                const supplierId = supplierField.value;
+
+                fetch(`/api/supplier-product-price/${supplierId}/${productId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.price) {
+                            priceField.value = data.price;
+                        } else {
+                            priceField.value = '';
+                        }
+                    });
+            });
+        }
+
+        itemForms.forEach(form => {
+            updatePrice(form);
+        });
+
+        // Adding new item formset
+        document.getElementById('add-item').addEventListener('click', function () {
+            const newItem = itemForms[0].cloneNode(true);
+            document.getElementById('items-formset').appendChild(newItem);
+            updatePrice(newItem);
+        });
+
+        // Removing an item formset
+        document.getElementById('items-formset').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-form-row')) {
+                e.target.closest('.form-inline').remove();
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Lista de Banners
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="get" action="{% url 'banner_list' %}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="title" placeholder="Título do Banner"
+                    value="{{ request.GET.title }}" id="">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{% url 'banner_create' %}" class="btn btn-success me-2">
+            <i class="bi bi-plus"></i> Novo Banner
+        </a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Descrição</th>
+                <th>Imagem</th>
+                <th>Link</th>
+                <th>Data de Início</th>
+                <th>Data de Fim</th>
+                <th>Ativo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for banner in banners %}
+            <tr>
+                <td>{{ banner.title }}</td>
+                <td>{{ banner.description }}</td>
+                <td>
+                    {% if banner.image %}
+                    <img src="{{ banner.image.url }}" alt="{{ banner.title }}" style="max-height: 50px;">
+                    {% else %}
+                    Sem imagem
+                    {% endif %}
+                </td>
+                <td><a href="{{ banner.link }}">{{ banner.link }}</a></td>
+                <td>{{ banner.start_date }}</td>
+                <td>{{ banner.end_date }}</td>
+                <td>{{ banner.active }}</td>
+                <td>
+                    <a href="{% url 'banner_update' pk=banner.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal" data-form-id="{{ banner.pk }}"
+                        data-item-name="{{ banner.title }}">
+                        Excluir
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para confirmação de exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmação de Exclusão</h5>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir o banner "<span id="itemName"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="delete-form" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lógica para definir o formulário de exclusão dinamicamente
+        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+            button.addEventListener('click', function () {
+                const formId = this.getAttribute('data-form-id');
+                const itemName = this.getAttribute('data-item-name');
+                const deleteForm = document.getElementById('delete-form');
+                const modalBody = document.querySelector('.modal-body #itemName');
+
+                deleteForm.action = `{% url 'banner_delete' 0 %}`.replace('0', formId);
+                modalBody.textContent = itemName;
+            });
+        });
+    });
+</script>
+{% endblock %}

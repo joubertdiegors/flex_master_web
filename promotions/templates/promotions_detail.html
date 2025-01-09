@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhes do Cliente - {{ customer.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <h2>Detalhes do Cliente - {{ customer.name }}</h2>
+  </div>
+
+  <div class="col-md-6">
+    <a href="{% url 'customer_update' customer.pk %}" class="btn btn-warning float-end">
+      <i class="bi bi-pencil"></i> Editar
+    </a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Informações Gerais</h5>
+    <dl class="row">
+      <dt class="col-sm-3">ID</dt>
+      <dd class="col-sm-9">{{ customer.pk }}</dd>
+
+      <dt class="col-sm-3">Nome</dt>
+      <dd class="col-sm-9">{{ customer.name }}</dd>
+
+      <dt class="col-sm-3">Tipo</dt>
+      <dd class="col-sm-9">{{ customer.type }}</dd>
+
+      <dt class="col-sm-3">Status</dt>
+      <dd class="col-sm-9">{{ customer.status }}</dd>
+
+      <dt class="col-sm-3">Telefone</dt>
+      <dd class="col-sm-9">{{ customer.phone }}</dd>
+
+      <dt class="col-sm-3">E-mail</dt>
+      <dd class="col-sm-9">{{ customer.email }}</dd>
+
+      <dt class="col-sm-3">Endereço</dt>
+      <dd class="col-sm-9">
+        {% if customer.address %}
+          {{ customer.address }},
+        {% endif %}
+        {% if customer.city %}
+          {{ customer.city }} -
+        {% endif %}
+        {% if customer.state %}
+          {{ customer.state }},
+        {% endif %}
+        {% if customer.country %}
+          {{ customer.country }}
+        {% endif %}
+      </dd>
+
+      <dt class="col-sm-3">Imagem</dt>
+      <dd class="col-sm-9">
+        {% if customer.image %}
+          <img src="{{ customer.image.url }}" class="img-fluid" alt="{{ customer.name }} Imagem">
+        {% else %}
+          <p>Sem imagem disponível</p>
+        {% endif %}
+      </dd>
+
+      <!-- Adicione aqui outros campos do Customer conforme necessário -->
+
+      <dt class="col-sm-3">Criado em</dt>
+      <dd class="col-sm-9">{{ customer.created_at|date:"d/m/Y H:i" }}</dd>
+
+      <dt class="col-sm-3">Última Atualização</dt>
+      <dd class="col-sm-9">{{ customer.updated_at|date:"d/m/Y H:i" }}</dd>
+
+      <dt class="col-sm-3">Criado por</dt>
+      <dd class="col-sm-9">{{ customer.created_by }}</dd>
+
+      <dt class="col-sm-3">Atualizado por</dt>
+      <dd class="col-sm-9">{{ customer.updated_by }}</dd>
+    </dl>
+  </div>
+</div>
+
+{% endblock %}

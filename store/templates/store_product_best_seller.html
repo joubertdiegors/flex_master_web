@@ -1,0 +1,53 @@
+{% extends 'base_store.html' %}
+
+{% block title %}Sacolão - Produtos Mais Vendidos{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-xxl-3 col-xl-2 d-none d-lg-block col-md-2">
+
+      <!-- Marcas -->
+      <div class="list-group list-group-flush" >
+        <span class="fw-bold px-2">Filtrar por Marca:</span>
+        <a href="{% url 'store_product_list' %}" class="list-group-item list-group-item-action {% if not selected_brand %}active{% endif %}">Todas as Marcas</a>
+        {% for brand in brands %}
+          <a href="{% url 'store_products_by_brand' brand.name %}" class="list-group-item list-group-item-action {% if selected_brand and selected_brand.name == brand.name %}active{% endif %}">{{ brand.name }}</a>
+        {% endfor %}
+      </div>
+
+      <!-- Países -->
+      <div class="list-group list-group-flush" >
+        <span class="fw-bold">Filtrar por País:</span>
+        <a href="{% url 'store_product_list' %}" class="list-group-item list-group-item-action {% if not selected_country %}active{% endif %}">Todos os Países</a>
+        {% for country in countries %}
+          <a href="{% url 'store_products_by_country' country.name %}" class="list-group-item list-group-item-action {% if selected_country and selected_country.name == country.name %}active{% endif %}">{{ country.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Produtos -->
+    <div class="col-xxl-9 col-xl-10 col-lg-10 col-md-12 col-sm-12 col-xs-12 justify-content">
+      <div class="row">
+        {% for product in products %}
+          <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-4 col-sm-6 col-6 mb-4">
+            {% include 'components/product_card.html' with product=product product_default_url=product_default_url %}
+          </div>
+        {% endfor %}
+      </div>
+      {% include 'components/_pagination_store.html' %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .list-group {
+    margin-top: 0px;
+    padding-bottom: 20px;
+    border-radius: 20px;
+  }
+</style>
+{% endblock %}

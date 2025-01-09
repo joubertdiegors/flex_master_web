@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhes do Tipo de Cliente - {{ customertype.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-6">
+    <h2>Detalhes do Tipo de Cliente - {{ customertype.name }}</h2>
+  </div>
+
+  <div class="col-md-6">
+    <a href="{% url 'customer_type_update' customertype.pk %}" class="btn btn-warning float-end">
+      <i class="bi bi-pencil"></i> Editar
+    </a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Informações Gerais</h5>
+    <dl class="row">
+      <dt class="col-sm-3">ID</dt>
+      <dd class="col-sm-9">{{ customertype.pk }}</dd>
+
+      <dt class="col-sm-3">Nome</dt>
+      <dd class="col-sm-9">{{ customertype.name }}</dd>
+
+      <!-- Adicione aqui outros campos do CustomerType conforme necessário -->
+
+      <dt class="col-sm-3">Criado em</dt>
+      <dd class="col-sm-9">{{ customertype.created_at|date:"d/m/Y H:i" }}</dd>
+
+      <dt class="col-sm-3">Última Atualização</dt>
+      <dd class="col-sm-9">{{ customertype.updated_at|date:"d/m/Y H:i" }}</dd>
+
+      <dt class="col-sm-3">Criado por</dt>
+      <dd class="col-sm-9">{{ customertype.created_by }}</dd>
+
+      <dt class="col-sm-3">Atualizado por</dt>
+      <dd class="col-sm-9">{{ customertype.updated_by }}</dd>
+    </dl>
+  </div>
+</div>
+
+{% endblock %}

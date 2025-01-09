@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-lg d-none d-lg-block" style="background-color: rgb(5, 151, 0);">
+    <div class="container">
+        <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between w-100">
+            <div id="logo-container" class="d-flex flex-column align-items-center mb-2 mb-lg-0">
+                <a href="{% url 'store_home' %}">
+                    <img src="{{ header_logo_url }}" alt="Sacolão" class="header-logo" style="max-height: 200px;">
+                </a>
+            </div>
+            <div class="w-100 d-flex justify-content-center mb-2 mb-lg-0">
+                <form class="input-group d-flex w-100 w-lg-auto justify-content-center" action="{% url 'search_product' %}" method="GET" role="search" style="max-width: 654px;">
+                    <span class="input-group-text" id="addon-wrapping"><i class="bi bi-search"></i></span>
+                    <input class="form-control" type="search" name="q" placeholder="O que você procura?" aria-label="search" value="{{ search_query|default_if_none:'' }}">
+                    <button class="btn btn-warning" type="submit">Procurar</button>
+                </form>
+            </div>
+            <div class="">
+                <ul class="list-unstyled">
+                    <li>
+                        {% if user.is_authenticated %}
+                            <div class="d-flex align-items-center">
+                                <span class="mr-2">{{ user.first_name }} {{ user.last_name }}</span>
+                                <a href="{% url 'logout' %}" class="d-flex flex-column align-items-center text-decoration-none text-dark">
+                                    <i class="bi bi-x-circle" style="font-size: 1.5em;"></i>
+                                    <span class="icon-text text-center">Sair</span>
+                                </a>
+                            </div>
+                            {% else %}
+                            <a href="#" class="d-flex flex-column align-items-center text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                <i class="bi bi-people" style="font-size: 3em;"></i>
+                                <span class="icon-text text-center">Conectar</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
