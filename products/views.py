@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Func, Q, F, Value
+from django.db.models import Q, Func, F
 from django.http import JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.views.generic import View, ListView, CreateView, DetailView, UpdateView, DeleteView
 from . import models, forms
 from dal import autocomplete
+from django.db import connection
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
@@ -205,38 +206,16 @@ class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     success_url = reverse_lazy('product_list')
     permission_required = 'products.delete_product'
     
-# def product_search(request):
-#     query = request.GET.get('q', '')
-#     print(f"Search query: {query}")
-
-#     if query:
-#         products = models.Product.objects.filter(name__icontains=query)[:10]
-#         if not products.exists():
-#             print(f"No products found for query: {query}")
-#         results = [{'id': product.id, 'name': product.name} for product in products]
-#         print(f"Products found: {results}")
-#     else:
-#         results = []
-#         print("No query provided, returning empty list.")
-    
-#     return JsonResponse({'products': results})
-
-
 def product_search(request):
     query = request.GET.get('q', '')
     print(f"Search query: {query}")
 
     if query:
-        # Use Func para aplicar a função unaccent
-        products = models.Product.objects.annotate(
-            name_unaccented=Func(F('name'), function='unaccent')
-        ).filter(
-            name_unaccented__icontains=Func(Value(query), function='unaccent')
-        )[:10]
-
+        products = models.Product.objects.filter(name__icontains=query)[:10]
+        
         if not products.exists():
             print(f"No products found for query: {query}")
-        
+
         results = [{'id': product.id, 'name': product.name} for product in products]
         print(f"Products found: {results}")
     else:

@@ -211,6 +211,7 @@ class SearchProductView(View):
             # Filtra produtos onde o nome contém o termo de pesquisa (com ou sem acentos) e também por marca
             products = products.filter(
                 Q(name__icontains=search_query) |
+                Q(keywords__icontains=search_query) |
                 Q(name__icontains=normalized_query) |
                 Q(brand__name__icontains=search_query) |
                 Q(brand__name__icontains=normalized_query)

@@ -76,6 +76,7 @@ class ProductForm(forms.ModelForm):
             'selling_price',
             'image',
             'description',
+            'keywords',
             'is_active'
         ]
 
@@ -95,6 +96,7 @@ class ProductForm(forms.ModelForm):
             'selling_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex: 12,99'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Somente se for necessário'}),
+            'keywords': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: arroz, grãos, orgânico'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch', 'id': 'isActiveSwitch'})
         }
 
@@ -115,6 +117,7 @@ class ProductForm(forms.ModelForm):
             'selling_price': 'Preço de Venda',
             'image': 'Imagem do Produto',
             'description': 'Descrição',
+            'keywords': 'Palavras-Chave',
             'is_active': 'Ativo'
         }
 

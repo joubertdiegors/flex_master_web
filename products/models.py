@@ -138,6 +138,7 @@ class Product(models.Model):
     selling_price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='products/images/', blank=True, null=True)
     description = models.TextField(null=True, blank=True)
+    keywords = models.TextField(null=True, blank=True, help_text="Palavras-chave separadas por vírgulas para busca.")
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
