@@ -80,11 +80,14 @@ Produtos
           order: [[0, 'asc']],
           paging: true,
           searching: true,
-          info: false,
+          info: true,
           ordering: true,
           language: {
             search: "Buscar:",
-            searchPlaceholder: "Pesquisar produtos..."
+            searchPlaceholder: "Pesquisar produtos...",
+            info: "Exibindo _START_ a _END_ de _TOTAL_ produtos",
+            infoEmpty: "Nenhum produto encontrado",
+            infoFiltered: "(filtrado de _MAX_ produtos no total)"
           }
       });
   });
