@@ -41,7 +41,7 @@
     {% if fresh_products %}
     <div id="fresh_products"  class="row mb-4">
         <div class="col">
-            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #0d6efd; border-radius: 10px;">Novidades</h2>
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: rgb(19, 80, 64); border-radius: 10px;">Novidades</h2>
             <div class="responsive">
                 {% for fresh_product in fresh_products %}
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
@@ -51,7 +51,7 @@
             </div>
             <div class="row">
                 <div class="col d-flex justify-content-center">
-                    <a href="{% url 'store_product_fresh_list' %}" class="btn btn-primary" style="width: 50rem;">Ver todos os novos produtos.</a>
+                    <a href="{% url 'store_product_fresh_list' %}" class="btn btn-primary" style="width: 50rem; background-color: rgb(19, 80, 64);">Ver todos os novos produtos.</a>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
     {% if best_seller_products %}
     <div id="best_seller_products" class="row mb-4">
         <div class="col">
-            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: #198754; border-radius: 10px;">Produtos mais vendidos</h2>
+            <h2 class="mb-3 text-center py-2" style="color: rgb(255, 255, 255); background-color: rgb(19, 80, 64); border-radius: 10px;">Produtos mais vendidos</h2>
                 <div class="responsive">
                     {% for bestseller in best_seller_products %}
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
@@ -72,7 +72,7 @@
                 </div>
             <div class="row">
                 <div class="col d-flex justify-content-center">
-                    <a href="{% url 'store_product_best_seller_list' %}" class="btn btn-success" style="width: 50rem;">Ver todos os produtos mais vendidos</a>
+                    <a href="{% url 'store_product_best_seller_list' %}" class="btn btn-success" style="width: 50rem; background-color: rgb(19, 80, 64);">Ver todos os produtos mais vendidos</a>
                 </div>
             </div>
         </div>
