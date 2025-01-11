@@ -85,7 +85,7 @@
         <div class="col">
             <div class="highlighted-brands-carousel">
                 {% for highlighted_brand in highlighted_brands %}
-                <div class="card">
+                <div class="card card-highlighted-brands"> <!-- Remove borda padrão -->
                     <a href="{% url 'store_products_by_brand' highlighted_brand.brand.name %}">
                         {% if highlighted_brand.brand.image %}
                         <img src="{{ highlighted_brand.brand.image.url }}" class="card-img-top highlighted-brand-img" alt="{{ highlighted_brand.brand.name }}">
@@ -233,11 +233,24 @@
         }
     }
 
-    /* Estilos para marcas em destaque */
-    .highlighted-brands-carousel img.highlighted-brand-img {
-        max-height: 70px;
+    /* Estilo para o carrossel */
+    .highlighted-brands-carousel {
+        background-color: transparent;
+        display: flex;
+    }
+
+    /* Imagens */
+    .highlighted-brand-img {
+        background-color: transparent;
+        max-height: 80px; /* Altura máxima para imagens no carrossel */
+        max-width: 100%; /* Mantém a proporção */
         object-fit: contain;
-        width: 100%;
+    }
+
+    /* Cartões */
+    .card-highlighted-brands {
+        background-color: transparent;
+        border: none;
     }
 
 </style>
