@@ -51,7 +51,7 @@
       <!-- Se o estoque for menor ou igual a 0, exibir a mensagem e o botão de "Avisar-me" -->
       {% if product.stock_quantity <= 0 %}
         <div class="mb-1 d-grid">
-          <button class="btn" style="background-color: rgb(19, 80, 64); color: white;" type="button">Produto esgotado!</button>
+          <button class="btn btn-secondary" style="color: white;" type="button">Produto esgotado!</button>
         </div>
         <div class="d-grid gap-3">
           <button class="btn btn-warning" type="button" onclick="">Avise-me!</button>
@@ -167,15 +167,15 @@
 
   /* Cores específicas para cada alerta */
   .promotion-alert {
-    background-color: rgba(220, 53, 69, 0.7);
+    background-color: rgba(220, 53, 69, 0.9);
   }
 
   .best-seller-alert {
-    background-color: rgba(8, 141, 19, 0.7);
+    background-color: rgba(19, 80, 64, 0.8);
   }
 
   .fresh-product-alert {
-    background-color: rgba(8, 8, 141, 0.7);
+    background-color: rgba(19, 80, 64, 0.8);
   }
 
   .product-card:hover {
