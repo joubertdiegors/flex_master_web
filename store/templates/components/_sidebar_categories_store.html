@@ -1,11 +1,28 @@
 <!-- Offcanvas Menu -->
-<div class="offcanvas offcanvas-start" id="offcanvasMenu" tabindex="-1" aria-labelledby="offcanvasMenuLabel">
+<div class="offcanvas offcanvas-start" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
     <div class="offcanvas-header">
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">X</button>
+        <!-- Informações do usuário -->
+        <div class="user-info-sidebar-categories d-flex flex-column align-items-start">
+            {% if user.is_authenticated %}
+                <span class="user-greeting-sidebar-categories">Olá, {{ user.first_name }}!</span>
+            {% else %}
+                <a href="#" class="user-login-link-sidebar-categories" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="bi bi-person-circle user-login-icon-sidebar-categories"></i>
+                    <span>Acesse a sua conta.</span>
+                </a>
+            {% endif %}
+        </div>
+        
+        <!-- Botão de fechar -->
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="bi bi-x-circle"></i>
+        </button>
     </div>
     <div class="offcanvas-body">
         <div class="accordion" id="accordionCategories">
-
+            <div>
+                <h2>Categorias</h2>
+            </div>
             <!-- Botão para visualizar todos os produtos -->
             <div class="accordion-item category-without-children">
                 <h2 class="accordion-header" id="headingAllProducts">
@@ -22,7 +39,6 @@
                     <button class="accordion-button category-item collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapse{{ category.id }}" aria-expanded="false"
                         aria-controls="collapse{{ category.id }}">
-                        <!-- Nome da categoria dentro de um div com onclick para redirecionar -->
                         <div class="category-link" data-href="{% url 'store_products_by_category' category_path=category.get_full_path %}">
                             {% if category.image %}
                                 <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
@@ -54,23 +70,101 @@
 
 {% block extra_styles %}
 <style>
+    /* Estilos gerais */
     .offcanvas {
-        background-color: rgb(255, 255, 255);
+        background-color: #fff;
+        width: 100%;
     }
 
-    .offcanvas .btn-close {
+    /* Telas menores - celular */
+    @media (max-width: 480px) {
+        #offcanvasMenu {
+            width: 60% !important;
+        }
+    }
+
+    /* Estilização do cabeçalho do offcanvas */
+    .offcanvas-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Botão de fechar */
+    .btn-close {
         background: none;
         border: none;
-        font-size: 2em;
-        color: rgb(0, 0, 0);
+        font-size: 1.5em;
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5em;
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
     }
 
+    /* Hover no botão de fechar */
+    .btn-close:hover {
+        color: rgb(30, 100, 80);
+    }
+
+    /* Informações do usuário */
+    .user-info-sidebar-categories {
+        flex: 1;
+        text-align: left;
+    }
+
+    .user-greeting-sidebar-categories {
+        font-size: 1em;
+        font-weight: bold;
+        color: rgb(19, 80, 64);
+    }
+
+    .user-login-link-sidebar-categories {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        color: rgb(19, 80, 64);
+    }
+
+    .user-login-link-sidebar-categories:hover {
+        color: rgb(30, 100, 80);
+    }
+
+    .user-login-icon-sidebar-categories {
+        font-size: 2em;
+        margin-right: 0.5em;
+    }
+
+    /* Accordion */
     .accordion-body {
-        padding-left: 1em; /* Adicione um recuo para subcategorias */
+        padding-left: 1em;
     }
 
     .accordion-item {
         border: none;
+    }
+
+    .accordion-button {
+        cursor: pointer;
+    }
+
+    /* Categorias */
+    .category-item {
+        font-size: 0.6em;
+        color: #000;
+        padding: 0.5em 1em;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .category-item:hover {
+        background-color: #3cec54;
     }
 
     .category-image {
@@ -81,20 +175,6 @@
         margin-right: 10px;
     }
 
-    .category-item {
-        font-size: 0.6em;
-        color: #000;
-        padding: 0.5em 1em;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-    }
-
-    .category-item:hover {
-        background-color: #3cec54;
-    }
-
-    /* Ajuste para categorias com e sem filhos */
     .category-with-children .category-link {
         font-weight: bold;
     }
@@ -104,50 +184,3 @@
     }
 </style>
 {% endblock %}
-
-{% block extra_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var accordions = document.querySelectorAll('.accordion-button');
-        var categoryLinks = document.querySelectorAll('.category-link');
-
-        accordions.forEach(function (accordion) {
-            accordion.addEventListener('click', function () {
-                var target = document.querySelector(this.getAttribute('data-bs-target'));
-                if (target) {
-                    var isCollapsed = target.classList.contains('collapse');
-                    if (isCollapsed) {
-                        target.classList.add('show');
-                    } else {
-                        target.classList.remove('show');
-                    }
-                }
-            });
-        });
-
-        categoryLinks.forEach(function (link) {
-            link.addEventListener('click', function () {
-                var href = this.getAttribute('data-href');
-                if (href) {
-                    window.location.href = href;
-                }
-            });
-        });
-
-        function handleScroll() {
-            var header = document.querySelector('nav.navbar-expand-lg[style]');
-            var navbar = document.querySelector('#navbarMain');
-            if (header && navbar) {
-                if (window.scrollY >= header.offsetHeight) {
-                    navbar.classList.add('fixed-navbar');
-                } else {
-                    navbar.classList.remove('fixed-navbar');
-                }
-            }
-        }
-
-        window.addEventListener('scroll', handleScroll);
-    });
-</script>
-{% endblock %}
-
