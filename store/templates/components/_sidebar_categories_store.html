@@ -18,6 +18,7 @@
             <i class="bi bi-x-circle"></i>
         </button>
     </div>
+
     <div class="offcanvas-body">
         <div class="accordion" id="accordionCategories">
             <div>
@@ -183,4 +184,50 @@
         font-weight: normal;
     }
 </style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var accordions = document.querySelectorAll('.accordion-button');
+        var categoryLinks = document.querySelectorAll('.category-link');
+
+        accordions.forEach(function (accordion) {
+            accordion.addEventListener('click', function () {
+                var target = document.querySelector(this.getAttribute('data-bs-target'));
+                if (target) {
+                    var isCollapsed = target.classList.contains('collapse');
+                    if (isCollapsed) {
+                        target.classList.add('show');
+                    } else {
+                        target.classList.remove('show');
+                    }
+                }
+            });
+        });
+
+        categoryLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                var href = this.getAttribute('data-href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
+
+        function handleScroll() {
+            var header = document.querySelector('nav.navbar-expand-lg[style]');
+            var navbar = document.querySelector('#navbarMain');
+            if (header && navbar) {
+                if (window.scrollY >= header.offsetHeight) {
+                    navbar.classList.add('fixed-navbar');
+                } else {
+                    navbar.classList.remove('fixed-navbar');
+                }
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+    });
+</script>
 {% endblock %}

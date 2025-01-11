@@ -1,8 +1,22 @@
 <!-- Off-canvas do carrinho de compras -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">X</button>
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="cartOffcanvasLabel">Seu Carrinho</h5>
+        <!-- Informações do usuário -->
+        <div class="user-info-sidebar-categories d-flex flex-column align-items-start">
+            {% if user.is_authenticated %}
+                <span class="user-greeting-sidebar-categories">Olá, {{ user.first_name }}!</span>
+            {% else %}
+                <a href="#" class="user-login-link-sidebar-categories" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="bi bi-person-circle user-login-icon-sidebar-categories"></i>
+                    <span>Acesse a sua conta.</span>
+                </a>
+            {% endif %}
+        </div>
+        
+        <!-- Botão de fechar -->
+        <button type="button" class="btn-close-cart" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="bi bi-x-circle"></i>
+        </button>
     </div>
     <div class="offcanvas-body">
         <div id="cart-items-container">
@@ -47,6 +61,21 @@
 
 {% block extra_styles %}
 <style>
+    /* Botão de fechar */
+    .btn-close-cart {
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5em;
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
+    }
+
     /* Estilos para o offcanvas */
     .offcanvas .card {
         border: 1px solid #dee2e6;
