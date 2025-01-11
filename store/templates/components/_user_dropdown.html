@@ -1,0 +1,79 @@
+<div class="dropdown">
+    {% if user.is_authenticated %}
+        <!-- Nome do usuário -->
+        <span class="dropdown-toggle user-dropdown-toggle" id="{{ dropdown_id }}" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ user.first_name }}
+        </span>
+
+        <!-- Dropdown Menu -->
+        <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu" aria-labelledby="{{ dropdown_id }}">
+            <li><a class="dropdown-item" href="#">Minha Conta</a></li>
+            <li><a class="dropdown-item" href="#">Meus Pedidos</a></li>
+            <li><a class="dropdown-item" href="#">Minha Lista</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Sair</a></li>
+        </ul>
+    {% else %}
+        <!-- Usuário desconectado -->
+        <a href="#" class="user-login-link" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <i class="bi bi-person-circle user-login-icon"></i> <br>
+            <span>Login</span>
+        </a>
+    {% endif %}
+</div>
+
+{% block extra_styles %}
+<style>
+    /* Estilo geral do dropdown */
+    .custom-dropdown-menu {
+        background-color: rgb(19, 80, 64); /* Cor do header/nav */
+        color: #fff;
+    }
+
+    .custom-dropdown-menu .dropdown-item {
+        color: #fff;
+        padding: 8px 16px;
+    }
+
+    .custom-dropdown-menu .dropdown-item:hover {
+        background-color: rgb(30, 100, 80); /* Cor de hover */
+    }
+
+    /* Estilo geral para o texto do dropdown */
+    .user-dropdown-toggle {
+        color: rgba(255, 255, 255, 0.8); /* Cor inicial */
+    }
+
+    .user-dropdown-toggle:hover {
+        color: #ddd; /* Cor ao passar o mouse */
+    }
+
+    /* Estilo do link de login (usuário desconectado) */
+    .user-login-link {
+        display: flex;
+        flex-direction: column; /* Empilha ícone e texto */
+        align-items: center; /* Centraliza horizontalmente */
+        justify-content: center; /* Centraliza verticalmente */
+        color: rgba(255, 255, 255, 0.744); /* Cor do texto e ícone */
+        text-align: center; /* Centraliza texto */
+        text-decoration: none; /* Remove sublinhado */
+        cursor: pointer; /* Adiciona o cursor de clique */
+        gap: 0;
+    }
+
+    .user-login-link:hover {
+        color: #ddd; /* Cor de hover */
+    }
+
+    .user-login-icon {
+        margin-bottom: -2px; /* Garante que não há margem inferior */
+        font-size: 2em; /* Tamanho do ícone */
+        line-height: 0; /* Remove espaçamento vertical entre linhas */
+    }
+
+    .user-login-link span {
+        margin-top: -10px; /* Opcional: Ajuste fino para aproximar o texto ao ícone */
+        font-size: 0.9em; /* Ajuste o tamanho do texto, se necessário */
+        line-height: 0; /* Garante que o texto não tenha espaçamento extra */
+    }
+</style>
+{% endblock %}

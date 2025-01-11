@@ -13,28 +13,10 @@
                     <button class="btn btn-warning" type="submit">Procurar</button>
                 </form>
             </div>
+            
+            <!-- Ítem de Login/Usuário -->
             <div class="d-flex align-items-center dropdown">
-                <!-- Verificação se o usuário está autenticado -->
-                {% if user.is_authenticated %}
-                    <!-- Nome do usuário -->
-                    <span class="mr-2 dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: rgba(255, 255, 255, 0.744);">
-                        {{ user.first_name }}
-                    </span>
-                    
-                    <!-- Dropdown Menu -->
-                    <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu" aria-labelledby="userDropdown" style="min-width: 160px;">
-                        <li><a class="dropdown-item" href="#">Minha Conta</a></li>
-                        <li><a class="dropdown-item" href="#">Meus Pedidos</a></li>
-                        <li><a class="dropdown-item" href="#">Minha Lista</a></li>
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Sair</a></li>
-                    </ul>
-                    
-                {% else %}
-                    <!-- Usuário desconectado -->
-                    <a href="#" class="align-items-center justify-content-center text-decoration-none text-white" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        <i class="bi bi-person-circle" style="font-size: 2em;"></i>
-                    </a>
-                {% endif %}
+                {% include 'components/_user_dropdown.html' with dropdown_id="headerUserDropdown" %}
             </div>
         </div>
     </div>
@@ -43,21 +25,13 @@
 {% block extra_styles %}
 <style>
 
-    /* Estilo personalizado para o dropdown menu */
-    .custom-dropdown-menu {
-        background-color: rgb(19, 80, 64); /* Cor do header */
-        color: #fff; /* Texto branco para contraste */
+    /* Estilo específico para o header */
+    #headerUserDropdown {
+        color: rgba(255, 255, 255, 0.9);
     }
 
-    /* Estilo do texto dentro do dropdown */
-    .custom-dropdown-menu .dropdown-item {
+    #headerUserDropdown:hover {
         color: #fff;
-        padding: 8px 16px;
-    }
-
-    /* Alterar o hover para destacar o item */
-    .custom-dropdown-menu .dropdown-item:hover {
-        background-color: rgb(30, 100, 80); /* Cor de hover mais escura */
     }
 
 </style>
