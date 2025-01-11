@@ -48,14 +48,24 @@
           {% endif %}
         </div>
       </div>
-      <div class="d-flex justify-content-center align-items-center mb-1 d-grid">
-        <button class="btn btn-warning btn-quantity-left" type="button" onclick="changeQuantity('{{ product.id }}', 'decrement')">-</button>
-        <input type="number" id="quantity_{{ product.id }}" class="form-control form-control-sm mx-0 text-center quantity-input no-spinners" value="1" min="1" max="">
-        <button class="btn btn-warning btn-quantity-right" type="button" onclick="changeQuantity('{{ product.id }}', 'increment')">+</button>
-      </div>
-      <div class="d-grid gap-3">
-        <button class="btn btn-warning" type="button" onclick="addToCart('{{ product.id }}')">Adicionar</button>
-      </div>
+      <!-- Se o estoque for menor ou igual a 0, exibir a mensagem e o botão de "Avisar-me" -->
+      {% if product.stock_quantity <= 0 %}
+        <div class="mb-1 d-grid">
+          <button class="btn" style="background-color: rgb(19, 80, 64); color: white;" type="button">Produto esgotado!</button>
+        </div>
+        <div class="d-grid gap-3">
+          <button class="btn btn-warning" type="button" onclick="">Avise-me!</button>
+        </div>
+        {% else %}
+        <div class="d-flex justify-content-center align-items-center mb-1 d-grid">
+          <button class="btn btn-warning btn-quantity-left" type="button" onclick="changeQuantity('{{ product.id }}', 'decrement')">-</button>
+          <input type="number" id="quantity_{{ product.id }}" class="form-control form-control-sm mx-0 text-center quantity-input no-spinners" value="1" min="1" max="">
+          <button class="btn btn-warning btn-quantity-right" type="button" onclick="changeQuantity('{{ product.id }}', 'increment')">+</button>
+        </div>
+        <div class="d-grid gap-3">
+          <button class="btn btn-warning" type="button" onclick="addToCart('{{ product.id }}')">Adicionar</button>
+        </div>
+      {% endif %}
   </div>
 </form>
 

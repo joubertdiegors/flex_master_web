@@ -128,6 +128,12 @@
         <div class="text-danger">{{ error }}</div>
       {% endfor %}
 
+      {{ form.stock_quantity.label_tag }}
+      {{ form.stock_quantity }}
+      {% for error in form.stock_quantity.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+
       {{ form.stock_control.label_tag }}
       {{ form.stock_control }}
       {% for error in form.stock_control.errors %}

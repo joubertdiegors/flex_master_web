@@ -34,6 +34,7 @@ class ProductAdmin(admin.ModelAdmin):
         'sales_unit',
         'net_weight',
         'gross_weight',
+        'stock_quantity',
         'stock_control',
         'minimum_stock',
         'maximum_stock',

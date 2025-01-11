@@ -132,6 +132,7 @@ class Product(models.Model):
     sales_unit = models.ForeignKey(SalesUnit, on_delete=models.PROTECT, null=True, blank=True, related_name='products_sales_unit')
     net_weight = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
     gross_weight = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
+    stock_quantity = models.DecimalField(max_digits=10, decimal_places=3, default=1)
     stock_control = models.BooleanField(default=True)
     minimum_stock = models.PositiveIntegerField(null=True, blank=True)
     maximum_stock = models.PositiveIntegerField(null=True, blank=True)
