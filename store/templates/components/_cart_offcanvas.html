@@ -1,23 +1,18 @@
 <!-- Off-canvas do carrinho de compras -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
-    <div class="offcanvas-header">
-        <!-- Informações do usuário -->
-        <div class="user-info-sidebar-categories d-flex flex-column align-items-start">
-            {% if user.is_authenticated %}
-                <span class="user-greeting-sidebar-categories">Olá, {{ user.first_name }}!</span>
-            {% else %}
-                <a href="#" class="user-login-link-sidebar-categories" data-bs-toggle="modal" data-bs-target="#loginModal">
-                    <i class="bi bi-person-circle user-login-icon-sidebar-categories"></i>
-                    <span>Acesse a sua conta.</span>
-                </a>
-            {% endif %}
-        </div>
-        
+<div class="offcanvas offcanvas-end" id="OffcanvasCart" aria-labelledby="OffcanvasCartLabel">
+    <div class="offcanvas-header-cart">
+
         <!-- Botão de fechar -->
         <button type="button" class="btn-close-cart" data-bs-dismiss="offcanvas" aria-label="Close">
             <i class="bi bi-x-circle"></i>
         </button>
+
+        <!-- Título -->
+        <div class="cart-info-sidebar">
+            <span class="cart-title-sidebar">Carrinho de Compras</span>
+        </div>
     </div>
+
     <div class="offcanvas-body">
         <div id="cart-items-container">
             <!-- Lista de cards para telas menores -->
@@ -61,6 +56,15 @@
 
 {% block extra_styles %}
 <style>
+    /* Estilo do cabeçalho do OffcanvasCart */
+    .offcanvas-header-cart {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+
     /* Botão de fechar */
     .btn-close-cart {
         background: none;
@@ -70,10 +74,20 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0.5em;
-        position: absolute;
-        top: 0.5em;
-        right: 0.5em;
+    }
+
+    /* Cart Info Sidebar */
+    .cart-info-sidebar {
+        display: flex;
+        align-items: center; /* Alinha verticalmente o conteúdo */
+        justify-content: flex-end; /* Alinha o conteúdo à direita */
+    }
+
+    /* Título do Carrinho de Compras */
+    .cart-title-sidebar {
+        font-size: 1.5em; /* Fonte maior */
+        font-weight: bold;
+        color: rgb(19, 80, 64);
     }
 
     /* Estilos para o offcanvas */
@@ -116,16 +130,17 @@
 </style>
 {% endblock %}
 
+
 {% block extra_scripts %}
 <script>
   function openCartSidebar() {
-    var cartOffcanvas = new bootstrap.Offcanvas(document.getElementById('cartOffcanvas'));
-    cartOffcanvas.show();
+    var OffcanvasCart = new bootstrap.Offcanvas(document.getElementById('OffcanvasCart'));
+    OffcanvasCart.show();
   }
 
   function closeCartSidebar() {
-    var cartOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('cartOffcanvas'));
-    cartOffcanvas.hide();
+    var OffcanvasCart = bootstrap.Offcanvas.getInstance(document.getElementById('OffcanvasCart'));
+    OffcanvasCart.hide();
   }
 
   function updateQuantity(productId, type, action = null) {
@@ -179,7 +194,7 @@
                 $.ajax({
                     url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
                     success: function(offcanvasResponse) {
-                        var offcanvasElement = $('#cartOffcanvas');
+                        var offcanvasElement = $('#OffcanvasCart');
                         
                         // Encontrar e atualizar apenas o conteúdo do #cart-items-container
                         var newContent = $(offcanvasResponse);
@@ -189,7 +204,7 @@
                         offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
 
                         // Atualizar o total no footer
-                        $('#cartOffcanvas .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                        $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
                     },
                     error: function(xhr, status, error) {
                         console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
@@ -237,7 +252,7 @@ function removeItemFromCart(productId) {
                 $.ajax({
                     url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
                     success: function(offcanvasResponse) {
-                        var offcanvasElement = $('#cartOffcanvas');
+                        var offcanvasElement = $('#OffcanvasCart');
                         
                         // Encontrar e atualizar apenas o conteúdo do #cart-items-container
                         var newContent = $(offcanvasResponse);
@@ -247,7 +262,7 @@ function removeItemFromCart(productId) {
                         offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
 
                         // Atualizar o total no footer
-                        $('#cartOffcanvas .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                        $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
                     },
                     error: function(xhr, status, error) {
                         console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);

@@ -1,6 +1,7 @@
 <!-- Offcanvas Menu -->
 <div class="offcanvas offcanvas-start" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-    <div class="offcanvas-header">
+    <div class="offcanvas-header-menu">
+
         <!-- Informações do usuário -->
         <div class="user-info-sidebar-categories d-flex flex-column align-items-start">
             {% if user.is_authenticated %}
@@ -12,9 +13,9 @@
                 </a>
             {% endif %}
         </div>
-        
+
         <!-- Botão de fechar -->
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+        <button type="button" id="btn-close-menu" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
             <i class="bi bi-x-circle"></i>
         </button>
     </div>
@@ -85,7 +86,7 @@
     }
 
     /* Estilização do cabeçalho do offcanvas */
-    .offcanvas-header {
+    .offcanvas-header-menu {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -94,7 +95,7 @@
     }
 
     /* Botão de fechar */
-    .btn-close {
+    #btn-close-menu {
         background: none;
         border: none;
         font-size: 1.5em;
@@ -109,7 +110,7 @@
     }
 
     /* Hover no botão de fechar */
-    .btn-close:hover {
+    #btn-close-menu:hover {
         color: rgb(30, 100, 80);
     }
 
