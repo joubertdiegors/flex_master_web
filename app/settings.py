@@ -5,6 +5,11 @@ from decouple import config, Csv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Google Analytics
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GOOGLE_APPLICATION_CREDENTIALS = os.path.join(BASE_DIR, "GoogleAnalytics.json")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -31,7 +36,6 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'dal_select2.widgets',
-    'google_analytics_django',
 
     'app',
 

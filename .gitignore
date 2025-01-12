@@ -5,3 +5,5 @@ __pycache__/
 .env
 comandos.txt
 git.txt
+/app/services
+GoogleAnalytics.json
