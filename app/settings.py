@@ -17,6 +17,8 @@ DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+GOOGLE_ANALYTICS_PROPERTY_ID = 'G-JXDB7562NW'
+
 
 # Application definition
 
@@ -31,7 +33,7 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'dal_select2.widgets',
-    'analytical',
+    'google_analytics_django',
 
     'app',
 
@@ -63,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'google_analytics_django.middleware.GoogleAnalyticsMiddleware',
+
     'app.middleware.AdminPermissionMiddleware',
     'cart.middleware.TransferCartMiddleware',
     'customization_store.middlewares.MaintenanceMiddleware',
@@ -90,16 +94,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'app.wsgi.application'
-
-ANALYTICAL = {
-    'BACKENDS': {
-        'googleanalytics': {
-            'googleanalytics': {
-                'GOOGLE_ANALYTICS_GTAG_PROPERTY_ID': 'G-JXDB7562NW',  # Substitua com o seu ID do Google Analytics
-            },
-        },
-    },
-}
 
 
 # Database
