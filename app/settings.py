@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'dal_select2.widgets',
+    'analytical',
 
     'app',
 
@@ -89,6 +90,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'app.wsgi.application'
+
+ANALYTICAL = {
+    'BACKENDS': {
+        'googleanalytics': {
+            'googleanalytics': {
+                'GOOGLE_ANALYTICS_GTAG_PROPERTY_ID': 'G-JXDB7562NW',  # Substitua com o seu ID do Google Analytics
+            },
+        },
+    },
+}
 
 
 # Database
