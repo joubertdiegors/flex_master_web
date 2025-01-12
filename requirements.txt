@@ -1,7 +1,6 @@
 asgiref==3.8.1
 Django==4.2.13
 django-autocomplete-light==3.11.0
-google-analytics-django==0.1.4
 pillow==10.3.0
 psycopg2==2.9.10
 psycopg2-binary==2.9.10

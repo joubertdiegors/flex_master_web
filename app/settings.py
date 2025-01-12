@@ -17,8 +17,6 @@ DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
-GOOGLE_ANALYTICS_PROPERTY_ID = 'G-JXDB7562NW'
-
 
 # Application definition
 
@@ -64,8 +62,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'google_analytics_django.middleware.GoogleAnalyticsMiddleware',
 
     'app.middleware.AdminPermissionMiddleware',
     'cart.middleware.TransferCartMiddleware',
