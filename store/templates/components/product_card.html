@@ -233,7 +233,7 @@
                 $.ajax({
                     url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
                     success: function(offcanvasResponse) {
-                        var offcanvasElement = $('#cartOffcanvas');
+                        var offcanvasElement = $('#OffcanvasCart');
                         var newContent = $(offcanvasResponse.html);
 
                         // Atualizar o corpo do offcanvas
@@ -248,7 +248,7 @@
                 $.ajax({
                     url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
                     success: function(offcanvasResponse) {
-                        var offcanvasElement = $('#cartOffcanvas');
+                        var offcanvasElement = $('#OffcanvasCart');
                         
                         // Encontrar e atualizar apenas o conteúdo do #cart-items-container
                         var newContent = $(offcanvasResponse);
@@ -258,7 +258,7 @@
                         offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
 
                         // Atualizar o total no footer
-                        $('#cartOffcanvas .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                        $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
                     },
                     error: function(xhr, status, error) {
                         console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
