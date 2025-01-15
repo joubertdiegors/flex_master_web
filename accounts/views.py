@@ -127,35 +127,38 @@ class EmailConfirmationSentView(View):
         return render(request, self.template_name, context)
 
 def send_verification_email(customer, request):
-    # Gera o uidb64 (ID codificado)
-    uid = urlsafe_base64_encode(force_bytes(customer.pk))
-    # Gera o token de verificação
-    token = email_verification_token.make_token(customer)
-    
-    # Monta a URL de ativação (/activate/<uidb64>/<token>/)
-    activate_url = request.build_absolute_uri(
-        reverse('activate', kwargs={'uidb64': uid, 'token': token})
-    )
-    
-    # Exemplo de template HTML para o e-mail
-    html_content = render_to_string('emails/verification_email.html', {
-        'customer': customer,
-        'activate_url': activate_url,
-    })
-    plain_message = strip_tags(html_content)
-    
-    subject = "Ative sua conta para continuar"
-    from_email = None  # Usa o DEFAULT_FROM_EMAIL se configurado
-    recipient_list = [customer.email]
-    
-    send_mail(
-        subject,
-        plain_message,
-        from_email,
-        recipient_list,
-        html_message=html_content,
-        fail_silently=False,
-    )
+    try:
+        # Gera o uidb64 (ID codificado)
+        uid = urlsafe_base64_encode(force_bytes(customer.pk))
+        # Gera o token de verificação
+        token = email_verification_token.make_token(customer)
+        
+        # Monta a URL de ativação (/activate/<uidb64>/<token>/)
+        activate_url = request.build_absolute_uri(
+            reverse('activate', kwargs={'uidb64': uid, 'token': token})
+        )
+        
+        # Exemplo de template HTML para o e-mail
+        html_content = render_to_string('emails/verification_email.html', {
+            'customer': customer,
+            'activate_url': activate_url,
+        })
+        plain_message = strip_tags(html_content)
+        
+        subject = "Ative sua conta para continuar"
+        from_email = None  # Usa o DEFAULT_FROM_EMAIL se configurado
+        recipient_list = [customer.email]
+        
+        send_mail(
+            subject,
+            plain_message,
+            from_email,
+            recipient_list,
+            html_message=html_content,
+            fail_silently=False,
+        )
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {e}")
 
 def activate_email(request, uidb64, token):
     try:
