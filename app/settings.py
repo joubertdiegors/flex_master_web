@@ -160,8 +160,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Mantém a sessão a cada requisição
 SESSION_SAVE_EVERY_REQUEST = True
 
-PASSWORD_RESET_TIMEOUT = 60
-# PASSWORD_RESET_TIMEOUT = 432000
+# Tempo de token para confirmar e-mail
+PASSWORD_RESET_TIMEOUT = 432000
 
 # Configurações de sessão
 SESSION_COOKIE_AGE = 1209600  # 2 semanas
