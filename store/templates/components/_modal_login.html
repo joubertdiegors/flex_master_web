@@ -18,13 +18,15 @@
                         <label for="id_password" class="form-label">Senha:</label>
                         <input type="password" class="form-control" id="id_password" name="password"
                             placeholder="Digite sua senha">
+                            <div class="d-flex justify-content-end mt-2">
+                                <a href="{% url 'password_reset' %}" class="text-decoration-none">Esqueci minha senha</a>
+                            </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
             </div>
-            <div class="modal-footer">
-                <!-- <span>Não tem uma conta? <a href="{% url 'register' %}">Registre-se aqui</a></span> -->
-                <span style="color: red; background-color: yellow;">O cadastro será disponibilizado em breve!</a></span>
+            <div class="modal-footer d-flex justify-content-between">
+                <span>Não tem uma conta? <a href="{% url 'register' %}">Registre-se aqui</a></span>
             </div>
         </div>
     </div>

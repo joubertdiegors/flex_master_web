@@ -103,3 +103,42 @@ class CustomerForm(forms.ModelForm):
             'status': 'Estado',
         }
 
+class CustomerProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.Customer
+        fields = [
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'birth_date',
+            'country',
+            'postal_code',
+            'city',
+            'address',
+            'image'
+        ]
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'birth_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'},  format='%Y-%m-%d'),
+            'country': forms.Select(attrs={'class': 'form-control'}),
+            'postal_code': forms.TextInput(attrs={'class': 'form-control'}),
+            'city': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'first_name': 'Nome',
+            'last_name': 'Sobrenome',
+            'email': 'Email',
+            'phone': 'Telefone',
+            'birth_date': 'Data de Nascimento',
+            'country': 'País',
+            'postal_code': 'Código Postal',
+            'city': 'Cidade',
+            'address': 'Endereço',
+            'image': 'Imagem',
+        }

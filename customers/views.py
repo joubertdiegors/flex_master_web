@@ -1,7 +1,12 @@
+from datetime import datetime
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, DetailView ,UpdateView
-from . import models, forms
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView, CreateView, DetailView ,UpdateView, View, TemplateView
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.admin.views.decorators import staff_member_required
+from . import models, forms
+from products.models import Category
 
 class CustomerTypeListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = models.CustomerType
@@ -122,3 +127,57 @@ class CustomerUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
         return super().form_valid(form)
+
+class CustomerProfileDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'customer_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        customer = self.request.user.customer_profile
+        categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+
+        context = {
+            'customer': customer,
+            'categories': categories,
+            'is_not_list_page': True,
+            'breadcrumb_off': True,
+        }
+        return render(request, self.template_name, context)    
+
+class CustomerProfileUpdateView(LoginRequiredMixin, View):
+    template_name = 'customer_profile_update.html'
+    form_class = forms.CustomerProfileUpdateForm
+    success_url = reverse_lazy('customer_profile')
+
+    def get(self, request, *args, **kwargs):
+        customer = request.user.customer_profile
+        form = self.form_class(instance=customer)
+        categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+        
+        # Adiciona as informações ao contexto
+        categories = Category.objects.all()
+        context = {
+            'form': form,
+            'categories': categories,
+            'is_not_list_page': True,
+            'breadcrumb_off': True,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        customer = request.user.customer_profile
+        form = self.form_class(request.POST, request.FILES, instance=customer)
+
+        if form.is_valid():
+            birth_date_str = form.cleaned_data.get('birth_date')
+            if birth_date_str:
+                try:
+                    birth_date_str = birth_date_str.strftime('%Y-%m-%d')
+                    customer.birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d').date()
+                except ValueError:
+                    pass
+
+            form.save()
+            return redirect('customer_profile')  # Redireciona para a página de conta do cliente
+
+        return render(request, self.template_name, {'form': form})
+

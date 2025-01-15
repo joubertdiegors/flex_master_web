@@ -1,0 +1,37 @@
+{% extends "base_store.html" %}
+
+{% block title %}Confirmação de E-mail Enviada{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white text-center">
+                <h1>Verifique a sua caixa de e-mail.</h1>
+            </div>
+            <div class="card-body text-center">
+                <p class="mb-4">
+                    Enviamos um e-mail para <strong>{{ email }}</strong>.
+                </p>
+                <p class="mb-4">
+                    Para continuar, clique no link de confirmação no e-mail.
+                </p>
+                <p class="mb-4">
+                    Caso você não encontre o e-mail em sua caixa de entrada, por favor, verifique sua <strong>caixa de spam</strong> ou <strong>lixo eletrônico</strong>.
+                </p>
+                <p>
+                    Se ainda assim não encontrar, você pode solicitar o reenvio da confirmação no prazo de 5 dias.
+                </p>
+
+                <p style="margin-bottom: 20px;">
+                    Falta pouco para realizar suas compras. <br>
+                    Caso precise de ajuda, estamos à disposição através do nosso WhatsApp ou por telefone: 📱<strong>+32 469 12 4469</strong>.
+                </p>
+                <div class="mt-4">
+                    <a href="/" class="btn btn-primary">Voltar à Página Inicial</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

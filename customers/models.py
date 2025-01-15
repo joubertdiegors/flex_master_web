@@ -53,7 +53,7 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
-    birth_date = models.DateField(blank=True, null=True)  # Campo de data de nascimento
+    birth_date = models.DateField(blank=True, null=True)
 
     # Cadastro de empresa
     company_name = models.CharField(max_length=255, blank=True, null=True)
@@ -70,6 +70,7 @@ class Customer(models.Model):
     address = models.TextField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='customers/images/', blank=True, null=True)
+    is_email_verified = models.BooleanField(default=False)
     status = models.ForeignKey(CustomerState, on_delete=models.PROTECT, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

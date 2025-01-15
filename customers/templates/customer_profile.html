@@ -1,0 +1,45 @@
+{% extends 'base_store.html' %}
+
+{% block title %}Minha Conta - Sacolão{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-secondary text-white text-center">
+                    <h1>Meus dados</h1>
+                </div>
+                <div class="card-body">
+                    <div class="personal-info mb-4">
+                        <h2 class="mb-1">Informações Pessoais</h2>
+                        <p><strong>Nome:</strong> {{ customer.first_name }} {{ customer.last_name }}</p>
+                        <p><strong>E-mail:</strong> {{ customer.email }}</p>
+                        <p><strong>Telefone:</strong> {{ customer.phone }}</p>
+                        <p><strong>Data de Nascimento:</strong> {{ customer.birth_date }}</p>
+                    </div>
+
+                    <div class="address-info mb-4">
+                        <h2 class="mb-3">Endereço</h2>
+                        <p><strong>País:</strong> {{ customer.country.name|default:'Não informado' }}</p>
+                        <p><strong>Código Postal:</strong> {{ customer.postal_code|default:'' }}</p>
+                        <p><strong>Cidade:</strong> {{ customer.city|default:'' }}</p>
+                        <p><strong>Endereço:</strong> {{ customer.address|default:'' }}</p>
+                    </div>
+
+                    {% if customer.image %}
+                        <div class="profile-image text-center">
+                            <h2 class="mb-3">Foto de Perfil</h2>
+                            <img src="{{ customer.image.url }}" alt="Foto do perfil" class="img-fluid rounded mx-auto d-block" style="max-width: 300px;">
+                        </div>
+                    {% endif %}
+
+                    <div class="text-center mt-4">
+                        <a href="{% url 'customer_profile_update'%}" class="btn btn-primary">Editar Informações</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

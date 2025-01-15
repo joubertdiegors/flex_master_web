@@ -16,4 +16,7 @@ urlpatterns = [
     path('administration/customer/create/', views.CustomerCreateView.as_view(), name='customer_create'),
     path('administration/customer/<int:pk>/detail/', views.CustomerDetailView.as_view(), name='customer_detail'),
     path('administration/customer/<int:pk>/update/', views.CustomerUpdateView.as_view(), name='customer_update'),
+
+    path('minhaconta/', views.CustomerProfileDetailView.as_view(), name='customer_profile'),
+    path('minhaconta/editar/', views.CustomerProfileUpdateView.as_view(), name='customer_profile_update'),
 ]

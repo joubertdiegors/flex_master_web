@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-from customers.models import Customer, Country
+from django.core.validators import RegexValidator
+from customers.models import Customer
 
 class UserBasicRegistrationForm(forms.ModelForm):
     first_name = forms.CharField(label='Nome', widget=forms.TextInput(attrs={'placeholder': 'José Maria'}))
@@ -13,17 +14,20 @@ class UserBasicRegistrationForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'email']
 
-    def clean_password2(self):
-        cd = self.cleaned_data
-        if cd['password'] != cd['password2']:
-            raise forms.ValidationError('Passwords do not match.')
-        return cd['password2']
-
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError('This email is already in use.')
+            raise forms.ValidationError('Este e-mail já está castrado!')
         return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password2 = cleaned_data.get('password2')
+
+        if password and password2 and (password != password2):
+            self.add_error('password2', 'As senhas não conferem.')
+        return cleaned_data
 
 class CustomerBasicRegistrationForm(forms.ModelForm):
     class Meta:
@@ -37,13 +41,12 @@ class CustomerBasicRegistrationForm(forms.ModelForm):
         }
 
 class CustomerCompleteRegistrationForm(forms.ModelForm):
+    phone = forms.CharField(required=True)
+    postal_code = forms.CharField(required=True)
+    city = forms.CharField(required=True)
+    address = forms.CharField(required=True)
+    image = forms.ImageField(required=False)
+
     class Meta:
         model = Customer
         fields = ['phone', 'postal_code', 'city', 'address', 'image']
-        widgets = {
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'postal_code': forms.TextInput(attrs={'class': 'form-control'}),
-            'city': forms.TextInput(attrs={'class': 'form-control'}),
-            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-        }
