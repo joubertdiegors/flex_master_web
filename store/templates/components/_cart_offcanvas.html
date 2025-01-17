@@ -133,150 +133,124 @@
 
 {% block extra_scripts %}
 <script>
-  function openCartSidebar() {
-    var OffcanvasCart = new bootstrap.Offcanvas(document.getElementById('OffcanvasCart'));
-    OffcanvasCart.show();
-  }
-
-  function closeCartSidebar() {
-    var OffcanvasCart = bootstrap.Offcanvas.getInstance(document.getElementById('OffcanvasCart'));
-    OffcanvasCart.hide();
-  }
-
-  function updateQuantity(productId, type, action = null) {
-    var input = document.getElementById('quantity_' + type + '_' + productId);
-    var currentQuantity = parseInt(input.value);
-
-    if (action === 'increment') {
-        input.value = currentQuantity + 1;
-    } else if (action === 'decrement' && currentQuantity > 1) {
-        input.value = currentQuantity - 1;
+    function openCartSidebar() {
+        var OffcanvasCart = new bootstrap.Offcanvas(document.getElementById('OffcanvasCart'));
+        OffcanvasCart.show();
     }
 
-    var updatedQuantity = parseInt(input.value);
-
-    if (updatedQuantity < 1 || isNaN(updatedQuantity)) {
-        input.value = 1;
-        updatedQuantity = 1;
+    function closeCartSidebar() {
+        var OffcanvasCart = bootstrap.Offcanvas.getInstance(document.getElementById('OffcanvasCart'));
+        OffcanvasCart.hide();
     }
 
-    $.ajax({
-        url: "{% url 'update_cart_item_quantity' %}",
-        type: "POST",
-        data: {
-            'product_id': productId,
-            'quantity': updatedQuantity,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        success: function(response) {
-            if (response.cart_data) {
-                // Atualiza o custo total do item específico
-                var totalElements = document.querySelectorAll('.total[data-product-id="' + productId + '"]');
-                totalElements.forEach(function(totalElement) {
-                    var itemPrice = parseFloat(totalElement.textContent.replace('€', '').replace(',', '.')) / updatedQuantity;
-                    var newTotalCost = itemPrice * updatedQuantity;
-                    totalElement.textContent = newTotalCost.toFixed(2).replace('.', ',');
-                });
+    function updateQuantity(productId, type, action = null) {
+        var input = document.getElementById('quantity_' + type + '_' + productId);
+        var currentQuantity = parseInt(input.value);
 
-                // Atualiza o total de itens e o custo total do carrinho
-                var totalItemsElements = document.querySelectorAll('.cart-total-items');
-                var totalCostElements = document.querySelectorAll('.cart-total-cost');
-                
-                totalItemsElements.forEach(function(element) {
-                    element.textContent = response.cart_data.total_items;
-                });
-                
-                totalCostElements.forEach(function(element) {
-                    element.textContent = '€' + response.cart_data.total_cost.toFixed(2).replace('.', ',');
-                });
-                
-                // Atualiza o offcanvas com o novo HTML
-                $.ajax({
-                    url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
-                    success: function(offcanvasResponse) {
-                        var offcanvasElement = $('#OffcanvasCart');
-                        
-                        // Encontrar e atualizar apenas o conteúdo do #cart-items-container
-                        var newContent = $(offcanvasResponse);
-                        var newItemsContainer = newContent.find('#cart-items-container').html();
-                        var footerContent = offcanvasElement.find('.cart-footer').html();  // Manter o footer atual
-
-                        offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
-
-                        // Atualizar o total no footer
-                        $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
-                    }
-                });
-
-            } else {
-                console.error('Resposta AJAX inválida:', response);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Ocorreu um erro: " + error);
+        // Incrementa ou decrementa a quantidade com base na ação
+        if (action === 'increment') {
+            input.value = currentQuantity + 1;
+        } else if (action === 'decrement' && currentQuantity > 1) {
+            input.value = currentQuantity - 1;
         }
-    });
-}
 
-function removeItemFromCart(productId) {
-    $.ajax({
-        url: "{% url 'remove_from_cart' product_id=0 %}".replace('0', productId),
-        type: "POST",
-        data: {
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        success: function(response) {
-            if (response.cart_data) {
-                // Remove o item do offcanvas
-                var cartItemElement = document.getElementById('cart-item-card-' + productId);
-                if (cartItemElement) {
-                    cartItemElement.remove();
+        var updatedQuantity = parseInt(input.value);
+
+        // Garante que a quantidade nunca seja menor que 1
+        if (updatedQuantity < 1 || isNaN(updatedQuantity)) {
+            input.value = 1;
+            updatedQuantity = 1;
+        }
+
+        // Envia a atualização para o servidor via AJAX
+        $.ajax({
+            url: "{% url 'update_cart_item_quantity' %}",
+            type: "POST",
+            data: {
+                'product_id': productId,
+                'quantity': updatedQuantity,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.cart_data) {
+                    // Atualiza o custo total do item específico
+                    var totalElement = document.querySelector('.total[data-product-id="' + productId + '"]');
+                    if (totalElement) {
+                        var updatedTotalCost = response.cart_data.item_total; // Total do item vindo do backend
+                        totalElement.textContent = updatedTotalCost.toFixed(2).replace('.', ',');
+                    }
+
+                    // Atualiza todos os elementos com a classe 'cart-total-cost'
+                    var totalCostElements = document.querySelectorAll('.cart-total-cost');
+                    totalCostElements.forEach(function(element) {
+                        element.textContent = '€' + response.cart_data.total_cost.toFixed(2).replace('.', ',');
+                    });
+                } else {
+                    console.error('Resposta AJAX inválida:', response);
                 }
-
-                // Atualiza o total de itens e o custo total do carrinho
-                var totalItemsElements = document.querySelectorAll('.cart-total-items');
-                var totalCostElements = document.querySelectorAll('.cart-total-cost');
-
-                totalItemsElements.forEach(function(element) {
-                    element.textContent = response.cart_data.total_items;
-                });
-
-                totalCostElements.forEach(function(element) {
-                    element.textContent = '€' + response.cart_data.total_cost.toFixed(2).replace('.', ',');
-                });
-
-                // Atualiza o offcanvas com o novo HTML
-                $.ajax({
-                    url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
-                    success: function(offcanvasResponse) {
-                        var offcanvasElement = $('#OffcanvasCart');
-                        
-                        // Encontrar e atualizar apenas o conteúdo do #cart-items-container
-                        var newContent = $(offcanvasResponse);
-                        var newItemsContainer = newContent.find('#cart-items-container').html();
-                        var footerContent = offcanvasElement.find('.cart-footer').html();  // Manter o footer atual
-
-                        offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
-
-                        // Atualizar o total no footer
-                        $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
-                    }
-                });
-
-            } else {
-                console.error('Resposta AJAX inválida:', response);
+            },
+            error: function(xhr, status, error) {
+                console.error("Ocorreu um erro: " + error);
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Ocorreu um erro: " + error);
-        }
-    });
-}
+        });
+    }
+
+    function removeItemFromCart(productId) {
+        $.ajax({
+            url: "{% url 'remove_from_cart' product_id=0 %}".replace('0', productId),
+            type: "POST",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.cart_data) {
+                    // Remove o item do offcanvas
+                    var cartItemElement = document.getElementById('cart-item-card-' + productId);
+                    if (cartItemElement) {
+                        cartItemElement.remove();
+                    }
+
+                    // Atualiza o total de itens e o custo total do carrinho
+                    var totalItemsElements = document.querySelectorAll('.cart-total-items');
+                    var totalCostElements = document.querySelectorAll('.cart-total-cost');
+
+                    totalItemsElements.forEach(function(element) {
+                        element.textContent = response.cart_data.total_items;
+                    });
+
+                    totalCostElements.forEach(function(element) {
+                        element.textContent = '€' + response.cart_data.total_cost.toFixed(2).replace('.', ',');
+                    });
+
+                    // Atualiza o offcanvas com o novo HTML
+                    $.ajax({
+                        url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
+                        success: function(offcanvasResponse) {
+                            var offcanvasElement = $('#OffcanvasCart');
+                            
+                            // Encontrar e atualizar apenas o conteúdo do #cart-items-container
+                            var newContent = $(offcanvasResponse);
+                            var newItemsContainer = newContent.find('#cart-items-container').html();
+                            var footerContent = offcanvasElement.find('.cart-footer').html();  // Manter o footer atual
+
+                            offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
+
+                            // Atualizar o total no footer
+                            $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
+                        }
+                    });
+
+                } else {
+                    console.error('Resposta AJAX inválida:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Ocorreu um erro: " + error);
+            }
+        });
+    }
 </script>
 {% endblock %}

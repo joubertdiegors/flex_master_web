@@ -82,12 +82,16 @@ class UpdateCartItemQuantityView(CartMixin, View):  # Herda de CartMixin
         cart_item.quantity = quantity
         cart_item.save()
 
+        # Calcular o total do item atualizado
+        item_total = cart_item.quantity * cart_item.price
+
         # Preparar dados do carrinho para resposta AJAX
         total_items = sum(item.quantity for item in cart.items.all())
         total_cost = cart.get_total_cost()
 
         return JsonResponse({
             'cart_data': {
+                'item_total': float(item_total),
                 'total_items': total_items,
                 'total_cost': float(total_cost)
             }
