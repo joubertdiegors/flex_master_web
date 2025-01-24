@@ -27,13 +27,15 @@ class CartItem(models.Model):
         return f"{self.quantity} of {self.product.name}"
 
     def get_cost(self):
+        if self.price is None or self.quantity is None:
+            return 0
         return self.price * self.quantity
 
     def save(self, *args, **kwargs):
         # Verificar se o produto está em promoção e ajustar o preço
-        if self.promotion:
-            self.price = self.promotion.promotion_price
-        else:
-            self.price = self.product.selling_price
-
+        if not self.price:  # Define o preço apenas se estiver vazio
+            if self.promotion:
+                self.price = self.promotion.promotion_price
+            else:
+                self.price = self.product.selling_price
         super().save(*args, **kwargs)
