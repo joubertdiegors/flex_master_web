@@ -54,7 +54,7 @@
                 {% if user.is_authenticated %}
                 <p class="fs-6">Seu carrinho está vazio.</p>
                 {% else %}
-                <p class="fs-6">Faça login para recuperar o carrinho que você deixou na última visita ou inicie uma nova.
+                <p class="fs-6">Faça login para recuperar sua compra em espera ou comece uma nova.</p>
                 <a href="#" style="color: black; text-decoration: none;" data-bs-toggle="modal" data-bs-target="#loginModal">
                     <i class="bi bi-person-circle user-login-icon"></i> <br>
                     <span>Login</span>
@@ -67,7 +67,7 @@
     </div>
     <div class="cart-footer">
         <p class="text-end">Total: <span class="cart-total-cost">€{{ total_cost|default:"0.00" }}</span></p>
-        <a href="{% url 'cart_detail' %}" class="btn btn-primary w-100">Finalizar Compra</a>
+        <a href="{% url 'cart_detail' %}" class="btn btn-primary w-100">Finalizar sCompra</a>
     </div>
 </div>
 
@@ -141,11 +141,10 @@
         text-align: center;
     }
 
-    .offcanvas .cart-footer {
+    .cart-footer {
         
         background-color: #e3e3e3; /* Cor de fundo para cobrir o conteúdo embaixo */
         padding: 1rem;
-        z-index: 10; /* Garante que fique acima do restante */
         text-align: center;
         border: none;
     }
@@ -217,6 +216,59 @@
         });
     }
 
+    function addToCart(productId) {
+        var quantity = document.getElementById('quantity_' + productId).value;
+
+        $.ajax({
+            url: "{% url 'add_to_cart_ajax' %}",
+            type: "POST",
+            data: {
+                'product_id': productId,
+                'quantity': quantity,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.cart_data) {
+                // Atualiza os totais no layout
+                    var totalItemsElements = document.querySelectorAll('.cart-total-items');
+                    var totalCostElements = document.querySelectorAll('.cart-total-cost');
+
+                    totalItemsElements.forEach(function(element) {
+                        element.textContent = response.cart_data.total_items;
+                    });
+
+                    totalCostElements.forEach(function(element) {
+                        element.textContent = '€' + response.cart_data.total_cost.toFixed(2);
+                    });
+
+                    // Atualizar o conteúdo do offcanvas
+                    $.ajax({
+                        url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
+                        success: function(offcanvasResponse) {
+                            var offcanvasElement = $('#OffcanvasCart');
+                            var newContent = $(offcanvasResponse);
+
+                            // Atualiza apenas os itens do carrinho
+                            offcanvasElement.find('#cart-items-container').html(newContent.find('#cart-items-container').html());
+
+                            // Atualiza o total no rodapé
+                            $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Erro ao atualizar o offcanvas: " + error);
+                        }
+                    });
+
+                } else {
+                    console.error('Resposta AJAX inválida:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Ocorreu um erro: " + error);
+            }
+        });
+    }
+
     function removeItemFromCart(productId) {
         $.ajax({
             url: "{% url 'remove_from_cart' product_id=0 %}".replace('0', productId),
@@ -244,21 +296,18 @@
                         element.textContent = '€' + response.cart_data.total_cost.toFixed(2).replace('.', ',');
                     });
 
-                    // Atualiza o offcanvas com o novo HTML
+                    // Atualiza o conteúdo do container de itens sem tocar no rodapé
                     $.ajax({
-                        url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
+                        url: "{% url 'cart_detail' %}",  // URL da view que renderiza o conteúdo do carrinho
                         success: function(offcanvasResponse) {
                             var offcanvasElement = $('#OffcanvasCart');
                             
                             // Encontrar e atualizar apenas o conteúdo do #cart-items-container
                             var newContent = $(offcanvasResponse);
                             var newItemsContainer = newContent.find('#cart-items-container').html();
-                            var footerContent = offcanvasElement.find('.cart-footer').html();  // Manter o footer atual
-
-                            offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
-
-                            // Atualizar o total no footer
-                            $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                            
+                            // Atualizar somente os itens, sem modificar o rodapé
+                            offcanvasElement.find('#cart-items-container').html(newItemsContainer);
                         },
                         error: function(xhr, status, error) {
                             console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
