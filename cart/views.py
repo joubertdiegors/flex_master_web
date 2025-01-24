@@ -14,9 +14,27 @@ class CartDetailView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        cart = self.get_or_create_cart(request)
+
+        # cart = self.get_or_create_cart(request)
+        cart = self.get_cart(request)
+
+        # Se o carrinho não existir, retornar uma página vazia ou uma mensagem de "carrinho vazio"
+        if not cart or not cart.items.exists():
+            return render(request, self.template_name, {
+                'categories': categories,
+                'cart': None,
+                'total_items': 0,
+                'total_cost': 0.0,
+                'is_not_list_page': True,
+                'breadcrumb_off': True,
+                'is_cart_detail_page': True,
+                'message': 'Seu carrinho está vazio.'
+            })
+
+        # Calcular os totais
         total_items = sum(item.quantity for item in cart.items.all())
         total_cost = cart.get_total_cost()
+        
         return render(request, self.template_name, {
             'categories': categories,
             'cart': cart,
@@ -32,14 +50,15 @@ class AddToCartView(CartMixin, View):
         product_id = request.POST.get('product_id')
         quantity = int(request.POST.get('quantity', 1))
 
-        cart = self.get_or_create_cart(request)
+        cart = self.get_cart(request) or self.create_cart(request)
+        # cart = self.get_or_create_cart(request)
         product = get_object_or_404(Product, id=product_id)
 
         # Verificar se o produto está em promoção
         promotion = Promotion.objects.filter(product=product).first()
         price = promotion.promotion_price if promotion else product.selling_price
 
-        # Filtrar para garantir que não haja múltiplos itens
+        # Verificar se o item já existe no carrinho
         cart_items = CartItem.objects.filter(cart=cart, product=product)
         
         if cart_items.exists():
@@ -53,10 +72,9 @@ class AddToCartView(CartMixin, View):
             cart_item.promotion = promotion
         else:
             cart_item.promotion = None
-
         cart_item.save()
 
-        # Preparar dados do carrinho para resposta AJAX
+        # Retornar dados atualizados para AJAX
         total_items = sum(item.quantity for item in cart.items.all())
         total_cost = cart.get_total_cost()
         
@@ -74,16 +92,29 @@ class UpdateCartItemQuantityView(CartMixin, View):  # Herda de CartMixin
         product_id = request.POST.get('product_id')
         quantity = int(request.POST.get('quantity', 1))
 
-        cart = self.get_or_create_cart(request)  # Isso agora funcionará
-        product = get_object_or_404(Product, id=product_id)
+        # Obter o carrinho existente
+        cart = self.get_cart(request)
+        if not cart:
+            return JsonResponse({'error': 'Carrinho não encontrado'}, status=400)
 
+        # cart = self.get_or_create_cart(request)  # Isso agora funcionará
+        
+        # Verificar se o produto existe no carrinho
+        product = get_object_or_404(Product, id=product_id)
+        cart_item = CartItem.objects.filter(cart=cart, product=product).first()
+        if not cart_item:
+            return JsonResponse({'error': 'Produto não encontrado no carrinho'}, status=400)
+        
         # Atualizar a quantidade do item no carrinho
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        # cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         cart_item.quantity = quantity
         cart_item.save()
 
         # Calcular o total do item atualizado
-        item_total = cart_item.quantity * cart_item.price
+        # item_total = cart_item.quantity * cart_item.price
+
+        # Calcular o total do item atualizado
+        item_total = cart_item.get_cost()
 
         # Preparar dados do carrinho para resposta AJAX
         total_items = sum(item.quantity for item in cart.items.all())
@@ -99,9 +130,18 @@ class UpdateCartItemQuantityView(CartMixin, View):  # Herda de CartMixin
 
 class RemoveFromCartView(CartMixin, View):
     def post(self, request, product_id, *args, **kwargs):
-        cart = self.get_or_create_cart(request)
+        # cart = self.get_or_create_cart(request)
+         # Obter o carrinho existente
+        cart = self.get_cart(request)
+        if not cart:
+            return JsonResponse({'error': 'Carrinho não encontrado'}, status=400)
+        
+        # Obter o item no carrinho
         product = get_object_or_404(Product, id=product_id)
-        cart_item = get_object_or_404(CartItem, cart=cart, product=product)
+        # cart_item = get_object_or_404(CartItem, cart=cart, product=product)
+        cart_item = CartItem.objects.filter(cart=cart, product=product).first()
+        if not cart_item:
+            return JsonResponse({'error': 'Produto não encontrado no carrinho'}, status=400)
         
         # Remover completamente o item selecionado
         cart_item.delete()

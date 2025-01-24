@@ -15,7 +15,7 @@
 
     <div class="offcanvas-body">
         <div id="cart-items-container">
-            {% if cart.items.all %}
+        {% if cart.items.all %}
             <!-- Lista de cards para telas menores -->
             <div class="">
                 {% for item in cart.items.all %}
@@ -50,15 +50,16 @@
             {% else %}
             <!-- Mensagem de carrinho vazio -->
             <div class="text-center mt-5">
-                <p class="fs-5">Olá, {{ user.first_name }}.</p>
+                <p class="fs-5">Olá, {% if user.is_authenticated %}{{ user.first_name }}{% else %}seja bem vindo{% endif %}.</p>
+                
                 {% if user.is_authenticated %}
-                <p class="fs-6">Seu carrinho está vazio.</p>
+                    <p class="fs-6">Seu carrinho está vazio.</p>
                 {% else %}
-                <p class="fs-6">Faça login para recuperar sua compra em espera ou comece uma nova.</p>
-                <a href="#" style="color: black; text-decoration: none;" data-bs-toggle="modal" data-bs-target="#loginModal">
-                    <i class="bi bi-person-circle user-login-icon"></i> <br>
-                    <span>Login</span>
-                </a>
+                    <p class="fs-6">Faça login para recuperar sua compra em espera ou comece uma nova.</p>
+                    <a href="#" style="color: black; text-decoration: none;" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="bi bi-person-circle user-login-icon"></i> <br>
+                        <span>Login</span>
+                    </a>
                 {% endif %}
             </div>
             {% endif %}
