@@ -68,6 +68,35 @@
             {% endfor %}
         </div>
     </div>
+    <div class="offcanvas-footer">
+        <span>Encontre-nos</span>
+        <div class="social-icons mt-2">
+            <!-- Instagram -->
+            <a href="https://www.instagram.sacolao.be" target="_blank" class="social-icon">
+                <i class="bi bi-instagram"></i>
+            </a>
+            <!-- Facebook -->
+            <a href="https://www.facebook.sacolao.be" target="_blank" class="social-icon">
+                <i class="bi bi-facebook"></i>
+            </a>
+            <!-- Google Maps -->
+            <a href="https://www.googlemaps.sacolao.be" target="_blank" class="social-icon">
+                <i class="bi bi-geo-alt"></i>
+            </a>
+            <!-- WhatsApp -->
+            <a href="https://wa.me/32469124469" target="_blank" class="social-icon">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+            <!-- Ligar -->
+            <a href="tel:+32469124469" target="_blank" class="social-icon">
+                <i class="bi bi-telephone"></i>
+            </a>
+            <!-- E-mail -->
+            <a href="mailto:info@sacolao.be" target="_blank" class="social-icon">
+                <i class="bi bi-envelope"></i>
+            </a>
+        </div>
+    </div>
 </div>
 
 {% block extra_styles %}
@@ -184,6 +213,34 @@
 
     .category-without-children .category-link {
         font-weight: normal;
+    }
+
+    .offcanvas-footer {
+        background-color: #e3e3e3; /* Cor de fundo */
+        padding: 1rem;
+        text-align: center;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Estilo dos ícones sociais */
+    .social-icons {
+        display: flex;
+        gap: 1rem; /* Espaçamento entre os ícones */
+        margin-top: 0.5rem;
+    }
+
+    .social-icon {
+        text-decoration: none;
+        font-size: 1.5rem; /* Tamanho dos ícones */
+        color: #000; /* Cor padrão dos ícones */
+        transition: color 0.3s ease; /* Transição suave */
+    }
+
+    .social-icon:hover {
+        color: #007bff; /* Cor ao passar o mouse */
     }
 </style>
 {% endblock %}
