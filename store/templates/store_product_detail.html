@@ -11,41 +11,60 @@
   <div class="row">
     <!-- Foto do Produto -->
     <div class="col-md-6">
-      {% if product.image %}
-      <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
-      {% else %}
-      <img src="{{ product_default_url }}" class="img-fluid" alt="{{ product.name }}">
-      {% endif %}
+      <div class="product-image-container">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+        {% else %}
+          <img src="{{ product_default_url }}" alt="{{ product.name }}" class="product-image">
+        {% endif %}
+      </div>
     </div>
 
     <!-- Detalhes do Produto -->
     <div class="col-md-6 mt-5">
-      <h2>{{ product.name }} {% if product.brand %} {{ product.brand }} {% endif %} {% if product.volume %}
-        {{ product.volume }} {{ product.package_unit.symbol }} {% endif %}</h2>
+      <h2>
+        {{ product.name }}
+        {% if product.brand %} {{ product.brand }} {% endif %}
+        {% if product.volume %}
+          {{ product.volume }} {{ product.package_unit.symbol }}
+        {% endif %}
+      </h2>
 
       <!-- Preço -->
       <div class="mb-3">
         {% if product.promotion_product and product.promotion_product.active %}
-        <p class="text-muted" style="text-decoration: line-through; color: red;">
-          € {{ product.selling_price }}
-        </p>
-        <p class="text-danger" style="font-size: 1.5rem;">
-          € {{ product.promotion_product.promotion_price }}
-        </p>
+          <p class="text-muted" style="text-decoration: line-through; color: red;">
+            € {{ product.selling_price }}
+          </p>
+          <p class="text-danger" style="font-size: 1.5rem;">
+            € {{ product.promotion_product.promotion_price }}
+          </p>
         {% else %}
-        <p style="font-size: 1.5rem;">€ {{ product.selling_price }}</p>
+          <p style="font-size: 1.5rem; font-weight: bold;">€ {{ product.selling_price }}</p>
         {% endif %}
       </div>
 
-      <!-- Quantidade e Botão Adicionar ao Carrinho -->
-      <div class="d-flex align-items-center mb-3">
+      <div class="d-flex justify-content-center align-items-center mb-1 d-grid col-md-4">
+        <!-- Botão de reduzir quantidade -->
         <button class="btn btn-warning btn-quantity-left" type="button"
-          onclick="changeQuantity('{{ product.id }}', 'decrement')">-</button>
+                onclick="changeQuantity('{{ product.id }}', 'decrement')">-</button>
+      
+        <!-- Input para quantidade -->
         <input type="number" id="quantity_{{ product.id }}"
-          class="form-control form-control-sm mx-2 text-center quantity-input no-spinners" value="1" min="1" max="">
-        <button class="btn btn-warning btn-quantity-right" type="button" onclick="changeQuantity('{{ product.id }}', 'increment')">+</button>
+               class="form-control form-control-sm mx-0 text-center quantity-input no-spinners"
+               value="1" min="1" max="">
+      
+        <!-- Botão de aumentar quantidade -->
+        <button class="btn btn-warning btn-quantity-right" type="button"
+                onclick="changeQuantity('{{ product.id }}', 'increment')">+</button>
       </div>
-      <button class="btn btn-warning" type="button" onclick="addToCart('{{ product.id }}')">Adicionar</button>
+      
+      <div class="d-grid gap-3 col-md-4">
+        <!-- Botão de adicionar ao carrinho -->
+        <button class="btn btn-warning" type="button"
+                onclick="addToCart('{{ product.id }}')">Adicionar</button>
+      </div>
+      <hr>
     </div>
   </div>
 
@@ -157,7 +176,7 @@
                 $.ajax({
                     url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
                     success: function(offcanvasResponse) {
-                        var offcanvasElement = $('#cartOffcanvas');
+                        var offcanvasElement = $('#OffcanvasCart');
                         var newContent = $(offcanvasResponse.html);
 
                         // Atualizar o corpo do offcanvas
@@ -172,7 +191,7 @@
                 $.ajax({
                     url: "{% url 'cart_detail' %}",  // URL da view que renderiza o offcanvas completo
                     success: function(offcanvasResponse) {
-                        var offcanvasElement = $('#cartOffcanvas');
+                        var offcanvasElement = $('#OffcanvasCart');
                         
                         // Encontrar e atualizar apenas o conteúdo do #cart-items-container
                         var newContent = $(offcanvasResponse);
@@ -182,7 +201,7 @@
                         offcanvasElement.find('.offcanvas-body').html(newItemsContainer + '<div class="cart-footer">' + footerContent + '</div>');
 
                         // Atualizar o total no footer
-                        $('#cartOffcanvas .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
+                        $('#OffcanvasCart .cart-total-cost').text('€' + response.cart_data.total_cost.toFixed(2).replace('.', ','));
                     },
                     error: function(xhr, status, error) {
                         console.error("Ocorreu um erro ao atualizar o offcanvas: " + error);
@@ -204,19 +223,62 @@
 
 {% block extra_styles %}
 <style>
-  .img-fluid {
-    max-height: 500px;
-    object-fit: contain;
+  .product-image-container {
     width: 100%;
+    max-width: 500px; /* ou defina um valor fixo ou outra lógica de tamanho */
+    height: 500px;    /* altura fixa do 'quadro' */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* se quiser centralizar no container */
+  }
+
+  .product-image-container img.product-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* garante que a imagem seja 'contida' no quadro */
+  }
+
+  /* Altura menor para telas menores que 768px */
+  @media (max-width: 767px) {
+    .product-image-container {
+      height: 400px; /* Altura reduzida para telas menores */
+    }
+  }
+
+  /* Remove os spinners do input de quantidade */
+  .no-spinners {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .no-spinners::-webkit-outer-spin-button,
+  .no-spinners::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Estilização dos botões de quantidade */
+  .btn-quantity-left {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    width: 8rem;
+  }
+
+  .btn-quantity-right {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    width: 8rem;
   }
 
   .quantity-input {
-    width: 60px;
-  }
-
-  .btn-quantity-left,
-  .btn-quantity-right {
-    width: 50px;
+    margin-left: -1px; /* Remove o espaço entre o input e os botões */
+    margin-right: -1px; /* Remove o espaço entre o input e os botões */
+    height: calc(2.25rem + 2px); /* Ajusta a altura para corresponder aos botões */
+    border-radius: 0;
   }
 
   .tab-content-container {

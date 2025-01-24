@@ -15,6 +15,7 @@
 
     <div class="offcanvas-body">
         <div id="cart-items-container">
+            {% if cart.items.all %}
             <!-- Lista de cards para telas menores -->
             <div class="">
                 {% for item in cart.items.all %}
@@ -46,11 +47,27 @@
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <!-- Mensagem de carrinho vazio -->
+            <div class="text-center mt-5">
+                <p class="fs-5">Olá, {{ user.first_name }}.</p>
+                {% if user.is_authenticated %}
+                <p class="fs-6">Seu carrinho está vazio.</p>
+                {% else %}
+                <p class="fs-6">Faça login para recuperar o carrinho que você deixou na última visita ou inicie uma nova.
+                <a href="#" style="color: black; text-decoration: none;" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="bi bi-person-circle user-login-icon"></i> <br>
+                    <span>Login</span>
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
-        <div class="cart-footer mt-3">
-            <p class="text-end">Total: <span class="cart-total-cost">€{{ total_cost|default:"0.00" }}</span></p>
-            <a href="{% url 'cart_detail' %}" class="btn btn-primary w-100">Finalizar Compra</a>
-        </div>
+
+    </div>
+    <div class="cart-footer">
+        <p class="text-end">Total: <span class="cart-total-cost">€{{ total_cost|default:"0.00" }}</span></p>
+        <a href="{% url 'cart_detail' %}" class="btn btn-primary w-100">Finalizar Compra</a>
     </div>
 </div>
 
@@ -123,9 +140,14 @@
         width: 3rem;
         text-align: center;
     }
+
     .offcanvas .cart-footer {
-        margin-top: 1rem;
-        text-align: right;
+        
+        background-color: #e3e3e3; /* Cor de fundo para cobrir o conteúdo embaixo */
+        padding: 1rem;
+        z-index: 10; /* Garante que fique acima do restante */
+        text-align: center;
+        border: none;
     }
 </style>
 {% endblock %}

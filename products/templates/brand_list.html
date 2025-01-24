@@ -41,7 +41,7 @@ Marcas
         </tr>
         {% empty %}
         <tr>
-          <td colspan="3">Nenhuma marca encontrada.</td>
+          <td colspan="3" class="text-center">Nenhuma marca encontrada.</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -66,7 +66,9 @@ Marcas
             searchPlaceholder: "Pesquisar marcas...",
             info: "Exibindo _START_ a _END_ de _TOTAL_ marcas",
             infoEmpty: "Nenhuma marca encontrada",
-            infoFiltered: "(filtrado de _MAX_ marcas no total)"
+            infoFiltered: "(filtrado de _MAX_ marcas no total)",
+            lengthMenu: "Mostrar _MENU_ marcas por página",
+            zeroRecords: "Nenhum resultado encontrado"
           }
       });
   });
