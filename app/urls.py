@@ -12,7 +12,7 @@ from django.conf.urls import handler404
 from .views import custom_page_not_found_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('adm/', admin.site.urls),
 
     path('', include('accounts.urls')),
     path('dashboard/', home, name='dashboard'),

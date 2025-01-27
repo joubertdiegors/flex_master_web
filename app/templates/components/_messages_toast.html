@@ -3,7 +3,13 @@
         {% for message in messages %}
             <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
-                    <strong class="me-auto">{{ message.tags|capfirst }}</strong>
+                    <strong class="me-auto">
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.DEBUG %}Depuração{% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}Informação{% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}Olá, {{ user.first_name }}.{% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}Atenção{% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Erro{% endif %}
+                    </strong>
                     <small class="text-muted">Agora</small>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>

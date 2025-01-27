@@ -32,17 +32,19 @@ def login_view(request):
             request.session['old_session_key'] = old_session_key
             
             if not user.is_superuser and not user.is_staff:
-                return redirect('/')
+                messages.success(request, "Seu login foi realizado com sucesso!")
+                return redirect(request.META.get('HTTP_REFERER', '/'))
+            messages.success(request, "Bem vindo ao painel administrativo!")
             return redirect('dashboard')
         else:
-            login_form = AuthenticationForm()
-    else:
-        login_form = AuthenticationForm()
-    return render(request, 'login.html', {'login_form': login_form})
+            # Adiciona uma mensagem de erro para o modal
+            messages.error(request, "Usuário ou senha incorretos.")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 def logout_view(request):
     logout(request)
-    return redirect('/')
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 class RegisterBasicView(View):
     template_name = 'register_basic.html'

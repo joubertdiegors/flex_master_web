@@ -7,6 +7,9 @@
 
         <!-- Dropdown Menu -->
         <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu" aria-labelledby="{{ dropdown_id }}">
+            {% if user.is_superuser or user.is_staff %}
+            <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
+            {% endif %}
             <li><a class="dropdown-item" href="{% url 'customer_profile' %}">Minha Conta</a></li>
             <li><a class="dropdown-item" href="#">Meus Pedidos</a></li>
             <li><a class="dropdown-item" href="#">Minha Lista</a></li>

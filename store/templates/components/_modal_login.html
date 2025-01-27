@@ -1,5 +1,5 @@
 <!-- Modal de Login -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true" data-login-error="{% if login_error %}1{% else %}0{% endif %}">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,12 +7,18 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'gestao' %}">
+                {% if messages %}
+                    <div class="alert alert-danger">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="id_username" class="form-label">Email / Usuário:</label>
-                        <input type="text" class="form-control" id="id_username" name="username"
-                            placeholder="Digite seu email">
+                        <input type="text" class="form-control" id="id_username" name="username" placeholder="Digite seu email">
                     </div>
                     <div class="mb-3">
                         <label for="id_password" class="form-label">Senha:</label>
@@ -32,3 +38,19 @@
         </div>
     </div>
 </div>
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Obter o modal e o valor do atributo data-login-error
+        var loginModalElement = document.getElementById('loginModal');
+        var loginError = loginModalElement.getAttribute('data-login-error');
+
+        // Verificar se o erro existe e é "1"
+        if (loginError === "1") {
+            var loginModal = new bootstrap.Modal(loginModalElement);
+            loginModal.show(); // Mostrar o modal novamente
+        }
+    });
+</script>
+{% endblock %}

@@ -18,7 +18,7 @@
                     {% if user.is_authenticated %}
                         Bem-vindo, {{ user.username }}!
                     {% else %}
-                        <a href="{% url 'login' %}" class="text-white">Login</a>
+                        <span>Faça o login</span>
                     {% endif %}
                 </span>
                 <br>
