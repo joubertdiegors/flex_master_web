@@ -19,7 +19,10 @@
             <!-- Lista de cards para telas menores -->
             <div class="">
                 {% for item in cart.items.all %}
-                <div class="card mb-3" id="cart-item-card-{{ item.product.id }}">
+                <div class="card mb-3 position-relative" id="cart-item-card-{{ item.product.id }}">
+                    <button type="button" class="btn-close-card btn btn-danger position-absolute top-0 end-0 m-2" onclick="removeItemFromCart('{{ item.product.id }}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
                     <div class="card-body">
                         <h5 class="card-title">
                             {{ item.product.name }} {% if item.product.brand %} {{ item.product.brand }} {% endif %} {% if item.product.volume %} {{ item.product.volume }} {{ item.product.volume_unit.symbol }} {% endif %}
@@ -33,14 +36,13 @@
                                 {% endif %}
                             </div>
                             <div class="col-8">
-                                <p class="card-text">Preço: €{{ item.price }}</p>
+                                <p class="">Preço: €{{ item.price }}</p>
                                 <div class="d-flex align-items-center mb-2">
                                     <button class="btn btn-outline-secondary btn-quantity-left" type="button" onclick="updateQuantity('{{ item.product.id }}', 'card', 'decrement')">-</button>
                                     <input type="number" id="quantity_card_{{ item.product.id }}" class="form-control form-control-sm mx-0 text-center quantity-input no-spinners" value="{{ item.quantity }}" min="1" step="1">
                                     <button class="btn btn-outline-secondary btn-quantity-right" type="button" onclick="updateQuantity('{{ item.product.id }}', 'card', 'increment')">+</button>
                                 </div>
-                                <p class="card-text">Total: €<span class="total" data-product-id="{{ item.product.id }}">{{ item.get_cost }}</span></p>
-                                <button type="button" class="btn btn-danger" onclick="removeItemFromCart('{{ item.product.id }}')"><i class="bi bi-trash"></i></button>
+                                <p class="card-text-total-item">Total: €<span class="total" data-product-id="{{ item.product.id }}">{{ item.get_cost }}</span></p>
                             </div>
                         </div>
                     </div>
@@ -67,7 +69,7 @@
 
     </div>
     <div class="cart-footer">
-        <p class="text-end">Total: <span class="cart-total-cost">€{{ total_cost|default:"0.00" }}</span></p>
+        <p class="text-end-footer">Total: <span class="cart-total-cost">€{{ total_cost|default:"0.00" }}</span></p>
         <a href="{% url 'cart_detail' %}" class="btn btn-primary w-100">Finalizar Compra</a>
     </div>
 </div>
@@ -113,6 +115,22 @@
         border: 1px solid #dee2e6;
         border-radius: 8px;
     }
+
+    .btn-close-card {
+        z-index: 10;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .btn-close-card i {
+        pointer-events: none; /* Permite clicar em qualquer parte do botão */
+    }
+
     .offcanvas .card .card-body {
         padding: 0.75rem;
     }
@@ -120,33 +138,41 @@
         font-size: 1rem;
         margin-bottom: 0.5rem;
     }
-    .offcanvas .card .card-text {
-        margin-bottom: 0.5rem;
+    .offcanvas .card .card-text-total-item {
+        margin-bottom: 0rem;
+        font-weight: bold;
+        text-align: end;
     }
     .offcanvas .btn-quantity-left {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
-        width: 2rem;
+        width: 4rem;
     }
     .offcanvas .btn-quantity-right {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
-        width: 2rem;
+        width: 4rem;
     }
     .offcanvas .quantity-input {
         margin-left: -1px;
         margin-right: -1px;
         height: calc(2.25rem + 2px);
         border-radius: 0;
-        width: 3rem;
+        width: 4rem;
         text-align: center;
     }
-
+    
     .cart-footer {
         background-color: #e3e3e3; /* Cor de fundo para cobrir o conteúdo embaixo */
         padding: 1rem;
         text-align: center;
         border: none;
+    }
+    
+    .offcanvas .text-end-footer {
+        margin-bottom: 1rem;
+        font-weight: bold;
+        text-align: center;
     }
 </style>
 {% endblock %}
