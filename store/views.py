@@ -48,7 +48,9 @@ class StoreProductListView(View):
         products = Product.objects.all()
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         brands = Brand.objects.all()
-        countries = Country.objects.all()
+        
+        # Filtrar apenas os países que têm produtos associados
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Pegando o valor de produtos por página do request, ou definindo o padrão como 16
         products_per_page = request.GET.get('products_per_page', 16)
@@ -96,7 +98,7 @@ class ProductsByCategoryView(View):
         
         # Obtenha todas as marcas e países
         brands = Brand.objects.all()
-        countries = Country.objects.all()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
         
         # Pegue o valor de produtos por página do request, ou defina o padrão como 16
         products_per_page = request.GET.get('products_per_page', 16)
@@ -131,7 +133,7 @@ class ProductsByBrandView(View):
         products = Product.objects.filter(brand=brand)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         brands = Brand.objects.all()
-        countries = Country.objects.all()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Pegando o valor de produtos por página do request, ou definindo o padrão como 16
         products_per_page = request.GET.get('products_per_page', 16)
@@ -161,7 +163,7 @@ class ProductsByCountryView(View):
         products = Product.objects.filter(country=country)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         brands = Brand.objects.all()
-        countries = Country.objects.all()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Pegando o valor de produtos por página do request, ou definindo o padrão como 16
         products_per_page = request.GET.get('products_per_page', 16)
@@ -191,7 +193,7 @@ class SearchProductView(View):
         products = Product.objects.all()
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         brands = Brand.objects.all()
-        countries = Country.objects.all()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Pegando o valor de produtos por página do request, ou definindo o padrão como 16
         products_per_page = request.GET.get('products_per_page', 16)
@@ -244,7 +246,7 @@ class StoreProductBestSellerView(View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         brands = Brand.objects.all()
-        countries = Country.objects.all()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
         best_seller_products = BestSellerProduct.objects.all()
 
         # Obtendo os produtos correspondentes aos produtos mais vendidos
@@ -275,7 +277,7 @@ class StoreProductFreshListView(View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         brands = Brand.objects.all()
-        countries = Country.objects.all()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Obtendo os produtos novos
         fresh_products = FreshProducts.objects.all()
@@ -309,7 +311,7 @@ class StoreProductPromotionsView(View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         brands = Brand.objects.all()
-        countries = Country.objects.all()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
         promotions = Promotion.objects.all()
 
         products = [promotion.product for promotion in promotions]
