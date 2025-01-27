@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.utils.timezone import now
+from datetime import timedelta
 
 from PIL import Image as PILImage
 from io import BytesIO
@@ -72,6 +74,10 @@ class Customer(models.Model):
     image = models.ImageField(upload_to='customers/images/', blank=True, null=True)
     is_email_verified = models.BooleanField(default=False)
     status = models.ForeignKey(CustomerState, on_delete=models.PROTECT, blank=True, null=True)
+
+    email_verification_code = models.CharField(max_length=6, blank=True, null=True)
+    email_verification_code_expiry = models.DateTimeField(blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='customer_created_user', on_delete=models.PROTECT, default=1)
@@ -84,6 +90,12 @@ class Customer(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+    def generate_verification_code(self):
+        from random import randint
+        self.email_verification_code = f"{randint(100000, 999999)}"
+        self.email_verification_code_expiry = now() + timedelta(minutes=2880)  # Código válido por 2 dias
+        self.save()
     
     def save(self, *args, **kwargs):
         print("Dados do Customer antes de salvar:", self.__dict__)

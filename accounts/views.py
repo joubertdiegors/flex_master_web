@@ -1,23 +1,19 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout, views as auth_views
 from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.utils import timezone
+from django.utils.timezone import now
 from django.utils.html import strip_tags
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
 from django.urls import reverse
 
 from .forms import UserBasicRegistrationForm, CustomerBasicRegistrationForm, CustomerCompleteRegistrationForm
 from .mixins.mixins import CustomerAccessMixin
 from customers.models import Customer, CustomerState, CustomerType
 from products.models import Category
-from .tokens import email_verification_token
 
 def login_view(request):
     if request.method == "POST":
@@ -80,16 +76,17 @@ class RegisterBasicView(View):
             customer.last_name = new_user.last_name
             customer.email = new_user.email
             customer.created_by = new_user
+            customer.generate_verification_code()  # Gera o código de verificação
             customer.save()
 
             #Verifica o e-mail informado
-            send_verification_email(customer, request)
+            send_verification_code(customer)
 
             # Logar o usuário automaticamente
             login(request, new_user)
 
             # Redireciona para a página de confirmação do e-mail com PRG
-            return redirect('email_confirmation_sent', email=new_user.email)
+            return redirect('verify_email')
         
         else:
             # Formulários inválidos: retorna para a mesma página mostrando os erros
@@ -104,106 +101,74 @@ class RegisterBasicView(View):
             }
             return render(request, self.template_name, context)
 
-class EmailConfirmationSentView(View):
-    template_name = 'email_confirmation_sent.html'
+def send_verification_code(customer):
+    html_message = render_to_string('emails/verification_code_email.html', {
+        'customer': customer,
+        'code': customer.email_verification_code,
+    })
+    plain_message = strip_tags(html_message)
+    send_mail(
+        subject="Seu Código de Verificação - Sacolão",
+        message=plain_message,
+        from_email="noreply@sacolao.be",
+        recipient_list=[customer.email],
+        html_message=html_message,
+    )
+
+class EmailVerificationView(View):
+    template_name = "verify_email.html"
 
     def get(self, request, *args, **kwargs):
-        # Verifica se o cliente está autenticado
-        if not request.user.is_authenticated:
-            return redirect('/')  # Redireciona para a página principal se não estiver autenticado
+        if not request.user.is_authenticated:  # Garante que o usuário está logado
+            messages.error(request, "Você precisa estar logado para verificar seu e-mail.")
+            return redirect("login")
 
-        email = kwargs.get('email')
+        customer = request.user.customer_profile
 
-        # Verifica se o email pertence ao usuário autenticado
-        if email != request.user.email:
-            return redirect('/')  # Redireciona para a página principal se o email não pertencer ao usuário
+        # Verifica se o e-mail já foi verificado
+        if customer.is_email_verified:
+            messages.info(request, "Seu e-mail já foi verificado.")
+            return redirect("/")  # Redireciona para o dashboard
 
-        # Recupera categorias e mantém o contexto
+        # Contexto para renderizar a página
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         context = {
-            'email': email,
             'categories': categories,
             'is_not_list_page': True,
             'breadcrumb_off': True,
         }
+
+        # Renderiza a página de verificação
         return render(request, self.template_name, context)
 
-def send_verification_email(customer, request):
-    try:
-        # Gera o uidb64 (ID codificado)
-        uid = urlsafe_base64_encode(force_bytes(customer.pk))
-        # Gera o token de verificação
-        token = email_verification_token.make_token(customer)
-        
-        # Monta a URL de ativação (/activate/<uidb64>/<token>/)
-        activate_url = request.build_absolute_uri(
-            reverse('activate', kwargs={'uidb64': uid, 'token': token})
-        )
-        
-        # Exemplo de template HTML para o e-mail
-        html_content = render_to_string('emails/verification_email.html', {
-            'customer': customer,
-            'activate_url': activate_url,
-        })
-        plain_message = strip_tags(html_content)
-        
-        subject = "Ative sua conta para continuar"
-        from_email = None  # Usa o DEFAULT_FROM_EMAIL se configurado
-        recipient_list = [customer.email]
-        
-        send_mail(
-            subject,
-            plain_message,
-            from_email,
-            recipient_list,
-            html_message=html_content,
-            fail_silently=False,
-        )
-    except Exception as e:
-        print(f"Erro ao enviar e-mail: {e}")
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:  # Garante que o usuário está logado
+            messages.error(request, "Você precisa estar logado para verificar seu e-mail.")
+            return redirect("login")
 
-def activate_email(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        customer = get_object_or_404(Customer, pk=uid)
-    except (TypeError, ValueError, OverflowError):
-        customer = None
+        customer = request.user.customer_profile
+        code = request.POST.get("verification_code")
 
-    # Se o objeto Customer for inválido, ou se o token não for mais válido
-    if not customer or not email_verification_token.check_token(customer, token):
-        # Aqui token está inválido/expirado.
-        # Exibir página customizada, calculando quantos dias faltam ou já expirou
-        days_passed = (timezone.now() - customer.created_at).days if customer else 0
-        # Se o token expira em 5 dias (432000s), calcule:
-        days_left = 5 - days_passed
-
+        # Verifica se o código está correto e não expirou
+        if code == customer.email_verification_code and customer.email_verification_code_expiry > now():
+            customer.is_email_verified = True
+            customer.email_verification_code = None
+            customer.email_verification_code_expiry = None
+            customer.save()
+            messages.success(request, "E-mail verificado com sucesso! Por favor, complete o seu cadastro.")
+            return redirect('complete_registration', customer_id=customer.id)
+        else:
+            messages.error(request, "Código inválido ou expirado. Tente novamente.")
+        
+        # Contexto para recarregar a página com erro
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-
         context = {
-            'customer': customer,
-            'days_left': days_left,
             'categories': categories,
             'is_not_list_page': True,
             'breadcrumb_off': True,
         }
-        return render(request, 'expired_token.html', context)
 
-    # Se o token está válido, prossegue com a ativação
-    customer.is_email_verified = True
-    customer.save()
-    messages.success(request, "Seu e-mail foi confirmado com sucesso!")
-    return redirect('complete_registration', customer_id=customer.id)
-
-def resend_verification(request, customer_id):
-    if request.method == 'POST':
-        customer = get_object_or_404(Customer, pk=customer_id)
-        if not customer.is_email_verified:
-            # Gera novo token, reenvia e-mail
-            send_verification_email(customer, request)
-            messages.success(request, "Um novo e-mail de verificação foi enviado.")
-        else:
-            messages.info(request, "O e-mail deste usuário já foi verificado.")
-    return redirect('/')
+        return render(request, self.template_name, context)
 
 class CompleteRegistrationView(CustomerAccessMixin, View):
     template_name = 'complete_registration.html'

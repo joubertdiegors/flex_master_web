@@ -4,11 +4,9 @@ from . import views
 
 urlpatterns = [
     path('login', views.login_view, name='login'),
+    
     path('register/', views.RegisterBasicView.as_view(), name='register'),
-    path('activate/<uidb64>/<token>/', views.activate_email, name='activate'),
-    path('resend_verification/<int:customer_id>/', views.resend_verification, name='resend_verification'),
-    path('email_confirmation_sent/<str:email>/', views.EmailConfirmationSentView.as_view(), name='email_confirmation_sent'),
-
+    path('verify-email/', views.EmailVerificationView.as_view(), name='verify_email'),
     path('complete_registration/<int:customer_id>/', views.CompleteRegistrationView.as_view(), name='complete_registration'),
     path('logout/', views.logout_view, name='logout'),
 

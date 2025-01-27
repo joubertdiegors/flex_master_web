@@ -1,0 +1,43 @@
+{% extends "base_store.html" %}
+{% block title %}Verificar E-mail{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white text-center">
+                <h1>Verificação de E-mail</h1>
+            </div>
+            <div class="card-body text-center">
+                <p class="mb-4">
+                    Enviamos um código de verificação para o seu e-mail: <strong>{{ request.user.email }}</strong>.
+                </p>
+                <p class="mb-4">
+                    Por favor, insira o código abaixo para confirmar sua conta.
+                </p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="verification_code" class="form-label">Código de Verificação:</label>
+                        <input 
+                            type="text" 
+                            id="verification_code" 
+                            name="verification_code" 
+                            class="form-control text-center" 
+                            placeholder="Digite o código de 6 dígitos" 
+                            maxlength="6"
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 mt-3">Verificar</button>
+                </form>
+                <p class="mt-4">
+                    Não recebeu o e-mail? Verifique sua <strong>caixa de spam</strong> ou <strong>lixo eletrônico</strong>.
+                </p>
+                <p>
+                    Caso ainda não encontre, você pode solicitar o suporte de nossa equipe através do nosso whatsapp ou por telefone: <br> 📱<strong>+32 469 12 4469</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
