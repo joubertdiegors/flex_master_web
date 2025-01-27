@@ -5,8 +5,8 @@ from customers.models import Customer
 import re
 
 class UserBasicRegistrationForm(forms.ModelForm):
-    first_name = forms.CharField(label='Nome', widget=forms.TextInput(attrs={'placeholder': 'José/Maria'}))
-    last_name = forms.CharField(label='Sobrenome', widget=forms.TextInput(attrs={'placeholder': 'Ramos/Silva'}))
+    first_name = forms.CharField(label='Nome', widget=forms.TextInput(attrs={'placeholder': 'Diego'}))
+    last_name = forms.CharField(label='Sobrenome', widget=forms.TextInput(attrs={'placeholder': 'Costa Ramos'}))
     email = forms.EmailField(label='e-mail', widget=forms.EmailInput(attrs={'placeholder': 'email@gmail.com'}))
     password = forms.CharField(widget=forms.PasswordInput, label='Senha')
     password2 = forms.CharField(widget=forms.PasswordInput, label='Confirme a senha')
