@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from unidecode import unidecode
-from django.views.generic import View, DetailView
+from django.views.generic import View
 from products.models import Product, Brand, Ingredients, NutritionalInfo
 from promotions.models import Promotion
 from categories.models import Category
@@ -47,9 +47,9 @@ class StoreProductListView(View):
     def get(self, request, *args, **kwargs):
         products = Product.objects.all()
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        brands = Brand.objects.all()
         
-        # Filtrar apenas os países que têm produtos associados
+        # Filtrar apenas marcas e países que têm produtos associados
+        brands = Brand.objects.filter(products_brand__isnull=False).distinct()
         countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Pegando o valor de produtos por página do request, ou definindo o padrão como 16
@@ -96,8 +96,8 @@ class ProductsByCategoryView(View):
         # Obtenha todas as categorias de nível superior para o menu de navegação
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         
-        # Obtenha todas as marcas e países
-        brands = Brand.objects.all()
+        # Filtrar apenas marcas e países que têm produtos associados
+        brands = Brand.objects.filter(products_brand__isnull=False).distinct()
         countries = Country.objects.filter(products_country__isnull=False).distinct()
         
         # Pegue o valor de produtos por página do request, ou defina o padrão como 16
@@ -132,7 +132,9 @@ class ProductsByBrandView(View):
         brand = get_object_or_404(Brand, name=brand_name)
         products = Product.objects.filter(brand=brand)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        brands = Brand.objects.all()
+        
+        # Filtrar apenas marcas e países que têm produtos associados
+        brands = Brand.objects.filter(products_brand__isnull=False).distinct()
         countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Pegando o valor de produtos por página do request, ou definindo o padrão como 16
@@ -162,7 +164,9 @@ class ProductsByCountryView(View):
         country = get_object_or_404(Country, name=country_name)
         products = Product.objects.filter(country=country)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        brands = Brand.objects.all()
+        
+        # Filtrar apenas marcas e países que têm produtos associados
+        brands = Brand.objects.filter(products_brand__isnull=False).distinct()
         countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Pegando o valor de produtos por página do request, ou definindo o padrão como 16
@@ -192,7 +196,9 @@ class SearchProductView(View):
         search_query = request.GET.get('q')
         products = Product.objects.all()
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        brands = Brand.objects.all()
+        
+        # Filtrar apenas marcas e países que têm produtos associados
+        brands = Brand.objects.filter(products_brand__isnull=False).distinct()
         countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Pegando o valor de produtos por página do request, ou definindo o padrão como 16
@@ -245,9 +251,11 @@ class StoreProductBestSellerView(View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        brands = Brand.objects.all()
-        countries = Country.objects.filter(products_country__isnull=False).distinct()
         best_seller_products = BestSellerProduct.objects.all()
+
+        # Filtrar apenas marcas e países que têm produtos associados
+        brands = Brand.objects.filter(products_brand__isnull=False).distinct()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Obtendo os produtos correspondentes aos produtos mais vendidos
         products = [best_seller.product for best_seller in best_seller_products]
@@ -276,7 +284,9 @@ class StoreProductFreshListView(View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        brands = Brand.objects.all()
+        
+        # Filtrar apenas marcas e países que têm produtos associados
+        brands = Brand.objects.filter(products_brand__isnull=False).distinct()
         countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Obtendo os produtos novos
@@ -310,9 +320,11 @@ class StoreProductPromotionsView(View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        brands = Brand.objects.all()
-        countries = Country.objects.filter(products_country__isnull=False).distinct()
         promotions = Promotion.objects.all()
+        
+        # Filtrar apenas marcas e países que têm produtos associados
+        brands = Brand.objects.filter(products_brand__isnull=False).distinct()
+        countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         products = [promotion.product for promotion in promotions]
 
