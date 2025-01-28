@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.utils import timezone
 from unidecode import unidecode
 from django.views.generic import View
 from products.models import Product, Brand, Ingredients, NutritionalInfo
@@ -17,6 +18,8 @@ class StoreHomeView(View):
     template_name = 'store_home.html'
 
     def get(self, request, *args, **kwargs):
+        current_date = timezone.now().date()  # Obtém a data atual sem o tempo
+        
         products = Product.objects.all()
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         highlighted_brands = HighlightedBrand.objects.filter(is_active=True)
@@ -24,7 +27,13 @@ class StoreHomeView(View):
         banners = Banner.objects.all()
         best_seller_products = list(BestSellerProduct.objects.all())
         fresh_products = list(FreshProducts.objects.all())
-        promotions = list(Promotion.objects.all())
+        
+        # Filtra promoções válidas pela data de início e fim
+        promotions = Promotion.objects.filter(
+            start_date__lte=current_date,  # Promoção já iniciada
+            end_date__gte=current_date,    # Promoção ainda válida
+            active=True                    # Promoção ativa
+        )
         
         context = {
             'products': products,

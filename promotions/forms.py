@@ -29,8 +29,14 @@ class PromotionForm(forms.ModelForm):
 
         widgets = {
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'start_date': forms.DateInput(
+                attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'},
+                format='%Y-%m-%d'
+            ),
+            'end_date': forms.DateInput(
+                attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'},
+                format='%Y-%m-%d'
+            ),
             'active': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'})
         }
         labels = {
@@ -42,5 +48,9 @@ class PromotionForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Garantir que o formato das datas seja compatível com o widget
+        if self.instance and self.instance.pk:
+            self.fields['start_date'].initial = self.instance.start_date.strftime('%Y-%m-%d') if self.instance.start_date else ''
+            self.fields['end_date'].initial = self.instance.end_date.strftime('%Y-%m-%d') if self.instance.end_date else ''
         self.fields['product'].queryset = Product.objects.all()
         self.fields['product'].label_from_instance = lambda obj: f"{obj.name} - {obj.brand if obj.brand else ''} {obj.volume if obj.volume else ''} {obj.package_unit.symbol if obj.package_unit else ''}"
