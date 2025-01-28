@@ -25,14 +25,22 @@
                     </button>
                     <div class="card-body">
                         <h5 class="card-title">
-                            {{ item.product.name }} {% if item.product.brand %} {{ item.product.brand }} {% endif %} {% if item.product.volume %} {{ item.product.volume }} {{ item.product.volume_unit.symbol }} {% endif %}
+                            <a href="{% url 'store_product_detail' item.product.id item.product.name %}" class="product-link">
+                                {{ item.product.name }}
+                            {% if item.product.brand %} 
+                                {{ item.product.brand }} 
+                            {% endif %}
+                            {% if item.product.volume %} 
+                                {{ item.product.volume }} {{ item.product.volume_unit.symbol }}
+                            {% endif %}
+                            </a>
                         </h5>
                         <div class="row">
-                            <div class="col-4 text-center align-middle">
+                            <div class="col-4 text-center align-middle image-container">
                                 {% if item.product.image %}
-                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="width: auto; height: 80px;">
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail product-image">
                                 {% else %}
-                                <img src="{{ product_default_url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="width: auto; height: 80px;">
+                                <img src="{{ product_default_url }}" alt="{{ item.product.name }}" class="img-thumbnail product-image">
                                 {% endif %}
                             </div>
                             <div class="col-8">
@@ -108,6 +116,35 @@
         font-size: 1.5em; /* Fonte maior */
         font-weight: bold;
         color: rgb(19, 80, 64);
+    }
+
+    /* Estilização do link do título */
+    .product-link {
+        text-decoration: none; /* Remove sublinhado */
+        color: #000000; /* Azul para indicar que é um link */
+    }
+
+    /* Efeito hover para o link */
+    .product-link:hover {
+        color: #03a000; /* Escurece a cor no hover */
+    }
+
+    /* Contêiner fixo para a imagem */
+    .image-container {
+        width: 100px; /* Largura fixa do quadro */
+        height: 120px; /* Altura fixa do quadro */
+        display: flex;
+        align-items: center; /* Centraliza verticalmente */
+        justify-content: center; /* Centraliza horizontalmente */
+        overflow: hidden; /* Esconde parte da imagem caso ultrapasse os limites */
+        border-radius: 8px; /* Bordas arredondadas */
+    }
+
+    /* Estilo para as imagens dentro do contêiner */
+    .product-image {
+        max-width: 100%; /* Ajusta a largura sem ultrapassar o quadro */
+        max-height: 100%; /* Ajusta a altura sem ultrapassar o quadro */
+        object-fit: contain; /* Garante que a imagem seja ajustada dentro do contêiner */
     }
 
     /* Estilos para o offcanvas */
