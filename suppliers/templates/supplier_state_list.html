@@ -11,7 +11,7 @@ Estados do Fornecedor
   <div class="col-md-6">
     <form method="get" action="{% url 'supplier_state_list' %}">
       <div class="input-group">
-        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}" id="">
+        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}">
         <button type="submit" class="btn btn-primary">
           <i class="bi bi-search"></i>
         </button>
@@ -27,13 +27,11 @@ Estados do Fornecedor
 </div>
 
 <div class="table-responsive">
-  <table class="table table-striped table-bordered">
+  <table id="supplierStateTable" class="table table-striped table-bordered">
     <thead class="thead-dark">
       <tr>
         <th>ID</th>
         <th>Nome</th>
-        <!-- Adicione mais colunas conforme necessário -->
-
         <th>Ações</th>
       </tr>
     </thead>
@@ -42,13 +40,10 @@ Estados do Fornecedor
       <tr>
         <td>{{ supplierstate.pk }}</td>
         <td>{{ supplierstate.name }}</td>
-        <!-- Adicione mais colunas conforme necessário -->
-
         <td>
           <a href="{% url 'supplier_state_detail' supplierstate.pk %}" class="btn btn-info btn-sm">
             <i class="bi bi-eye"></i> Detalhes
           </a>
-
           <a href="{% url 'supplier_state_update' supplierstate.pk %}" class="btn btn-warning btn-sm">
             <i class="bi bi-pencil"></i> Editar
           </a>
@@ -59,4 +54,26 @@ Estados do Fornecedor
   </table>
 </div>
 
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(document).ready(function() {
+      $('#supplierStateTable').DataTable({
+          order: [[1, 'asc']],
+          paging: true,
+          searching: true,
+          info: true,
+          ordering: true,
+          language: {
+            lengthMenu: "Exibir _MENU_ por página",
+            search: "Buscar:",
+            searchPlaceholder: "Pesquisar estados...",
+            info: "Exibindo _START_ a _END_ de _TOTAL_ estados",
+            infoEmpty: "Nenhum estado encontrado",
+            infoFiltered: "(filtrado de _MAX_ estados no total)"
+          }
+      });
+  });
+</script>
 {% endblock %}

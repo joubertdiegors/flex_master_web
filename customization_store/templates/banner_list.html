@@ -7,25 +7,17 @@ Lista de Banners
 {% block content %}
 <div class="row mb-3">
     <div class="col-md-6">
-        <form method="get" action="{% url 'banner_list' %}">
-            <div class="input-group">
-                <input type="text" class="form-control" name="title" placeholder="Título do Banner"
-                    value="{{ request.GET.title }}" id="">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
-        </form>
+        <h2>Banners</h2>
     </div>
     <div class="col-md-6 text-end">
-        <a href="{% url 'banner_create' %}" class="btn btn-success me-2">
-            <i class="bi bi-plus"></i> Novo Banner
+        <a href="{% url 'banner_create' %}" class="btn btn-success">
+            <i class="bi bi-plus"></i> Adicionar um novo
         </a>
     </div>
 </div>
 
 <div class="table-responsive">
-    <table class="table table-striped table-bordered">
+    <table id="bannerTable" class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>Título</th>
@@ -53,7 +45,7 @@ Lista de Banners
                 <td><a href="{{ banner.link }}">{{ banner.link }}</a></td>
                 <td>{{ banner.start_date }}</td>
                 <td>{{ banner.end_date }}</td>
-                <td>{{ banner.active }}</td>
+                <td>{{ banner.active|yesno:"Sim,Não" }}</td>
                 <td>
                     <a href="{% url 'banner_update' pk=banner.pk %}" class="btn btn-primary btn-sm">Editar</a>
                     <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
@@ -88,12 +80,29 @@ Lista de Banners
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Lógica para definir o formulário de exclusão dinamicamente
+    $(document).ready(function() {
+        $('#bannerTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            language: {
+                lengthMenu: "Exibir _MENU_ por página",
+                search: "Buscar:",
+                searchPlaceholder: "Pesquisar banners...",
+                info: "Exibindo _START_ a _END_ de _TOTAL_ banners",
+                infoEmpty: "Nenhum banner encontrado",
+                infoFiltered: "(filtrado de _MAX_ banners no total)"
+            }
+        });
+
+        // Lógica para configurar o modal dinamicamente
         document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 const formId = this.getAttribute('data-form-id');
                 const itemName = this.getAttribute('data-item-name');
                 const deleteForm = document.getElementById('delete-form');

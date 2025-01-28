@@ -11,7 +11,7 @@ Fornecedores
   <div class="col-md-6">
     <form method="get" action="{% url 'supplier_list' %}">
       <div class="input-group">
-        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}" id="">
+        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}">
         <button type="submit" class="btn btn-primary">
           <i class="bi bi-search"></i>
         </button>
@@ -27,15 +27,13 @@ Fornecedores
 </div>
 
 <div class="table-responsive">
-  <table class="table table-striped table-bordered">
+  <table id="supplierTable" class="table table-striped table-bordered">
     <thead class="thead-dark">
       <tr>
         <th>ID</th>
         <th>Nome</th>
         <th>Tipo</th>
         <th>Status</th>
-        <!-- Adicione mais colunas conforme necessário -->
-
         <th>Ações</th>
       </tr>
     </thead>
@@ -46,13 +44,10 @@ Fornecedores
         <td>{{ supplier.name }}</td>
         <td>{{ supplier.type }}</td>
         <td>{{ supplier.status }}</td>
-        <!-- Adicione mais colunas conforme necessário -->
-
         <td>
           <a href="{% url 'supplier_detail' supplier.pk %}" class="btn btn-info btn-sm">
             <i class="bi bi-eye"></i> Detalhes
           </a>
-
           <a href="{% url 'supplier_update' supplier.pk %}" class="btn btn-warning btn-sm">
             <i class="bi bi-pencil"></i> Editar
           </a>
@@ -63,4 +58,26 @@ Fornecedores
   </table>
 </div>
 
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(document).ready(function() {
+      $('#supplierTable').DataTable({
+          order: [[1, 'asc']],
+          paging: true,
+          searching: true,
+          info: true,
+          ordering: true,
+          language: {
+            lengthMenu: "Exibir _MENU_ por página",
+            search: "Buscar:",
+            searchPlaceholder: "Pesquisar fornecedores...",
+            info: "Exibindo _START_ a _END_ de _TOTAL_ fornecedores",
+            infoEmpty: "Nenhum fornecedor encontrado",
+            infoFiltered: "(filtrado de _MAX_ fornecedores no total)"
+          }
+      });
+  });
+</script>
 {% endblock %}

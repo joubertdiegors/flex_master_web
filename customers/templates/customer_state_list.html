@@ -11,7 +11,7 @@ Estados do Cliente
   <div class="col-md-6">
     <form method="get" action="{% url 'customer_state_list' %}">
       <div class="input-group">
-        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}" id="">
+        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}">
         <button type="submit" class="btn btn-primary">
           <i class="bi bi-search"></i>
         </button>
@@ -27,13 +27,11 @@ Estados do Cliente
 </div>
 
 <div class="table-responsive">
-  <table class="table table-striped table-bordered">
+  <table id="customerStateTable" class="table table-striped table-bordered">
     <thead class="thead-dark">
       <tr>
         <th>ID</th>
         <th>Nome</th>
-        <!-- Adicione mais colunas conforme necessário -->
-
         <th>Ações</th>
       </tr>
     </thead>
@@ -42,13 +40,10 @@ Estados do Cliente
       <tr>
         <td>{{ customerstate.pk }}</td>
         <td>{{ customerstate.name }}</td>
-        <!-- Adicione mais colunas conforme necessário -->
-
         <td>
           <a href="{% url 'customer_state_detail' customerstate.pk %}" class="btn btn-info btn-sm">
             <i class="bi bi-eye"></i> Detalhes
           </a>
-
           <a href="{% url 'customer_state_update' customerstate.pk %}" class="btn btn-warning btn-sm">
             <i class="bi bi-pencil"></i> Editar
           </a>
@@ -59,4 +54,26 @@ Estados do Cliente
   </table>
 </div>
 
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(document).ready(function() {
+      $('#customerStateTable').DataTable({
+          order: [[1, 'asc']],
+          paging: true,
+          searching: true,
+          info: true,
+          ordering: true,
+          language: {
+            lengthMenu: "Exibir _MENU_ por página",
+            search: "Buscar:",
+            searchPlaceholder: "Pesquisar estados...",
+            info: "Exibindo _START_ a _END_ de _TOTAL_ estados",
+            infoEmpty: "Nenhum estado encontrado",
+            infoFiltered: "(filtrado de _MAX_ estados no total)"
+          }
+      });
+  });
+</script>
 {% endblock %}

@@ -6,77 +6,75 @@ Filiais
 
 {% block content %}
 
-<div class="row mb-3">
-
-  <div class="col-md-6">
-    <form method="get" action="{% url 'branch_list' %}">
-      <div class="input-group">
-        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}" id="">
-        <button type="submit" class="btn btn-primary">
-          <i class="bi bi-search"></i>
-        </button>
-      </div>
-    </form>
-  </div>
-  
-  <div class="col-md-6">
-    <a href="{% url 'branch_create' %}" class="btn btn-success float-end">
-      <i class="bi bi-plus"></i> Nova Filial
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Lista de Filiais</h2>
+    <a href="{% url 'branch_create' %}" class="btn btn-success">
+        <i class="bi bi-plus"></i> Nova Filial
     </a>
   </div>
-</div>
 
-<div class="table-responsive">
-  <table class="table table-striped table-bordered">
-    <thead class="thead-dark">
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Telefone</th>
-        <th>E-mail</th>
-        <th>Endereço</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for branch in branches %}
-      <tr>
-        <td>{{ branch.id }}</td>
-        <td>{{ branch.name }}</td>
-        <td>{{ branch.phone|default_if_none:"" }}</td>
-        <td>{{ branch.email|default_if_none:"" }}</td>
-        <td>
-            {% if branch.street %}
-              {{ branch.street }},
-            {% endif %}
-            {% if branch.number %}
-              {{ branch.number }},
-            {% endif %}
-            {% if branch.city %}
-              {{ branch.city }} - 
-            {% endif %}
-            {% if branch.state %}
-              {{ branch.state }},
-            {% endif %}
-            {% if branch.country %}
-              {{ branch.country }}
-            {% endif %}
+  <div class="table-responsive">
+    <table id="branchTable" class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th style="text-align: center;">ID</th>
+          <th style="text-align: center;">Nome</th>
+          <th style="text-align: center;">Telefone</th>
+          <th style="text-align: center;">E-mail</th>
+          <th style="text-align: center;">Endereço</th>
+          <th style="text-align: center;">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for branch in branches %}
+        <tr>
+          <td style="text-align: center;">{{ branch.id }}</td>
+          <td style="text-align: center;">{{ branch.name }}</td>
+          <td style="text-align: center;">{{ branch.phone|default_if_none:"" }}</td>
+          <td style="text-align: center;">{{ branch.email|default_if_none:"" }}</td>
+          <td>
+            {% if branch.street %}{{ branch.street }}, {% endif %}
+            {% if branch.number %}{{ branch.number }}, {% endif %}
+            {% if branch.city %}{{ branch.city }} - {% endif %}
+            {% if branch.state %}{{ branch.state }}, {% endif %}
+            {% if branch.country %}{{ branch.country }}{% endif %}
           </td>
-        <td>
-          <a href="{% url 'branch_detail' branch.id %}" class="btn btn-info btn-sm">
-            <i class="bi bi-eye"></i>Detalhes
-          </a>
-
-          <a href="{% url 'branch_update' branch.id %}" class="btn btn-warning btn-sm">
-            <i class="bi bi-pencil"></i>Editar
-          </a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+          <td style="text-align: center;">
+            <a href="{% url 'branch_detail' branch.id %}" class="btn btn-info btn-sm">
+              <i class="bi bi-eye"></i> Detalhes
+            </a>
+            <a href="{% url 'branch_update' branch.id %}" class="btn btn-warning btn-sm">
+              <i class="bi bi-pencil"></i> Editar
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 
+{% endblock %}
 
-
+{% block extra_scripts %}
+<script>
+  $(document).ready(function() {
+      $('#branchTable').DataTable({
+          order: [[1, 'asc']],  // Ordena pela coluna "Nome"
+          paging: true,
+          searching: true,
+          info: true,
+          ordering: true,
+          language: {
+            lengthMenu: "Exibir _MENU_ por página",
+            search: "Buscar:",
+            searchPlaceholder: "Pesquisar filiais...",
+            info: "Exibindo _START_ a _END_ de _TOTAL_ filiais",
+            infoEmpty: "Nenhuma filial encontrada",
+            infoFiltered: "(filtrado de _MAX_ filiais no total)"
+          }
+      });
+  });
+</script>
 {% endblock %}

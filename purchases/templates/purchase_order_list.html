@@ -6,17 +6,15 @@ Lista de Pedidos de Compras
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Lista de Pedidos de Compras</h2>
-    
-    <!-- Botão para adicionar novo pedido de compras -->
-    <div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Lista de Pedidos de Compras</h2>
         <a href="{% url 'purchase_order_create' %}" class="btn btn-success">
             <i class="bi bi-plus"></i> Novo Pedido de Compras
         </a>
     </div>
 
-    <div>
-        <table id="purchaseOrderTable" class="table table-bordered table-striped">
+    <div class="table-responsive">
+        <table id="purchaseOrderTable" class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>Número do Pedido</th>
@@ -36,31 +34,39 @@ Lista de Pedidos de Compras
                     <td>{{ order.expected_delivery_date }}</td>
                     <td>{{ order.get_status_display }}</td>
                     <td>
-                        <a href="{% url 'purchase_order_update' order.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="{% url 'purchase_order_delete' order.pk %}" class="btn btn-danger">Excluir</a>
+                        <a href="{% url 'purchase_order_update' order.pk %}" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <a href="{% url 'purchase_order_delete' order.pk %}" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Excluir
+                        </a>
                     </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6">Nenhum pedido de compras encontrado.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>    
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-    $(document).ready(function() {
-        $('#purchaseOrderTable').DataTable({
-            order: [[0, 'asc']],
-            paging: true,       // Ativa a paginação
-            searching: true,    // Ativa a busca
-            info: false,         // Exibe informações sobre o total de entradas
-            ordering: true,     // Ativa a ordenação
-        });
-    });
+  $(document).ready(function() {
+      $('#purchaseOrderTable').DataTable({
+          order: [[0, 'asc']],
+          paging: true,
+          searching: true,
+          info: true,
+          ordering: true,
+          language: {
+            lengthMenu: "Exibir _MENU_ por página",
+            search: "Buscar:",
+            searchPlaceholder: "Pesquisar pedidos...",
+            info: "Exibindo _START_ a _END_ de _TOTAL_ pedidos",
+            infoEmpty: "Nenhum pedido encontrado",
+            infoFiltered: "(filtrado de _MAX_ pedidos no total)"
+          }
+      });
+  });
 </script>
 {% endblock %}

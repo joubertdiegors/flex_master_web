@@ -8,24 +8,10 @@ Lista de Novos Produtos
 <div class="row mb-3">
     <div class="col-md-6">
         <h2>Lista de novos produtos.</h2>
-        <span>Manter a quantidade de múltiplos de 4 (4, 8, 12, 16...)</span>
-    </div>
-</div>
-
-<div class="row mb-3">
-    <div class="col-md-6">
-        <form method="get" action="{% url 'fresh_product_list' %}">
-            <div class="input-group">
-                <input type="text" class="form-control" name="search" placeholder="Buscar Produto" value="{{ request.GET.search }}" id="">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
-        </form>
     </div>
     <div class="col-md-6 text-end">
-        <a href="{% url 'fresh_product_create' %}" class="btn btn-success me-2">
-            <i class="bi bi-plus"></i> Novo Produto Novo
+        <a href="{% url 'fresh_product_create' %}" class="btn btn-success">
+            <i class="bi bi-plus"></i> Adicionar um novo
         </a>
     </div>
 </div>
@@ -82,6 +68,25 @@ Lista de Novos Produtos
 </div>
 
 <script>
+    $(document).ready(function() {
+        $('.table').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            order: [[0, 'asc']],
+            language: {
+                lengthMenu: "Exibir _MENU_ por página",
+                search: "Buscar:",
+                searchPlaceholder: "Pesquisar novos produtos...",
+                info: "Exibindo _START_ a _END_ de _TOTAL_ produtos",
+                infoEmpty: "Nenhum produto encontrado",
+                infoFiltered: "(filtrado de _MAX_ produtos no total)"
+            }
+        });
+    });
+
+
     document.addEventListener('DOMContentLoaded', function () {
         // Lógica para definir o formulário de exclusão dinamicamente
         document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
