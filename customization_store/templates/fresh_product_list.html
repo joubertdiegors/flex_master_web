@@ -29,7 +29,15 @@ Lista de Novos Produtos
         <tbody>
             {% for fresh_product in fresh_products %}
             <tr>
-                <td>{{ fresh_product.product.name }}</td>
+                <td>
+                    {{ fresh_product.product.name }},
+                    {% if fresh_product.product.volume %}
+                        {{ fresh_product.product.volume }}
+                    {% endif %}
+                    {% if fresh_product.product.package_unit %}
+                        {{ fresh_product.product.package_unit.symbol }}
+                    {% endif %}
+                </td>
                 <td>{{ fresh_product.description }}</td>
                 <td>{{ fresh_product.is_active }}</td>
                 <td>

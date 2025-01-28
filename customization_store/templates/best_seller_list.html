@@ -29,7 +29,15 @@ Lista de Produtos Mais Vendidos
         <tbody>
             {% for best_seller in best_sellers %}
             <tr>
-                <td>{{ best_seller.product.name }}</td>
+                <td>
+                    {{ best_seller.product.name }},
+                    {% if best_seller.product.volume %}
+                        {{ best_seller.product.volume }}
+                    {% endif %}
+                    {% if best_seller.product.package_unit %}
+                        {{ best_seller.product.package_unit.symbol }}
+                    {% endif %}
+                </td>
                 <td>{{ best_seller.description }}</td>
                 <td>{{ best_seller.is_active }}</td>
                 <td>

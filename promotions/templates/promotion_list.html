@@ -30,7 +30,15 @@ Promoções
                 {% for promotion in promotions %}
                 <tr>
                     <td>{{ promotion.pk }}</td>
-                    <td>{{ promotion.product }}</td>
+                    <td>
+                        {{ promotion.product.name }},
+                        {% if promotion.product.volume %}
+                            {{ promotion.product.volume }}
+                        {% endif %}
+                        {% if promotion.product.package_unit %}
+                            {{ promotion.product.package_unit.symbol }}
+                        {% endif %}
+                    </td>
                     <td>{{ promotion.promotion_price }}</td>
                     <td>{{ promotion.description }}</td>
                     <td>{{ promotion.start_date|date:"d/m/Y" }}</td>
