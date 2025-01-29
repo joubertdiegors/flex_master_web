@@ -8,12 +8,20 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 from django.utils.html import strip_tags
-from django.urls import reverse
+from django.urls import reverse_lazy
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.http import HttpResponseRedirect
+from django.contrib.auth.models import update_last_login
 
 from .forms import UserBasicRegistrationForm, CustomerBasicRegistrationForm, CustomerCompleteRegistrationForm
 from .mixins.mixins import CustomerAccessMixin
 from customers.models import Customer, CustomerState, CustomerType
 from products.models import Category
+
+User = get_user_model()
 
 def login_view(request):
     if request.method == "POST":
@@ -113,6 +121,7 @@ def send_verification_code(customer):
         from_email="noreply@sacolao.be",
         recipient_list=[customer.email],
         html_message=html_message,
+        fail_silently=True,
     )
 
 class EmailVerificationView(View):
@@ -217,57 +226,58 @@ def send_welcome_email(customer, confirmation_link):
     
     # Enviando o e-mail
     send_mail(
-        'Bem-vindo(a) ao Sacolão.be!',
-        plain_message,  # Mensagem de texto (opcional)
-        None,  # No default FROM_EMAIL, já será utilizado o DEFAULT_FROM_EMAIL configurado
-        [customer.email],  # Para quem o e-mail será enviado
-        html_message=html_message,  # Para versões que suportam HTML
-        fail_silently=False,
+        subject='Bem-vindo(a) ao Sacolão.be!',
+        message=plain_message,  # Mensagem de texto (opcional)
+        from_email="noreply@sacolao.be",
+        recipient_list=[customer.email],
+        html_message=html_message,
+        fail_silently=True,
     )
 
 
 # Redefinição de senhas (Esqueci minha senha)
 
 class CustomPasswordResetView(PasswordResetView):
-    template_name = 'password_reset.html'
-    html_email_template_name = 'emails/password_reset_email.html'  # Define o template HTML personalizado
+    template_name = "password_reset.html"  # Página do formulário de reset
+    email_template_name = "emails/password_reset_email.html"  # Template do e-mail
+    success_url = reverse_lazy("password_reset_done")  # Para onde redirecionar após enviar o e-mail
 
-    def get_context_data(self, **kwargs):
-        # Adiciona categorias e outros dados ao contexto
-        context = super().get_context_data(**kwargs)
-        categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        context.update({
-            'categories': categories,
-            'is_not_list_page': True,
-            'breadcrumb_off': True,
-        })
-        return context
-
-    def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):
+    def form_valid(self, form):
         """
-        Sobrescreve o método de envio de e-mail para garantir o uso do template personalizado.
+        Sobrescrevendo este método para personalizar o envio do e-mail de redefinição de senha.
         """
-        reset_url = self.request.build_absolute_uri(reverse('password_reset_confirm', kwargs={
-            'uidb64': context['uid'],
-            'token': context['token']
-        }))
+        email = form.cleaned_data["email"]
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return super().form_valid(form)  # Se não existir, retorna normalmente
 
-        # Renderiza o template HTML
-        html_message = render_to_string(self.html_email_template_name, {
-            'user': context.get('user'),
-            'reset_url': reset_url,
-        })
-        plain_message = strip_tags(html_message)
+        # Criando o token e o link de redefinição
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        reset_url = self.request.build_absolute_uri(reverse_lazy("password_reset_confirm", kwargs={"uidb64": uid, "token": token}))
 
-        # Envia o e-mail com suporte a texto puro e HTML
-        email = EmailMultiAlternatives(
-            subject="Redefinição de Senha - Sacolão",
-            body=plain_message,
-            from_email=from_email or settings.DEFAULT_FROM_EMAIL,
-            to=[to_email],
-        )
-        email.attach_alternative(html_message, "text/html")
-        email.send()
+        # Enviar e-mail
+        send_password_reset_email(user, reset_url)
+
+        return HttpResponseRedirect(self.success_url)
+
+
+def send_password_reset_email(user, reset_url):
+    """
+    Envia um e-mail de redefinição de senha para o usuário.
+    """
+    html_message = render_to_string("emails/password_reset_email.html", {"user": user, "reset_url": reset_url})
+    plain_message = strip_tags(html_message)
+
+    send_mail(
+        subject="🔑 Redefinição de Senha - Sacolão",
+        message=plain_message,
+        from_email="noreply@sacolao.be",
+        recipient_list=[user.email],
+        html_message=html_message,
+        fail_silently=True,
+    )
 
 class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
     template_name = 'password_reset_done.html'
@@ -284,6 +294,7 @@ class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
 
 class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
     template_name = 'password_reset_confirm.html'
+    success_url = reverse_lazy('store_home')  # Ajuste conforme a página principal da sua aplicação
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -294,17 +305,13 @@ class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
             'breadcrumb_off': True,
         })
         return context
-
-class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
-    template_name = 'password_reset_complete.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        context.update({
-            'categories': categories,
-            'is_not_list_page': True,
-            'breadcrumb_off': True,
-        })
-        return context
-
+    
+    def form_valid(self, form):
+        """
+        Após redefinir a senha, o usuário será autenticado automaticamente e redirecionado à página principal.
+        """
+        user = form.save()  # Salva a nova senha e retorna o usuário
+        login(self.request, user)  # Faz login automaticamente
+        update_last_login(None, user)  # Atualiza a última atividade do usuário
+        messages.success(self.request, "Sua senha foi alterada com sucesso!")
+        return redirect(self.success_url)  # Redireciona para a página principal
