@@ -11,6 +11,10 @@ from PIL import Image as PILImage
 from io import BytesIO
 from unidecode import unidecode
 
+from django.core.validators import RegexValidator, MaxLengthValidator
+from django.core.exceptions import ValidationError
+import re
+
 from branches.models import Country
 
 class CustomerType(models.Model):
@@ -45,14 +49,27 @@ class CustomerState(models.Model):
     def __str__(self):
         return self.name
 
+# Validador que bloqueia URLs e scripts comuns
+def validate_no_links_or_code(value):
+    if re.search(r'(https?://|www\.|\.com|\.net|<script|</|@)', value, re.IGNORECASE):
+        raise ValidationError("Texto inválido. Evite incluir links ou trechos de código.")
+
 class Customer(models.Model):
     # Dados automáticos / ao definir o customer_type os inputs serão ajustados para corresponder aos dados que devem ser preenchidos.
     user = models.OneToOneField(User, on_delete=models.PROTECT, related_name='customer_profile', null=True, blank=True)
     customer_type = models.ForeignKey(CustomerType, on_delete=models.PROTECT, blank=True, null=True)
 
     # Cadastro de pessoa física
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255, blank=True, null=True)
+    first_name = models.CharField(
+        max_length=20,
+        validators=[validate_no_links_or_code],
+    )
+    last_name = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        validators=[validate_no_links_or_code],
+    )
     email = models.EmailField(blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)

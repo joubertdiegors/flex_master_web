@@ -79,3 +79,11 @@ class CategoryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
             messages.error(request, 'Erro ao excluir a categoria! Verifique se a categoria não tem uma subcategoria vinculada')
             return JsonResponse({'error': str(e)}, status=400)
 
+
+#### PDV Local ###
+
+def pdv_categories_sync(request):
+    categories = models.Category.objects.all().values("id", "name", "parent_id")
+    return JsonResponse({
+        "categories": list(categories)
+    })

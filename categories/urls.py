@@ -8,4 +8,7 @@ urlpatterns = [
     path('administration/categories/create/', views.CategoryCreateView.as_view(), name='category_create'),
     path('administration/categories/<int:pk>/update/', views.CategoryUpdateView.as_view(), name='category_update'),
     path('administration/categories/<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category_delete'),
+
+    ### PDV Local ###
+    path("api/pdv/sync/categories/", views.pdv_categories_sync, name="pdv_categories_sync"),
 ]

@@ -324,3 +324,30 @@ class NutritionalInfoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, Del
     def get_success_url(self):
         product_id = self.object.product.id
         return reverse('nutritional_info_create', kwargs={'pk': product_id})
+
+
+#### PDV Local ###
+
+def pdv_products_sync(request):
+    data = []
+    for p in models.Product.objects.filter(is_active=True).prefetch_related("category"):
+        data.append({
+            "id": p.id,
+            "name": p.name,
+            "barcode": p.barcode,
+            "selling_price": float(p.selling_price),
+            "stock_quantity": float(p.stock_quantity),
+            "brand_id": p.brand_id,
+            "sales_unit": p.sales_unit_id,
+            "categories": list(p.category.values_list("id", flat=True)),
+        })
+
+    return JsonResponse({"products": data})
+
+def pdv_brands_sync(request):
+    brands = models.Brand.objects.all().values("id", "name")
+    return JsonResponse({"brands": list(brands)})
+
+def pdv_units_sync(request):
+    units = models.SalesUnit.objects.all().values("id", "name", "symbol", "is_fractional")
+    return JsonResponse({"units": list(units)})
