@@ -1,6 +1,7 @@
 from django import forms
 from . import models
 
+
 class CustomerTypeForm(forms.ModelForm):
     class Meta:
         model = models.CustomerType
@@ -34,6 +35,7 @@ class CustomerStateForm(forms.ModelForm):
         }
 
 class CustomerForm(forms.ModelForm):
+
     class Meta:
         model = models.Customer
         fields = [
