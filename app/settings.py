@@ -16,6 +16,8 @@ DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+PDV_API_KEY  = config('PDV_API_KEY')
+
 
 # Application definition
 

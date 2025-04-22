@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q, Func, F
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.urls import reverse_lazy, reverse
 from django.views.generic import View, ListView, CreateView, DetailView, UpdateView, DeleteView
 from . import models, forms
@@ -329,6 +330,10 @@ class NutritionalInfoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, Del
 #### PDV Local ###
 
 def pdv_products_sync(request):
+    api_key = request.headers.get("X-API-KEY")
+    if api_key != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+    
     data = []
     for p in models.Product.objects.filter(is_active=True).prefetch_related("category"):
         data.append({
@@ -345,9 +350,17 @@ def pdv_products_sync(request):
     return JsonResponse({"products": data})
 
 def pdv_brands_sync(request):
+    api_key = request.headers.get("X-API-KEY")
+    if api_key != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+    
     brands = models.Brand.objects.all().values("id", "name")
     return JsonResponse({"brands": list(brands)})
 
 def pdv_units_sync(request):
+    api_key = request.headers.get("X-API-KEY")
+    if api_key != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+    
     units = models.SalesUnit.objects.all().values("id", "name", "symbol", "is_fractional")
     return JsonResponse({"units": list(units)})

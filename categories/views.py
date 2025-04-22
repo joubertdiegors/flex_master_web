@@ -1,4 +1,5 @@
-from django.http import JsonResponse
+from django.conf import settings
+from django.http import JsonResponse, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models.deletion import ProtectedError
@@ -83,6 +84,10 @@ class CategoryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
 #### PDV Local ###
 
 def pdv_categories_sync(request):
+    api_key = request.headers.get("X-API-KEY")
+    if api_key != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+
     categories = models.Category.objects.all().values("id", "name", "parent_id")
     return JsonResponse({
         "categories": list(categories)
