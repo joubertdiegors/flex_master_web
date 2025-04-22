@@ -72,31 +72,49 @@ class RegisterBasicView(View):
         user_form = UserBasicRegistrationForm(request.POST)
         customer_form = CustomerBasicRegistrationForm(request.POST)
 
+        if user_form.errors.get('captcha'):
+            messages.error(request, 'Por favor, marque o reCAPTCHA para continuar.')
+
         if user_form.is_valid() and customer_form.is_valid():
-            new_user = user_form.save(commit=False)
-            new_user.username = user_form.cleaned_data['email']
-            new_user.set_password(user_form.cleaned_data['password'])
-            new_user.save()
+            try:
+                new_user = user_form.save(commit=False)
+                new_user.username = user_form.cleaned_data['email']
+                new_user.set_password(user_form.cleaned_data['password'])
+                new_user.save()
 
-            customer = customer_form.save(commit=False)
-            customer.user = new_user
-            customer.first_name = new_user.first_name
-            customer.last_name = new_user.last_name
-            customer.email = new_user.email
-            customer.created_by = new_user
-            customer.generate_verification_code()  # Gera o código de verificação
-            customer.save()
+                customer = customer_form.save(commit=False)
+                customer.user = new_user
+                customer.first_name = new_user.first_name
+                customer.last_name = new_user.last_name
+                customer.email = new_user.email
+                customer.created_by = new_user
+                customer.generate_verification_code()  # Gera o código de verificação
+                customer.save()
 
-            #Verifica o e-mail informado
-            send_verification_code(customer)
+                #Verifica o e-mail informado
+                send_verification_code(customer)
 
-            # Logar o usuário automaticamente
-            login(request, new_user)
+                # Logar o usuário automaticamente
+                login(request, new_user)
 
-            # Redireciona para a página de confirmação do e-mail com PRG
-            return redirect('verify_email')
+                # Redireciona para a página de confirmação do e-mail com PRG
+                return redirect('verify_email')
+            
+            except Exception as e:
+                messages.error(request, "Erro ao salvar os dados. Verifique os campos preenchidos.")
         
         else:
+            # Erros de validação: exibir todos via toast
+            for field, errors in user_form.errors.items():
+                for error in errors:
+                    label = user_form.fields.get(field).label if field in user_form.fields else field
+                    messages.error(request, f"{label}: {error}")
+
+            for field, errors in customer_form.errors.items():
+                for error in errors:
+                    label = customer_form.fields.get(field).label if field in customer_form.fields else field
+                    messages.error(request, f"{label}: {error}")
+
             # Formulários inválidos: retorna para a mesma página mostrando os erros
             categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
 
@@ -107,6 +125,7 @@ class RegisterBasicView(View):
                 'is_not_list_page': True,
                 'breadcrumb_off': True,
             }
+
             return render(request, self.template_name, context)
 
 def send_verification_code(customer):
