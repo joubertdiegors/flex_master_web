@@ -14,4 +14,7 @@ urlpatterns = [
     path('password_reset/', views.CustomPasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', views.CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
+    # PDV
+    path("api/pdv/sync/users/", views.pdv_users_sync, name="pdv_users_sync"),
 ]

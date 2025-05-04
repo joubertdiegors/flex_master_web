@@ -1,20 +1,20 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, views as auth_views
+from django.contrib.auth import get_user_model
 from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import update_last_login, User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.utils.timezone import now
-from django.utils.html import strip_tags
-from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.http import HttpResponseRedirect
-from django.contrib.auth.models import update_last_login
+from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
+from django.utils.timezone import now
+from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 
 from .forms import UserBasicRegistrationForm, CustomerBasicRegistrationForm, CustomerCompleteRegistrationForm
 from .mixins.mixins import CustomerAccessMixin
@@ -334,3 +334,18 @@ class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
         update_last_login(None, user)  # Atualiza a última atividade do usuário
         messages.success(self.request, "Sua senha foi alterada com sucesso!")
         return redirect(self.success_url)  # Redireciona para a página principal
+
+
+# PDV
+
+def pdv_users_sync(request):
+    api_key = request.headers.get("X-API-KEY")
+    if api_key != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+
+    # Filtrar por grupo 'Caixa' (ou outro critério seu)
+    users = User.objects.filter(is_active=True, is_staff=True).values(
+        "id", "username", "first_name", "last_name", "is_staff", "is_superuser"
+    )
+
+    return JsonResponse({"users": list(users)})
