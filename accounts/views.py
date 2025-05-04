@@ -345,7 +345,7 @@ def pdv_users_sync(request):
 
     # Filtrar por grupo 'Caixa' (ou outro critério seu)
     users = User.objects.filter(is_active=True, is_staff=True).values(
-        "id", "username", "first_name", "last_name", "is_staff", "is_superuser"
+        "id", "username", "first_name", "last_name", "is_staff", "is_superuser", "access_code"
     )
 
     return JsonResponse({"users": list(users)})
