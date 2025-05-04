@@ -343,9 +343,21 @@ def pdv_users_sync(request):
     if api_key != settings.PDV_API_KEY:
         return HttpResponseForbidden("Unauthorized")
 
-    # Filtrar por grupo 'Caixa' (ou outro critério seu)
-    users = User.objects.filter(is_active=True, is_staff=True).values(
-        "id", "username", "first_name", "last_name", "is_staff", "is_superuser", "access_code"
+    users = User.objects.filter(is_active=True, is_staff=True).select_related("profile").values(
+        "id", "username", "first_name", "last_name", "is_staff", "is_superuser", "profile__access_code"
     )
 
-    return JsonResponse({"users": list(users)})
+    # Renomear o campo no JSON final (opcional)
+    users_list = []
+    for u in users:
+        users_list.append({
+            "id": u["id"],
+            "username": u["username"],
+            "first_name": u["first_name"],
+            "last_name": u["last_name"],
+            "is_staff": u["is_staff"],
+            "is_superuser": u["is_superuser"],
+            "access_code": u["profile__access_code"]
+        })
+
+    return JsonResponse({"users": users_list})
