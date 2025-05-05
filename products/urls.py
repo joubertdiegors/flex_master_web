@@ -38,8 +38,9 @@ urlpatterns = [
     path('administration/package_unit/<int:pk>/delete/', views.PackageUnitDeleteView.as_view(), name='package_unit_delete'),
 
     ### PDV Local ###
-    path("api/pdv/sync/products/", views.pdv_products_sync, name="pdv_products_sync"),
     path("api/pdv/sync/units/", views.pdv_units_sync, name="pdv_units_sync"),
     path("api/pdv/sync/brands/", views.pdv_brands_sync, name="pdv_brands_sync"),
+    path("api/pdv/sync/products/", views.pdv_products_sync, name="pdv_products_sync"),
+    path("api/pdv/sync/product-category/", views.pdv_product_category_relations, name="pdv_product_category_relations"),
 
 ]

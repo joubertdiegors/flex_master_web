@@ -364,3 +364,12 @@ def pdv_units_sync(request):
     
     units = models.SalesUnit.objects.all().values("id", "name", "symbol", "is_fractional")
     return JsonResponse({"units": list(units)})
+
+def pdv_product_category_relations(request):
+    api_key = request.headers.get("X-API-KEY")
+    if api_key != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+
+    # Acessa a tabela ManyToMany diretamente
+    relations = models.Product.category.through.objects.all().values("product_id", "category_id")
+    return JsonResponse({"relations": list(relations)})
