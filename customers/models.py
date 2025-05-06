@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.timezone import now
+from django.http import JsonResponse, HttpResponseForbidden
 from datetime import timedelta
 
 from PIL import Image as PILImage
@@ -200,3 +201,34 @@ def delete_image_on_clear(sender, instance, **kwargs):
                     os.remove(this.image.path)
         except Customer.DoesNotExist:
             pass
+
+
+# PDV
+
+def pdv_customers_sync(request):
+    api_key = request.headers.get("X-API-KEY")
+    if api_key != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+
+    customers = Customer.objects.all().values(
+        "id",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "birth_date",
+        "company_name",
+        "tva_number",
+        "contact_person_name",
+        "contact_person_phone",
+        "contact_person_email",
+        "other_email",
+        "country_id",
+        "postal_code",
+        "city",
+        "address",
+        "status_id",
+        "customer_type_id",
+    )
+
+    return JsonResponse({"customers": list(customers)})

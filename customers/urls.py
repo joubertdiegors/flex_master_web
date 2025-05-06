@@ -19,4 +19,7 @@ urlpatterns = [
 
     path('minhaconta/', views.CustomerProfileDetailView.as_view(), name='customer_profile'),
     path('minhaconta/editar/', views.CustomerProfileUpdateView.as_view(), name='customer_profile_update'),
+
+    # PDV
+    path("api/pdv/sync/customers/", views.pdv_customers_sync, name="pdv_customers_sync"),
 ]
