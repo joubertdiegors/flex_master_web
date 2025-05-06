@@ -1,3 +1,4 @@
+from django.conf import settings
 from datetime import datetime
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
@@ -5,6 +6,7 @@ from django.views.generic import ListView, CreateView, DetailView ,UpdateView, V
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.admin.views.decorators import staff_member_required
+from django.http import JsonResponse, HttpResponseForbidden
 from . import models, forms
 from products.models import Category
 
@@ -181,3 +183,33 @@ class CustomerProfileUpdateView(LoginRequiredMixin, View):
 
         return render(request, self.template_name, {'form': form})
 
+
+# PDV
+
+def pdv_customers_sync(request):
+    api_key = request.headers.get("X-API-KEY")
+    if api_key != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+
+    customers = models.Customer.objects.all().values(
+        "id",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "birth_date",
+        "company_name",
+        "tva_number",
+        "contact_person_name",
+        "contact_person_phone",
+        "contact_person_email",
+        "other_email",
+        "country_id",
+        "postal_code",
+        "city",
+        "address",
+        "status_id",
+        "customer_type_id",
+    )
+
+    return JsonResponse({"customers": list(customers)})
