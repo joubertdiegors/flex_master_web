@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Excluir Favorito{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Excluir Produto Favorito</h2>
+  <p>Tem certeza que deseja remover o produto <strong>{{ object.product.name }}</strong> dos favoritos?</p>
+  <form method="post">{% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sim, excluir</button>
+    <a href="{% url 'favorite_list' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

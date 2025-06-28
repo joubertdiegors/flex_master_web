@@ -1,3 +1,5 @@
+from django.http import JsonResponse, HttpResponseForbidden
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView ,UpdateView
@@ -41,3 +43,14 @@ class BranchUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = forms.BranchForm
     success_url = reverse_lazy('branch_list')
     permission_required = 'branches.change_branch'
+
+#PDV
+def pdv_branch_sync(request):
+    if request.headers.get("X-API-KEY") != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+
+    branches = models.Branch.objects.filter(is_active=True).values(
+        "id", "name", "city", "state", "country_id"
+    ).order_by("name")
+
+    return JsonResponse({"branches": list(branches)})

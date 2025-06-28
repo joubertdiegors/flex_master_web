@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Detalhes do Método de Pagamento</h2>
+<ul>
+    <li><strong>Nome:</strong> {{ method.name }}</li>
+    <li><strong>Dinheiro:</strong> {{ method.is_cash|yesno:"Sim,Não" }}</li>
+    <li><strong>Crédito:</strong> {{ method.is_credit|yesno:"Sim,Não" }}</li>
+    <li><strong>Máquina:</strong> {{ method.is_machine_payment|yesno:"Sim,Não" }}</li>
+    <li><strong>Visível no PDV:</strong> {{ method.show_on_pdv|yesno:"Sim,Não" }}</li>
+    <li><strong>Visível no site:</strong> {{ method.show_on_site|yesno:"Sim,Não" }}</li>
+    <li><strong>Ordem:</strong> {{ method.order }}</li>
+</ul>
+<a href="{% url 'payment_method_update' method.id %}" class="btn btn-warning">Editar</a>
+<a href="{% url 'payment_method_list' %}" class="btn btn-secondary">Voltar</a>
+{% endblock %}

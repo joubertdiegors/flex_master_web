@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Detalhes do Favorito{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Detalhes do Produto Favorito</h2>
+  <ul>
+    <li><strong>Produto:</strong> {{ favorite.product.name }}</li>
+    <li><strong>Ordem:</strong> {{ favorite.order }}</li>
+    <li><strong>Cor:</strong>
+      <span class="favorite-color d-inline-block px-3 py-1" data-color="{{ favorite.color }}">
+        {{ favorite.color }}
+      </span>
+    </li>
+    <li><strong>Criado por:</strong> {{ favorite.created_by }}</li>
+  </ul>
+  <a href="{% url 'favorite_update' favorite.id %}" class="btn btn-warning">Editar</a>
+  <a href="{% url 'favorite_list' %}" class="btn btn-secondary">Voltar</a>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.querySelectorAll('.favorite-color').forEach(el => {
+    el.style.backgroundColor = el.dataset.color;
+    el.style.color = '#fff';
+    el.style.borderRadius = '4px';
+  });
+</script>
+{% endblock %}

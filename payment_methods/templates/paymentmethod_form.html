@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{% if object %}Editar{% else %}Novo{% endif %} Método de Pagamento</h2>
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{% url 'payment_method_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

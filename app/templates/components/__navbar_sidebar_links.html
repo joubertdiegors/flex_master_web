@@ -7,6 +7,7 @@
         <ul class="dropdown-menu" aria-labelledby="gestaoDropdown">
             <li><a class="dropdown-item {% if request.path == 'branch_list' %}active{% endif %}" href="{% url 'branch_list' %}">Filiais</a></li>
             <li><a class="dropdown-item {% if request.path == 'country_list' %}active{% endif %}" href="{% url 'country_list' %}">Países</a></li>
+            <li><a class="dropdown-item {% if request.path == 'payment_method_list' %}active{% endif %}" href="{% url 'payment_method_list' %}">Formas de Pagamento</a></li>
         </ul>
     </li>
     <!-- Produtos Dropdown -->

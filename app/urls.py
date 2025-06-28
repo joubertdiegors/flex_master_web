@@ -26,6 +26,8 @@ urlpatterns = [
     path('', include('categories.urls')),
     path('', include('products.urls')),
     path('', include('promotions.urls')),
+    path('', include('payment_methods.urls')),
+    path('', include('cashregister_pdv.urls')),
 
     path('', include('store.urls')),
     path('', include('customization_store.urls')),

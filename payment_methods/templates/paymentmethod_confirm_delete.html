@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Excluir Método de Pagamento</h2>
+<p>Tem certeza que deseja excluir o método <strong>{{ object.name }}</strong>?</p>
+<form method="post">{% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sim, excluir</button>
+    <a href="{% url 'payment_method_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

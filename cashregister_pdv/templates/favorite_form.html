@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}{{ view.object|default:'Novo' }} Favorito{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>{% if object %}Editar{% else %}Novo{% endif %} Produto Favorito</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      {{ form.product.label_tag }}
+      {{ form.product }}
+      {{ form.product.errors }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.color.label_tag }}
+      {{ form.color }}
+      {{ form.color.errors }}
+
+      <div class="mt-2">
+        <label class="form-label">Pré-visualização da cor:</label><br>
+        <span id="colorPreview" style="display: inline-block; width: 80px; height: 30px; border-radius: 5px; background-color: #FF0000;"></span>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      {{ form.order.label_tag }}
+      {{ form.order }}
+      {{ form.order.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{% url 'favorite_list' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const select = document.getElementById("id_color");
+  const preview = document.getElementById("colorPreview");
+
+  function updateColorPreview() {
+    preview.style.backgroundColor = select.value;
+  }
+
+  select.addEventListener("change", updateColorPreview);
+  document.addEventListener("DOMContentLoaded", updateColorPreview);
+</script>
+{% endblock %}

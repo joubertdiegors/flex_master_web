@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Favoritos do PDV
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Lista de Favoritos</h2>
+    <a href="{% url 'favorite_create' %}" class="btn btn-success">
+        <i class="bi bi-plus"></i> Novo Favorito
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table id="favoriteTable" class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th style="text-align: center;">Ordem</th>
+          <th style="text-align: center;">Produto</th>
+          <th style="text-align: center;">Cor</th>
+          <th style="text-align: center;">Criado por</th>
+          <th style="text-align: center;">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fav in favorites %}
+        <tr>
+          <td style="text-align: center;">{{ fav.order }}</td>
+          <td>{{ fav.product.name }}</td>
+          <td style="text-align: center;">
+            <span class="favorite-color d-inline-block px-3 py-1" data-color="{{ fav.color }}">
+              {{ fav.color }}
+            </span>
+          </td>
+          <td style="text-align: center;">{{ fav.created_by }}</td>
+          <td style="text-align: center;">
+            <a href="{% url 'favorite_detail' fav.id %}" class="btn btn-sm btn-info">
+              <i class="bi bi-eye"></i> Ver
+            </a>
+            <a href="{% url 'favorite_update' fav.id %}" class="btn btn-sm btn-warning">
+              <i class="bi bi-pencil"></i> Editar
+            </a>
+            <a href="{% url 'favorite_delete' fav.id %}" class="btn btn-sm btn-danger">
+              <i class="bi bi-trash"></i> Excluir
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(document).ready(function() {
+    $('#favoriteTable').DataTable({
+      order: [[0, 'asc']],  // Ordenar por "Ordem"
+      paging: true,
+      searching: true,
+      info: true,
+      ordering: true,
+      language: {
+        lengthMenu: "Exibir _MENU_ por página",
+        search: "Buscar:",
+        searchPlaceholder: "Pesquisar favoritos...",
+        info: "Exibindo _START_ a _END_ de _TOTAL_ favoritos",
+        infoEmpty: "Nenhum favorito encontrado",
+        infoFiltered: "(filtrado de _MAX_ no total)"
+      }
+    });
+
+    // Aplica cor de fundo dinamicamente
+    document.querySelectorAll('.favorite-color').forEach(el => {
+      el.style.backgroundColor = el.dataset.color;
+      el.style.color = '#fff';
+      el.style.borderRadius = '4px';
+    });
+  });
+</script>
+{% endblock %}

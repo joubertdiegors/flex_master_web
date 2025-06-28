@@ -6,4 +6,6 @@ urlpatterns = [
     path('administration/branches/create', views.BranchCreateView.as_view(), name='branch_create'),
     path('administration/branches/<int:pk>/detail', views.BranchDetailView.as_view(), name='branch_detail'),
     path('administration/branches/<int:pk>/update', views.BranchUpdateView.as_view(), name='branch_update'),
+
+    path("api/pdv/sync/branches/", views.pdv_branch_sync, name="pdv_branch_sync"),
 ]

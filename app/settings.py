@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'promotions',
     'store',
     'customization_store',
+    'payment_methods',
+
+    'cashregister_pdv',
 ]
 
 LOGIN_URL = '/'
