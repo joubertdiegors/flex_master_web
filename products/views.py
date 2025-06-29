@@ -335,7 +335,7 @@ def pdv_products_sync(request):
         return HttpResponseForbidden("Unauthorized")
     
     data = []
-    for p in models.Product.objects.filter(is_active=True).prefetch_related("category"):
+    for p in models.Product.objects.prefetch_related("category"):
         data.append({
             "id": p.id,
             "name": p.name,
