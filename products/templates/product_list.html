@@ -52,7 +52,7 @@ Produtos
           </td>
           <td style="text-align: center;">{{ product.selling_price }}</td>
           <td style="text-align: center;">{{ product.is_active_site|yesno:"Sim,Não" }}</td>
-          <td style="text-align: center;">{{ product.is_active_site_pdv|yesno:"Sim,Não" }}</td>
+          <td style="text-align: center;">{{ product.is_active_pdv|yesno:"Sim,Não" }}</td>
           <td>
             <a href="{% url 'product_detail' product.pk %}" class="btn btn-info btn-sm">
               <i class="bi bi-eye"></i> Detalhes
