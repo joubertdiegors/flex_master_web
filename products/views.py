@@ -345,6 +345,7 @@ def pdv_products_sync(request):
             "brand_id": p.brand_id,
             "sales_unit": p.sales_unit_id,
             "categories": list(p.category.values_list("id", flat=True)),
+            "is_active_pdv": p.is_active_pdv
         })
 
     return JsonResponse({"products": data})
