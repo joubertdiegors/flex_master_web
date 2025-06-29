@@ -54,6 +54,9 @@
                 <li class="nav-item">
                     <a class="nav-link" id="customizacoes-tab" data-bs-toggle="tab" href="#customizacoes" role="tab" aria-controls="customizacoes" aria-selected="false">Customizações</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pdv-tab" data-bs-toggle="tab" href="#pdv" role="tab" aria-controls="pdv" aria-selected="false">PDV</a>
+                </li>
             </ul>
         </div>
 
@@ -116,6 +119,12 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'fresh_product_list' %}">Novos produtos</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'highlighted_brand_list' %}">Marcas em destaque</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'edit_content' %}">Infos de Envio - Home</a></li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="pdv" role="tabpanel" aria-labelledby="pdv-tab">
+                <ul class="nav nav-pills" id="pdvSubMenu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'favorite_list' %}">Favoritos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'cash_register_history' %}">Histórico de caixas</a></li>
                 </ul>
             </div>
         </div>

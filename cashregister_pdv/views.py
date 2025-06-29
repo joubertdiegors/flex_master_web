@@ -1,4 +1,5 @@
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, View
+from django.shortcuts import render
 from django.utils.dateparse import parse_date
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,6 +14,7 @@ import json
 import uuid
 
 
+# PDV Abertura/Fechamento de caixa
 @csrf_exempt
 def get_open_cash_status(request):
     if request.headers.get("X-API-KEY") != settings.PDV_API_KEY:
@@ -65,7 +67,6 @@ def pdv_open_cash(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
-
 
 @csrf_exempt
 def pdv_close_cash(request):
@@ -123,6 +124,17 @@ def pdv_cash_history(request):
         })
 
     return JsonResponse({"cash_registers": data})
+
+
+class CashRegisterHistoryView(View):
+    template_name = 'cashregister_history.html'
+
+    def get(self, request, *args, **kwargs):
+        cash_registers = CashRegister.objects.select_related('operator').order_by('-opened_at')
+        context = {
+            'cash_registers': cash_registers
+        }
+        return render(request, self.template_name, context)
 
 # Produtos Favoritos PDV
 class FavoriteProductListView(LoginRequiredMixin, ListView):

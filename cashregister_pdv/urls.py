@@ -6,6 +6,7 @@ urlpatterns = [
     path("api/pdv/cash/open/", views.pdv_open_cash, name="pdv_cash_open"),
     path("api/pdv/cash/close/", views.pdv_close_cash, name="pdv_cash_close"),
     path("api/pdv/cash/history/", views.pdv_cash_history, name="pdv_cash_history"),
+    path('cash-register/history/', views.CashRegisterHistoryView.as_view(), name='cash_register_history'),
 
     # CRUD de favoritos
     path("favorites/", views.FavoriteProductListView.as_view(), name="favorite_list"),

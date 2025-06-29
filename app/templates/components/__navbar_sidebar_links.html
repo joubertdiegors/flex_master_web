@@ -73,6 +73,16 @@
             <li><a class="dropdown-item" href="{% url 'edit_content' %}">Infos de Envio - Home</a></li>
         </ul>
     </li>
+    <!-- PDV -->
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="customizacoesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            PDV
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="customizacoesDropdown">
+            <li><a class="dropdown-item" href="{% url 'favorite_list' %}">Favoritos</a></li>
+            <li><a class="dropdown-item" href="{% url 'cash_register_history' %}">Histórico de caixas</a></li>
+        </ul>
+    </li>
 </ul>
 
 {% block extra_styles %}

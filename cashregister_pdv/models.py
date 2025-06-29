@@ -62,7 +62,7 @@ class PdvSale(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     total_discount = models.DecimalField(max_digits=10, decimal_places=2)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.PROTECT)
+    change_given = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -83,6 +83,15 @@ class PdvSaleItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
+    
+class PdvSalePayment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    sale = models.ForeignKey(PdvSale, on_delete=models.CASCADE, related_name="payments")
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.PROTECT)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.payment_method.name}: {self.amount}"
 
 class PdvHoldSale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
