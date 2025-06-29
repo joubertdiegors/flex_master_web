@@ -96,6 +96,33 @@ def pdv_close_cash(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
+@csrf_exempt
+def pdv_cash_history(request):
+    if request.headers.get("X-API-KEY") != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+
+    cash_registers = CashRegister.objects.all().order_by("-opened_at")
+
+    data = []
+    for cash in cash_registers:
+        data.append({
+            "id": str(cash.id),
+            "branch_id": cash.branch_id,
+            "terminal_number": cash.terminal_number,
+            "operator_id": cash.operator_id,
+            "opened_at": cash.opened_at.isoformat() if cash.opened_at else None,
+            "closed_at": cash.closed_at.isoformat() if cash.closed_at else None,
+            "opening_amount": float(cash.opening_amount),
+            "closing_amount": float(cash.closing_amount) if cash.closing_amount else None,
+            "total_sales": float(cash.total_sales),
+            "total_cash": float(cash.total_cash),
+            "total_machine": float(cash.total_machine),
+            "total_credit": float(cash.total_credit),
+            "notes": cash.notes,
+            "status": "open" if cash.closed_at is None else "closed"
+        })
+
+    return JsonResponse({"cash_registers": data})
 
 # Produtos Favoritos PDV
 class FavoriteProductListView(LoginRequiredMixin, ListView):
