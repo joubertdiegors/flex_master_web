@@ -20,19 +20,20 @@ class StoreHomeView(View):
     def get(self, request, *args, **kwargs):
         current_date = timezone.now().date()  # Obtém a data atual sem o tempo
         
-        products = Product.objects.all()
+        products = Product.objects.filter(is_active_site=True)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         highlighted_brands = HighlightedBrand.objects.filter(is_active=True)
         countries = Country.objects.all()
         banners = Banner.objects.all()
-        best_seller_products = list(BestSellerProduct.objects.all())
-        fresh_products = list(FreshProducts.objects.all())
+        best_seller_products = list(BestSellerProduct.objects.select_related('product').filter(product__is_active_site=True))
+        fresh_products = list(FreshProducts.objects.select_related('product').filter(product__is_active_site=True))
         
         # Filtra promoções válidas pela data de início e fim
         promotions = Promotion.objects.filter(
             start_date__lte=current_date,  # Promoção já iniciada
             end_date__gte=current_date,    # Promoção ainda válida
-            active=True                    # Promoção ativa
+            active=True,                   # Promoção ativa
+            product__is_active_site=True
         )
         
         context = {
@@ -54,7 +55,7 @@ class StoreProductListView(View):
     template_name = 'store_product_list.html'
 
     def get(self, request, *args, **kwargs):
-        products = Product.objects.all()
+        products = Product.objects.filter(is_active_site=True)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         
         # Filtrar apenas marcas e países que têm produtos associados
@@ -100,7 +101,7 @@ class ProductsByCategoryView(View):
             ancestors.append(current_category)  # Adiciona a categoria à lista de ancestrais
         
         # Obtenha os produtos da categoria atual
-        products = Product.objects.filter(category=current_category)
+        products = Product.objects.filter(category=current_category).filter(is_active_site=True)
         
         # Obtenha todas as categorias de nível superior para o menu de navegação
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
@@ -139,7 +140,7 @@ class ProductsByBrandView(View):
 
     def get(self, request, brand_name, *args, **kwargs):
         brand = get_object_or_404(Brand, name=brand_name)
-        products = Product.objects.filter(brand=brand)
+        products = Product.objects.filter(brand=brand).filter(is_active_site=True)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         
         # Filtrar apenas marcas e países que têm produtos associados
@@ -171,7 +172,7 @@ class ProductsByCountryView(View):
 
     def get(self, request, country_name, *args, **kwargs):
         country = get_object_or_404(Country, name=country_name)
-        products = Product.objects.filter(country=country)
+        products = Product.objects.filter(country=country).filter(is_active_site=True)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         
         # Filtrar apenas marcas e países que têm produtos associados
@@ -203,7 +204,7 @@ class SearchProductView(View):
 
     def get(self, request, *args, **kwargs):
         search_query = request.GET.get('q')
-        products = Product.objects.all()
+        products = Product.objects.filter(is_active_site=True)
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
         
         # Filtrar apenas marcas e países que têm produtos associados
@@ -260,7 +261,7 @@ class StoreProductBestSellerView(View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        best_seller_products = BestSellerProduct.objects.all()
+        best_seller_products = BestSellerProduct.objects.select_related('product').filter(product__is_active_site=True)
 
         # Filtrar apenas marcas e países que têm produtos associados
         brands = Brand.objects.filter(products_brand__isnull=False).distinct()
@@ -299,7 +300,7 @@ class StoreProductFreshListView(View):
         countries = Country.objects.filter(products_country__isnull=False).distinct()
 
         # Obtendo os produtos novos
-        fresh_products = FreshProducts.objects.all()
+        fresh_products = FreshProducts.objects.select_related('product').filter(product__is_active_site=True)
 
         # Obtendo os produtos correspondentes aos produtos novos
         products = [fresh_product.product for fresh_product in fresh_products]
@@ -329,7 +330,15 @@ class StoreProductPromotionsView(View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
-        promotions = Promotion.objects.all()
+
+        current_date = timezone.now().date()
+        
+        promotions = Promotion.objects.select_related('product').filter(
+            start_date__lte=current_date,
+            end_date__gte=current_date,
+            active=True,
+            product__is_active_site=True
+        )
         
         # Filtrar apenas marcas e países que têm produtos associados
         brands = Brand.objects.filter(products_brand__isnull=False).distinct()
