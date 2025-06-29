@@ -170,9 +170,15 @@
         <div class="text-danger">{{ error }}</div>
       {% endfor %}
 
-      {{ form.is_active.label_tag }}
-      {{ form.is_active }}
-      {% for error in form.is_active.errors %}
+      {{ form.is_active_site.label_tag }}
+      {{ form.is_active_site }}
+      {% for error in form.is_active_site.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+      
+      {{ form.is_active_pdv.label_tag }}
+      {{ form.is_active_pdv }}
+      {% for error in form.is_active_pdv.errors %}
         <div class="text-danger">{{ error }}</div>
       {% endfor %}
 

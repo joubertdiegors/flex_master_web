@@ -78,7 +78,8 @@ class ProductForm(forms.ModelForm):
             'image',
             'description',
             'keywords',
-            'is_active'
+            'is_active_pdv',
+            'is_active_site',
         ]
 
         widgets = {
@@ -99,7 +100,8 @@ class ProductForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Somente se for necessário'}),
             'keywords': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex: arroz, grãos, orgânico'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch', 'id': 'isActiveSwitch'})
+            'is_active_pdv': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch', 'id': 'isActivePdvSwitch'}),
+            'is_active_site': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch', 'id': 'isActiveSiteSwitch'})
         }
 
         labels = {
@@ -121,7 +123,8 @@ class ProductForm(forms.ModelForm):
             'image': 'Imagem do Produto',
             'description': 'Descrição',
             'keywords': 'Palavras-Chave',
-            'is_active': 'Ativo'
+            'is_active_pdv': 'Ativo no PDV?',
+            'is_active_site': 'Ativo no Site?'
         }
 
     def __init__(self, *args, **kwargs):

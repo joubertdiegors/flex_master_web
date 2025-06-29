@@ -26,7 +26,8 @@ Produtos
           <th style="text-align: center;">Marca</th>
           <th style="text-align: center;">Categorias</th>
           <th style="text-align: center;">Preço de Venda</th>
-          <th style="text-align: center;">Ativo</th>
+          <th style="text-align: center;">Atv Site</th>
+          <th style="text-align: center;">Atv PDV</th>
           <th style="text-align: center;">Ações</th>
         </tr>
       </thead>
@@ -50,7 +51,8 @@ Produtos
             {% endfor %}
           </td>
           <td style="text-align: center;">{{ product.selling_price }}</td>
-          <td style="text-align: center;">{{ product.is_active|yesno:"Sim,Não" }}</td>
+          <td style="text-align: center;">{{ product.is_active_site|yesno:"Sim,Não" }}</td>
+          <td style="text-align: center;">{{ product.is_active_site_pdv|yesno:"Sim,Não" }}</td>
           <td>
             <a href="{% url 'product_detail' product.pk %}" class="btn btn-info btn-sm">
               <i class="bi bi-eye"></i> Detalhes
