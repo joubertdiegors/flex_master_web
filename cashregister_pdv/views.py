@@ -7,11 +7,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.utils.timezone import now
 from django.conf import settings
-from .models import CashRegister, FavoriteProduct, PdvSale, PdvSaleItem, PdvHoldSale, PdvHoldSaleItem
+from .models import CashRegister, FavoriteProduct, PdvSale, PdvSaleItem, PdvSalePayment, PdvHoldSale, PdvHoldSaleItem
 from products.models import Product
 from .forms import FavoriteProductForm
 import json
 import uuid
+from datetime import timezone
 
 
 # PDV Abertura/Fechamento de caixa
@@ -277,12 +278,12 @@ def pdv_sale_create(request):
             total_amount=data["total_amount"],
             total_discount=data["total_discount"],
             amount_paid=data["amount_paid"],
-            payment_method_id=data["payment_method_id"]
+            change_given=data.get("change_given", 0),
+            created_at=data.get("created_at") or timezone.now()
         )
 
         for item in data["items"]:
             PdvSaleItem.objects.create(
-                id=uuid.UUID(item["id"]),
                 sale=sale,
                 product_id=item["product_id"],
                 quantity=item["quantity"],
@@ -290,6 +291,13 @@ def pdv_sale_create(request):
                 discount=item["discount"],
                 line_total=item["line_total"],
                 observation=item.get("observation", "")
+            )
+
+        for payment in data.get("payments", []):
+            PdvSalePayment.objects.create(
+                sale=sale,
+                payment_method_id=payment["payment_method_id"],
+                amount=payment["amount"]
             )
 
         return JsonResponse({"status": "ok", "sale_id": str(sale.id)})
