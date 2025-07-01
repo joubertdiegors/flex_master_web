@@ -15,6 +15,9 @@ urlpatterns = [
     path("favorites/<int:pk>/update/", views.FavoriteProductUpdateView.as_view(), name="favorite_update"),
     path("favorites/<int:pk>/delete/", views.FavoriteProductDeleteView.as_view(), name="favorite_delete"),
 
+    # Tela de tickets de venda pelo PDV
+    path("sales/", views.PdvSaleListView.as_view(), name="pdv_sale_list"),
+
     # API para o PDV
     path("api/pdv/sync/favorites/", views.pdv_favorite_list, name="pdv_favorite_list"),
 

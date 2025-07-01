@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendas PDV{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-3">Histórico de Vendas do PDV</h2>
+
+  <div class="table-responsive">
+    <table id="pdvSalesTable" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Ticket</th>
+          <th>Data/Hora</th>
+          <th>Cliente</th>
+          <th>Total</th>
+          <th>Desconto</th>
+          <th>Pago</th>
+          <th>Troco</th>
+          <th>Pagamentos</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sale in sales %}
+        <tr>
+          <td>{{ sale.ticket_number }}</td>
+          <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
+          <td>{{ sale.customer|default:"-" }}</td>
+          <td>{{ sale.total_amount }} €</td>
+          <td>{{ sale.total_discount }} €</td>
+          <td>{{ sale.amount_paid }} €</td>
+          <td>{{ sale.change_given }} €</td>
+          <td>
+            {% for payment in sale.payments.all %}
+              {{ payment.payment_method.name }}: {{ payment.amount }} €<br>
+            {% empty %}
+              -
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(document).ready(function() {
+    $('#pdvSalesTable').DataTable({
+      order: [[1, 'desc']],
+      paging: true,
+      searching: true,
+      info: true,
+      language: {
+        lengthMenu: "Exibir _MENU_ por página",
+        search: "Buscar:",
+        searchPlaceholder: "Pesquisar vendas...",
+        info: "Exibindo _START_ a _END_ de _TOTAL_ vendas",
+        infoEmpty: "Nenhuma venda encontrada",
+        infoFiltered: "(filtrado de _MAX_ no total)"
+      }
+    });
+  });
+</script>
+{% endblock %}

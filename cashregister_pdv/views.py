@@ -169,6 +169,22 @@ class FavoriteProductDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'favorite_confirm_delete.html'
     success_url = reverse_lazy('favorite_list')
 
+
+# Tela de tickets de vendas pelo PDV
+class PdvSaleListView(ListView):
+    model = PdvSale
+    template_name = "pdvsale_list.html"
+    context_object_name = "sales"
+
+    def get_queryset(self):
+        return (
+            PdvSale.objects
+            .select_related("cash_register", "customer")
+            .prefetch_related("payments__payment_method")
+            .order_by("-created_at")
+        )
+
+
 # API
 def pdv_favorite_list(request):
     if request.headers.get("X-API-KEY") != settings.PDV_API_KEY:
