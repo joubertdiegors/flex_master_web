@@ -345,7 +345,8 @@ def pdv_products_sync(request):
             "brand_id": p.brand_id,
             "sales_unit": p.sales_unit_id,
             "categories": list(p.category.values_list("id", flat=True)),
-            "package_unit": p.package_unit,  # se for string/charfield
+            "package_unit_id": p.package_unit_id,
+            "package_unit_name": p.package_unit.name if p.package_unit else None,
             "volume": float(p.volume) if p.volume else None,
             "net_weight": float(p.net_weight) if p.net_weight else None,
             "gross_weight": float(p.gross_weight) if p.gross_weight else None,
