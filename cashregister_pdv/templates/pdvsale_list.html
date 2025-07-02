@@ -23,7 +23,7 @@
       <tbody>
         {% for sale in sales %}
         <tr>
-          <td>{{ sale.ticket_number }}</td>
+          <td><a href="{% url 'pdvsale_detail' sale.id %}">{{ sale.ticket_number }}</a></td>
           <td>{{ sale.created_at|date:"d/m/Y H:i" }}</td>
           <td>{{ sale.customer|default:"-" }}</td>
           <td>{{ sale.total_amount }} €</td>

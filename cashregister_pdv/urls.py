@@ -17,6 +17,7 @@ urlpatterns = [
 
     # Tela de tickets de venda pelo PDV
     path("sales/", views.PdvSaleListView.as_view(), name="pdv_sale_list"),
+    path("pdv/sales/<uuid:pk>/", views.PdvSaleDetailView.as_view(), name="pdvsale_detail"),
 
     # API para o PDV
     path("api/pdv/sync/favorites/", views.pdv_favorite_list, name="pdv_favorite_list"),

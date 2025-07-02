@@ -184,6 +184,18 @@ class PdvSaleListView(ListView):
             .prefetch_related("payments__payment_method")
             .order_by("-created_at")
         )
+    
+class PdvSaleDetailView(DetailView):
+    model = PdvSale
+    template_name = "pdvsale_detail.html"
+    context_object_name = "sale"
+
+    def get_queryset(self):
+        return (
+            super().get_queryset()
+            .select_related("cash_register__operator", "customer")
+            .prefetch_related("items__product", "payments__payment_method")
+        )
 
 
 # API

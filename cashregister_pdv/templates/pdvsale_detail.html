@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da Venda{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Detalhes da Venda - Ticket {{ sale.ticket_number }}</h2>
+  <p><strong>Data:</strong> {{ sale.created_at|date:"d/m/Y" }}</p>
+  <p><strong>Hora:</strong> {{ sale.created_at|date:"H:i" }}</p>
+  <p><strong>Operador:</strong> {{ sale.cash_register.operator.get_full_name|default:sale.cash_register.operator.username }}</p>
+  <p><strong>Cliente:</strong> {{ sale.customer|default:"-" }}</p>
+
+  <hr>
+
+  <h4>Produtos Vendidos</h4>
+  <table class="table table-sm table-bordered">
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Qtd</th>
+        <th>Preço Unit.</th>
+        <th>Desconto</th>
+        <th>Total</th>
+        <th>Obs.</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in sale.items.all %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.unit_price }} €</td>
+        <td>{{ item.discount }} €</td>
+        <td>{{ item.line_total }} €</td>
+        <td>{{ item.observation|default:"-" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h4>Resumo Financeiro</h4>
+  <p><strong>Total:</strong> {{ sale.total_amount }} €</p>
+  <p><strong>Desconto:</strong> {{ sale.total_discount }} €</p>
+  <p><strong>Pago:</strong> {{ sale.amount_paid }} €</p>
+  <p><strong>Troco:</strong> {{ sale.change_given }} €</p>
+
+  <h5>Métodos de Pagamento</h5>
+  <ul>
+    {% for p in sale.payments.all %}
+      <li>{{ p.payment_method.name }}: {{ p.amount }} €</li>
+    {% empty %}
+      <li>-</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'pdv_sale_list' %}" class="btn btn-secondary mt-3">Voltar para lista</a>
+</div>
+{% endblock %}
