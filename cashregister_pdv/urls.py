@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path("api/pdv/cash/open-status/", views.get_open_cash_status, name="pdv_cash_open_status"),
+    path("api/pdv/cash/list/", views.list_cash_registers, name="pdv_cash_list"),
     path("api/pdv/cash/open/", views.pdv_open_cash, name="pdv_cash_open"),
     path("api/pdv/cash/close/", views.pdv_close_cash, name="pdv_cash_close"),
     path("api/pdv/cash/history/", views.pdv_cash_history, name="pdv_cash_history"),
@@ -19,7 +20,7 @@ urlpatterns = [
     path("sales/", views.PdvSaleListView.as_view(), name="pdv_sale_list"),
     path("pdv/sales/<uuid:pk>/", views.PdvSaleDetailView.as_view(), name="pdvsale_detail"),
 
-    # API para o PDV
+    # Produtos favoritos no PDV
     path("api/pdv/sync/favorites/", views.pdv_favorite_list, name="pdv_favorite_list"),
 
     # vendas do PDV

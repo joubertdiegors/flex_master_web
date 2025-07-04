@@ -45,6 +45,28 @@ def get_open_cash_status(request):
         return JsonResponse({"status": "closed"})
 
 @csrf_exempt
+def list_cash_registers(request):
+    if request.headers.get("X-API-KEY") != settings.PDV_API_KEY:
+        return HttpResponseForbidden("Unauthorized")
+
+    cash_list = CashRegister.objects.all().order_by("opened_at")
+
+    result = []
+    for cash in cash_list:
+        result.append({
+            "id": str(cash.id),
+            "branch_id": cash.branch_id,
+            "terminal_number": cash.terminal_number,
+            "operator_id": cash.operator_id,
+            "opened_at": cash.opened_at,
+            "opening_amount": float(cash.opening_amount),
+            "closed_at": cash.closed_at,
+            "closing_amount": float(cash.closing_amount) if cash.closing_amount is not None else None,
+        })
+
+    return JsonResponse(result, safe=False)
+
+@csrf_exempt
 def pdv_open_cash(request):
     if request.method != "POST":
         return HttpResponseBadRequest("Método inválido")
