@@ -266,7 +266,7 @@ def pdv_sales_list(request):
             queryset = queryset.filter(created_at__date=date_obj)
 
     data = []
-    for sale in queryset.order_by("-created_at")[:100]:  # limita a 100 vendas recentes
+    for sale in queryset.order_by("-created_at")[:3000]:  # limita a 3000 vendas recentes
         items = [
             {
                 "product_id": item.product_id,
@@ -286,7 +286,6 @@ def pdv_sales_list(request):
             "total_amount": float(sale.total_amount),
             "total_discount": float(sale.total_discount),
             "amount_paid": float(sale.amount_paid),
-            "payment_method_id": sale.payment_method_id,
             "created_at": sale.created_at.isoformat(),
             "items": items
         })
