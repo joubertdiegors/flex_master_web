@@ -283,11 +283,19 @@ def pdv_sales_list(request):
             "id": str(sale.id),
             "ticket_number": sale.ticket_number,
             "customer_id": sale.customer_id,
+            "cash_register_id": sale.cash_register_id,
             "total_amount": float(sale.total_amount),
             "total_discount": float(sale.total_discount),
             "amount_paid": float(sale.amount_paid),
+            "change_given": float(sale.change_given),
             "created_at": sale.created_at.isoformat(),
-            "items": items
+            "items": items,
+            "payments": [
+                {
+                    "payment_method_id": p.payment_method_id,
+                    "amount": float(p.amount)
+                } for p in sale.payments.all()
+            ]
         })
 
     return JsonResponse({"sales": data})
