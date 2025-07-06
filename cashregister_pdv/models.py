@@ -59,6 +59,13 @@ class PdvSale(models.Model):
     cash_register = models.ForeignKey(CashRegister, on_delete=models.PROTECT, related_name="sales")
     ticket_number = models.CharField(max_length=20)
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    operator = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name="pdv_sales",
+        null=True,
+        blank=True
+    )
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     total_discount = models.DecimalField(max_digits=10, decimal_places=2)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
