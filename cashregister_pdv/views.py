@@ -283,6 +283,7 @@ def pdv_sales_list(request):
             "id": str(sale.id),
             "ticket_number": sale.ticket_number,
             "customer_id": sale.customer_id,
+            "operator_id": sale.operator_id,
             "cash_register_id": sale.cash_register_id,
             "total_amount": float(sale.total_amount),
             "total_discount": float(sale.total_discount),
