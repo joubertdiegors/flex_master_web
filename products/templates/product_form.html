@@ -88,15 +88,31 @@
         <!-- Segunda coluna com image -->
         <div class="col-md-2 d-flex align-items-center">
           <div class="form-group text-center" style="width: 100%;">
-            <label for="id_image" class="d-block">{{ form.image.label }}</label>
-            <div class="border rounded bg-light" style="width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <label for="inputImage" class="d-block">{{ form.image.label }}</label>
+        
+            <!-- Área clicável para selecionar imagem -->
+            <div id="clickableImageArea" class="border rounded bg-light"
+                 style="width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
               {% if form.instance.image %}
-                <img src="{{ form.instance.image.url }}" alt="Imagem do Produto" style="max-width: 100%; max-height: 100%;">
+                <img id="imagePreview"
+                     src="{{ form.instance.image.url }}"
+                     alt="Imagem do Produto"
+                     style="max-width: 100%; max-height: 100%;" />
               {% else %}
-                <span class="text-muted">Clique para adicionar a imagem</span>
+                <img id="imagePreview"
+                     src="#"
+                     alt="Pré-visualização"
+                     style="max-width: 100%; max-height: 100%; display: none;" />
+                <span class="text-muted" id="placeholderText">Clique para adicionar a imagem</span>
               {% endif %}
             </div>
-            {{ form.image }}
+        
+            <!-- Campo de input de imagem (oculto) -->
+            <input type="file" id="inputImage" accept="image/*" class="d-none" />
+        
+            <!-- Campo oculto com imagem recortada para envio -->
+            <input type="hidden" id="croppedImageData" name="image" />
+        
             {% for error in form.image.errors %}
               <div class="text-danger">{{ error }}</div>
             {% endfor %}
@@ -188,4 +204,99 @@
     </form>
   </div>
 </div>
+
+<!-- Model para cortar a imagem -->
+<div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Recorte a Imagem</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <img id="imageToCrop" style="max-width: 100%;" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="cropButton" class="btn btn-success">Recortar e Usar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let cropper;
+  const inputImage = document.getElementById('inputImage');
+  const imageToCrop = document.getElementById('imageToCrop');
+  const cropperModal = new bootstrap.Modal(document.getElementById('cropperModal'));
+  const cropButton = document.getElementById('cropButton');
+  const imagePreview = document.getElementById('imagePreview');
+  const placeholderText = document.getElementById('placeholderText');
+
+  // Abre seletor de arquivo ao clicar na área
+  document.getElementById('clickableImageArea').addEventListener('click', () => {
+    inputImage.click();
+  });
+
+  // Quando imagem é escolhida
+  inputImage.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file && /^image\//.test(file.type)) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        imageToCrop.src = e.target.result;
+        cropperModal.show();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert("Por favor, selecione um arquivo de imagem.");
+    }
+  });
+
+  document.getElementById('cropperModal').addEventListener('shown.bs.modal', function () {
+    cropper = new Cropper(imageToCrop, {
+      viewMode: 1,
+      autoCropArea: 1
+    });
+  });
+
+  document.getElementById('cropperModal').addEventListener('hidden.bs.modal', function () {
+    if (cropper) {
+      cropper.destroy();
+      cropper = null;
+    }
+  });
+
+  cropButton.addEventListener('click', function () {
+    const canvas = cropper.getCroppedCanvas();
+    canvas.toBlob(function (blob) {
+      const file = new File([blob], "cropped_image.jpg", { type: "image/jpeg" });
+
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.name = 'image';
+      input.files = dataTransfer.files;
+      input.style.display = 'none';
+
+      // Remove campos antigos
+      document.querySelectorAll('input[name="image"]').forEach(e => e.remove());
+      document.querySelector('form').appendChild(input);
+
+      // Atualiza preview e remove placeholder
+      imagePreview.src = canvas.toDataURL();
+      imagePreview.style.display = 'block';
+      if (placeholderText) {
+        placeholderText.style.display = 'none';
+      }
+
+      cropperModal.hide();
+    }, "image/jpeg");
+  });
+</script>
 {% endblock %}
