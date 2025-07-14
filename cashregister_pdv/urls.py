@@ -1,7 +1,10 @@
 from django.urls import path
 from . import views
+from .views_flush import flush_pdv_data
 
 urlpatterns = [
+    path('pdv/flush/', flush_pdv_data, name='flush_pdv_data'),
+    
     path("api/pdv/cash/open-status/", views.get_open_cash_status, name="pdv_cash_open_status"),
     path("api/pdv/cash/list/", views.list_cash_registers, name="pdv_cash_list"),
     path("api/pdv/cash/open/", views.pdv_open_cash, name="pdv_cash_open"),
